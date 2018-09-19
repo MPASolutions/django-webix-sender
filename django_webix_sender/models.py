@@ -175,6 +175,7 @@ class MessageSent(models.Model):
     send_method = models.CharField(max_length=255, verbose_name=_('Send method'))
     subject = models.TextField(blank=True, null=True, verbose_name=_('Subject'))
     body = models.TextField(blank=True, null=True, verbose_name=_('Body'))
+    extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
     attachments = models.ManyToManyField(
         CONF['attachments']['model'],
         blank=True,

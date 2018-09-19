@@ -115,6 +115,7 @@ class Migration(migrations.Migration):
             ('send_method', models.CharField(max_length=255, verbose_name='Send method')),
             ('subject', models.TextField(blank=True, null=True, verbose_name='Subject')),
             ('body', models.TextField(blank=True, null=True, verbose_name='Body')),
+            ('extra', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True, verbose_name='Extra')),
             ('attachments', models.ManyToManyField(blank=True, db_constraint=False, to=CONF['attachments']['model'], verbose_name='Attachments')),
         ],
         options={

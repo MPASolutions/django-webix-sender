@@ -177,6 +177,7 @@ class SenderSend(View):
             subject=subject,
             body=body
         )
+        _extra = {}
         if CONF['typology_model']['enabled']:
             message_sent.typology_id = typology
         message_sent.save()
@@ -201,47 +202,64 @@ class SenderSend(View):
             # Invio i messaggi
             for recipient in _recipients_instance:
                 # Invio al contatto principale
-                send_function(recipient.get_sms, body, recipient)
+                result = send_function(recipient.get_sms, body, recipient)
                 MessageRecipient.objects.create(
                     message_sent=message_sent,
                     recipient=recipient
                 )
+                if result:
+                    _extra["{}|{}.{}".format(recipient.pk, recipient.__class__.__module__,
+                                             recipient.__class__.__name__)] = result
                 # Invio anche ai contatti collegati tenendo conto dei contatti a cui l'ho già inviato
                 if hasattr(recipient, 'get_sms_related'):
                     for related in [i for i in recipient.get_sms_related if i not in _related]:
                         if not issubclass(related.__class__, DjangoWebixSender):
                             raise Exception(_('Related is not subclass of `DjangoWebixSender`'))
                         if related not in _related:
-                            send_function(related.get_sms, body, related)
+                            result = send_function(related.get_sms, body, related)
                             MessageRecipient.objects.create(
                                 message_sent=message_sent,
                                 recipient=related
                             )
+                            if result:
+                                _extra["{}|{}.{}".format(related.pk, related.__class__.__module__,
+                                                         related.__class__.__name__)] = result
                             _related.append(related)
-            return JsonResponse({'status': _('Sms sent')})
+            message_sent.extra = _extra
+            message_sent.save()
+            return JsonResponse({'status': _('Sms sent'), 'extra': message_sent.extra})
         elif method == "email":
             # Tengo nota dei contatti collegati ai quali ho inviato il messaggio per non inviarlo nuovamente
             _related = []
 
             for recipient in _recipients_instance:
                 # Invio al contatto principale
-                send_function(recipient.get_email, subject, body, settings.DEFAULT_FROM_EMAIL, recipient)
+                result = send_function(recipient.get_email, subject, body, settings.DEFAULT_FROM_EMAIL, recipient)
                 MessageRecipient.objects.create(
                     message_sent=message_sent,
                     recipient=recipient
                 )
+                if result:
+                    _extra["{}|{}.{}".format(recipient.pk, recipient.__class__.__module__,
+                                             recipient.__class__.__name__)] = result
                 # Invio anche ai contatti collegati tenendo conto dei contatti a cui l'ho già inviato
                 if hasattr(recipient, 'get_email_related'):
                     for related in [i for i in recipient.get_email_related if i not in _related]:
                         if not issubclass(related.__class__, DjangoWebixSender):
                             raise Exception(_('Related is not subclass of `DjangoWebixSender`'))
                         if related not in _related:
-                            send_function(related.get_email, subject, body, settings.DEFAULT_FROM_EMAIL, related)
+                            result = send_function(related.get_email, subject, body, settings.DEFAULT_FROM_EMAIL,
+                                                   related)
                             MessageRecipient.objects.create(
                                 message_sent=message_sent,
                                 recipient=related
                             )
+                            if result:
+                                _extra["{}|{}.{}".format(related.pk, related.__class__.__module__,
+                                                         related.__class__.__name__)] = result
                             _related.append(related)
-            return JsonResponse({'status': _('Emails sent')})
+            message_sent.extra = _extra
+            message_sent.save()
+            return JsonResponse({'status': _('Emails sent'), 'extra': message_sent.extra})
         else:
             return JsonResponse({'status': _('Invalid send method')}, status=400)
