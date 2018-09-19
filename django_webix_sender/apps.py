@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from django.apps import AppConfig
+from django.apps import AppConfig, apps
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -11,7 +11,6 @@ class DjangoWebixSenderConfig(AppConfig):
     verbose_name = 'Django Webix Sender'
 
     def ready(self):
-        from django.contrib.contenttypes.models import ContentType
         from django_webix_sender.settings import CONF
         from django_webix_sender.utils import my_import
 
@@ -24,8 +23,8 @@ class DjangoWebixSenderConfig(AppConfig):
 
         app_label, model = CONF['attachments']['model'].lower().split(".")
         try:
-            ContentType.objects.get(app_label=app_label, model=model)
-        except ContentType.DoesNotExist:
+            apps.get_model(app_label=app_label, model_name=model)
+        except Exception:
             raise NotImplementedError(_('Attachment model is not valid'))
 
         # Try to import Attachments save function
@@ -34,6 +33,6 @@ class DjangoWebixSenderConfig(AppConfig):
         for recipient in CONF['recipients']:
             app_label, model = recipient['model'].lower().split(".")
             try:
-                ContentType.objects.get(app_label=app_label, model=model)
-            except ContentType.DoesNotExist:
+                model_class = apps.get_model(app_label=app_label, model_name=model)
+            except Exception:
                 raise NotImplementedError(_('Recipient model is not valid'))

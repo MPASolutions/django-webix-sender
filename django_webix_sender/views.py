@@ -8,7 +8,6 @@ from collections import defaultdict
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -21,7 +20,7 @@ from django_webix_sender.models import MessageSent, MessageRecipient, DjangoWebi
 from django_webix_sender.settings import CONF
 from django_webix_sender.utils import my_import, ISO_8859_1_limited
 
-if 'filter' in apps.get_models():
+if apps.is_installed('filter'):
     from filter.models import Filter
     from filter.utils2 import get_aggregates_q_by_id
 
@@ -33,7 +32,7 @@ class SenderList(TemplateView):
 
     def __init__(self):
         super(SenderList, self).__init__()
-        self.use_dynamic_filters = 'filter' in apps.get_models()
+        self.use_dynamic_filters = apps.is_installed('filter')
 
     def get_context_data(self, **kwargs):
         context = super(SenderList, self).get_context_data(**kwargs)
@@ -77,13 +76,13 @@ class SenderGetList(View):
 
         contentype = request.GET.get('contentype', None)
         pks = request.GET.getlist('filters_pk', None)
-        use_dynamic_filters = 'filter' in apps.get_models()
+        use_dynamic_filters = apps.is_installed('filter')
 
         if contentype is None or (use_dynamic_filters and pks in [None, '', []]):
             return JsonResponse({}, status=400)
 
         app_label, model = contentype.lower().split(".")
-        model_class = ContentType.objects.get(app_label=app_label, model=model).model_class()
+        model_class = apps.get_model(app_label=app_label, model_name=model)
         queryset = model_class.objects.all()
         qset = Q()
 
@@ -153,7 +152,7 @@ class SenderSend(View):
         _recipients_instance = []
         for key, value in _recipients.items():
             app_label, model = key.lower().split(".")
-            model_class = ContentType.objects.get(app_label=app_label, model=model).model_class()
+            model_class = apps.get_model(app_label=app_label, model_name=model)
             if not issubclass(model_class, DjangoWebixSender):
                 raise Exception('{}.{} is not subclass of `DjangoWebixSender`'.format(app_label, model))
             _recipients_instance += list(model_class.objects.filter(pk__in=value))
