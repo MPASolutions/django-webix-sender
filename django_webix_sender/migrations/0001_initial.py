@@ -82,18 +82,19 @@ class Migration(migrations.Migration):
             },
         ))
 
-    operations.append(migrations.CreateModel(
-        name='MessageAttachment',
-        fields=[
-            ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-            ('file', models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name='Document')),
-            ('insert_date', models.DateTimeField(auto_now_add=True, verbose_name='Insert date')),
-        ],
-        options={
-            'verbose_name': 'Attachment',
-            'verbose_name_plural': 'Attachments',
-        },
-    ))
+    if CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
+        operations.append(migrations.CreateModel(
+            name='MessageAttachment',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('file', models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name='Document')),
+                ('insert_date', models.DateTimeField(auto_now_add=True, verbose_name='Insert date')),
+            ],
+            options={
+                'verbose_name': 'Attachment',
+                'verbose_name_plural': 'Attachments',
+            },
+        ))
 
     operations.append(migrations.CreateModel(
         name='MessageRecipient',

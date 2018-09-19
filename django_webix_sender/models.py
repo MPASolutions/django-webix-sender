@@ -129,22 +129,21 @@ if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipi
         def __str__(self):
             return '{}'.format(self.typology)
 
+if CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
+    @python_2_unicode_compatible
+    class MessageAttachment(models.Model):
+        file = models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name=_('Document'))
+        insert_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Insert date'))
 
-@python_2_unicode_compatible
-class MessageAttachment(models.Model):
-    file = models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name=_('Document'))
-    insert_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Insert date'))
+        class Meta:
+            verbose_name = _('Attachment')
+            verbose_name_plural = _('Attachments')
 
-    class Meta:
-        verbose_name = _('Attachment')
-        verbose_name_plural = _('Attachments')
+        def __str__(self):
+            return '{}'.format(self.file.name)
 
-    def __str__(self):
-        return '{}'.format(self.file.name)
-
-    def get_url(self):
-        return '{}'.format(self.file.url)
-
+        def get_url(self):
+            return '{}'.format(self.file.url)
 
 if CONF['typology_model']['enabled']:
     @python_2_unicode_compatible
