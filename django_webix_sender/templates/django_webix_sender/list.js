@@ -253,6 +253,11 @@ var getDatatablesItems = function () {
 }
 
 
+/**
+ * Funzione che ritorna gli id con il modello delle istanze selezionate
+ *
+ * @returns {Array} id con modello istanze selezionate
+ */
 var getDatatablesSelectedItems = function () {
     var recipients = [];
     {% for datatable in datatables %}
@@ -275,7 +280,6 @@ var getDatatablesSelectedItems = function () {
 
     $$('{{ datatable.model }}').attachEvent("onAfterLoad", getDatatablesItems);
     $$('{{ datatable.model }}').attachEvent("onAfterFilter", getDatatablesItems);
-    // $$('{{ datatable.model }}').attachEvent("onAfterFilter", getDatatablesItems);  // TODO: deselect all items after filter
     $$('{{ datatable.model }}').attachEvent("onAfterDelete", getDatatablesItems);
     $$('{{ datatable.model }}').attachEvent("onAfterSelect", getDatatablesItems);
     $$('{{ datatable.model }}').attachEvent("onAfterUnSelect", getDatatablesItems);
@@ -358,7 +362,7 @@ function create_window_sms(action) {
                     {
                         view: "label",
                         id: "length",
-                        label: "0 {% trans 'character' %}",
+                        label: "0 {% trans 'characters' %}",
                         align: "right"
                     },
                     {
