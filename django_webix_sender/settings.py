@@ -7,6 +7,8 @@ from django.conf import settings
 CONF = getattr(settings, "WEBIX_SENDER", None)
 
 """
+Sample settings `WEBIX_SENDER` configuration
+
 {
     'send_methods': [
         {

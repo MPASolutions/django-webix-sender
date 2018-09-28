@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 import json
-from collections import defaultdict
 
 from django.apps import apps
 from django.conf import settings
@@ -41,7 +40,6 @@ class SenderList(TemplateView):
 
         context['send_methods'] = CONF['send_methods']
         context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
-        context['typology_model'] = CONF['typology_model']
 
         context['datatables'] = []
         for recipient in CONF['recipients']:
@@ -138,19 +136,11 @@ class SenderSend(View):
         typology = request.POST.get("typology", None)
         subject = request.POST.get("subject", "")
         body = request.POST.get("body", "")
-        recipients = request.POST.get("recipients", "").split(",")
-
-        if "" in recipients:
-            recipients.remove("")
+        recipients = json.loads(request.POST.get("recipients", "{}"))
 
         # 1. Recupero la lista delle istanze a cui inviare il messaggio
-        _recipients = defaultdict(list)
-        for recipient in recipients:
-            recipient_id, recipient_model = recipient.split("__")
-            _recipients[recipient_model].append(recipient_id)
-
         _recipients_instance = []
-        for key, value in _recipients.items():
+        for key, value in recipients.items():
             app_label, model = key.lower().split(".")
             model_class = apps.get_model(app_label=app_label, model_name=model)
             if not issubclass(model_class, DjangoWebixSender):
@@ -263,3 +253,16 @@ class SenderSend(View):
             return JsonResponse({'status': _('Emails sent'), 'extra': message_sent.extra})
         else:
             return JsonResponse({'status': _('Invalid send method')}, status=400)
+
+
+@method_decorator(login_required, name='dispatch')
+class DjangoWebixSenderWindow(TemplateView):
+    template_name = 'django_webix_sender/sender.js'
+
+    def get_context_data(self, **kwargs):
+        context = super(DjangoWebixSenderWindow, self).get_context_data(**kwargs)
+
+        context['send_methods'] = CONF['send_methods']
+        context['typology_model'] = CONF['typology_model']
+
+        return context
