@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-19 11:40+0200\n"
-"PO-Revision-Date: 2018-09-19 11:42+0200\n"
+"POT-Creation-Date: 2018-10-30 14:46+0100\n"
+"PO-Revision-Date: 2018-09-28 11:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -17,149 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.1.1\n"
-
-#: apps.py:18
-msgid "`WEBIX_SENDER` is not configured in your settings.py file"
-msgstr "`WEBIX_SENDER` non è configurato nel tuo file settings.py"
-
-#: apps.py:28
-msgid "Attachment model is not valid"
-msgstr "Il modello degli allegati non è valido"
-
-#: apps.py:38
-msgid "Recipient model is not valid"
-msgstr "Il modello dei destinatari non è valido"
-
-#: models.py:52 models.py:94
-msgid "User"
-msgstr "Utente"
-
-#: models.py:53 models.py:95
-msgid "Name"
-msgstr "Nome"
-
-#: models.py:54 models.py:96
-msgid "Vat number"
-msgstr "Partita IVA"
-
-#: models.py:55 models.py:97
-msgid "Fiscal code"
-msgstr "Codice fiscale"
-
-#: models.py:56 models.py:98
-msgid "Sms"
-msgstr "Sms"
-
-#: models.py:57 models.py:99
-msgid "Email"
-msgstr "Email"
-
-#: models.py:58 models.py:100
-msgid "Note"
-msgstr "Note"
-
-#: models.py:59 models.py:101
-msgid "Extra"
-msgstr "Extra"
-
-#: models.py:61 models.py:81 models.py:103 models.py:123 models.py:152
-#: models.py:173 templates/django_webix_sender/list.js:334
-#: templates/django_webix_sender/list.js:471
-msgid "Typology"
-msgstr "Tipologia"
-
-#: models.py:64
-msgid "Customer"
-msgstr "Cliente"
-
-#: models.py:65
-msgid "Customers"
-msgstr "Clienti"
-
-#: models.py:84
-msgid "Customer typology"
-msgstr "Tipologia cliente"
-
-#: models.py:85
-msgid "Customer typologies"
-msgstr "Tipologia clienti"
-
-#: models.py:106
-msgid "External subject"
-msgstr "Soggetto esterno"
-
-#: models.py:107
-msgid "External subjects"
-msgstr "Soggetti esterni"
-
-#: models.py:126
-msgid "External subject typology"
-msgstr "Tipologia soggetto esterno"
-
-#: models.py:127
-msgid "External subject typologies"
-msgstr "Tipologie soggetti esterni"
-
-#: models.py:135
-msgid "Document"
-msgstr "Documento"
-
-#: models.py:136
-msgid "Insert date"
-msgstr "Data inserimento"
-
-#: models.py:139
-msgid "Attachment"
-msgstr "Allegato"
-
-#: models.py:140 models.py:182
-msgid "Attachments"
-msgstr "Allegati"
-
-#: models.py:155
-msgid "Message typology"
-msgstr "Tipologia messaggio"
-
-#: models.py:156
-msgid "Message typologies"
-msgstr "Tipologie messaggi"
-
-#: models.py:175
-msgid "Send method"
-msgstr "Metodo di invio"
-
-#: models.py:176 templates/django_webix_sender/list.js:485
-msgid "Subject"
-msgstr "Oggetto"
-
-#: models.py:177 templates/django_webix_sender/list.js:346
-#: templates/django_webix_sender/list.js:489
-msgid "Body"
-msgstr "Corpo"
-
-#: models.py:186
-msgid "Sent message"
-msgstr "Messaggio inviato"
-
-#: models.py:187
-msgid "Sent messages"
-msgstr "Messaggi inviati"
-
-#: models.py:195
-msgid "Attachments `save_function` must be a callable method"
-msgstr "`save_function` di Allegati deve essere un metodo"
-
-#: models.py:201
-msgid "Message sent"
-msgstr "Messaggio inviato"
-
-#: models.py:207
-msgid "Recipient"
-msgstr "Destinatario"
-
-#: models.py:208
-msgid "Recipients"
-msgstr "Destinatari"
 
 #: templates/django_webix_sender/list.js:30
 msgid "Filter the list by applying filters"
@@ -185,82 +42,182 @@ msgstr "Azione"
 msgid "Go"
 msgstr "Vai"
 
-#: templates/django_webix_sender/list.js:165
-#: templates/django_webix_sender/list.js:189
-msgid "Caution!"
-msgstr "Attenzione!"
-
-#: templates/django_webix_sender/list.js:166
-#: templates/django_webix_sender/list.js:190
-msgid "There are no recipients for this communication"
-msgstr "Non ci sono destinatari per questa comunicazione"
-
-#: templates/django_webix_sender/list.js:214
-#: templates/django_webix_sender/list.js:247
+#: templates/django_webix_sender/list.js:188
+#: templates/django_webix_sender/list.js:221
 msgid "selected of"
 msgstr "selezionati di"
 
-#: templates/django_webix_sender/list.js:312
-msgid "Send SMS"
-msgstr "Invia SMS"
+#: templates/django_webix_sender/list.js:261
+msgid "Unable to load sender class"
+msgstr "Impossibile caricare la classe sender"
 
-#: templates/django_webix_sender/list.js:316
-#: templates/django_webix_sender/list.js:453
-msgid "Close"
-msgstr "Chiudi"
+#: templates/django_webix_sender/sender.js:47
+msgid "Typology"
+msgstr "Tipologia"
 
-#: templates/django_webix_sender/list.js:357
-#: templates/django_webix_sender/list.js:365
+#: templates/django_webix_sender/sender.js:63
+msgid "Subject"
+msgstr "Oggetto"
+
+#: templates/django_webix_sender/sender.js:68
+msgid "Body"
+msgstr "Corpo"
+
+#: templates/django_webix_sender/sender.js:81
+#: templates/django_webix_sender/sender.js:91
 msgid "characters"
 msgstr "caratteri"
 
-#: templates/django_webix_sender/list.js:370
-#: templates/django_webix_sender/list.js:512
-msgid "Send"
-msgstr "Invia"
-
-#: templates/django_webix_sender/list.js:377
-#: templates/django_webix_sender/list.js:519
-msgid "You have to fill in all the required fields"
-msgstr "Devi compilare tutti i campi richiesti"
-
-#: templates/django_webix_sender/list.js:400
-#: templates/django_webix_sender/list.js:547
-msgid "The messages have been sent"
-msgstr "I messaggi sono stati inviati"
-
-#: templates/django_webix_sender/list.js:408
-#: templates/django_webix_sender/list.js:555
-msgid "Unable to send messages"
-msgstr "Impossibile inviare i messaggi"
-
-#: templates/django_webix_sender/list.js:449
-msgid "Send email"
-msgstr "Invia email"
-
-#: templates/django_webix_sender/list.js:500
+#: templates/django_webix_sender/sender.js:99
 msgid "Attach file"
 msgstr "Allega file"
 
-#: views.py:194
-msgid "Invalid characters"
-msgstr "Caratteri invalidi"
+#: templates/django_webix_sender/sender.js:112
+msgid "Send"
+msgstr "Invia"
 
-#: views.py:213 views.py:237
-msgid "Related is not subclass of `DjangoWebixSender`"
-msgstr "Oggetto collegato non è una sottoclasse di `DjangoWebixSender`"
+#: templates/django_webix_sender/sender.js:119
+msgid "You have to fill in all the required fields"
+msgstr "Devi compilare tutti i campi richiesti"
 
-#: views.py:221
-msgid "Sms sent"
-msgstr "Sms inviati"
+#: templates/django_webix_sender/sender.js:154
+msgid "The messages have been sent"
+msgstr "I messaggi sono stati inviati"
 
-#: views.py:245
-msgid "Emails sent"
-msgstr "Email inviate"
+#: templates/django_webix_sender/sender.js:163
+msgid "Unable to send messages"
+msgstr "Impossibile inviare i messaggi"
 
-#: views.py:247
-msgid "Invalid send method"
-msgstr "Metodo di invio non valido"
+#: templates/django_webix_sender/sender.js:208
+msgid "Send email"
+msgstr "Invia email"
+
+#: templates/django_webix_sender/sender.js:211
+msgid "Send SMS"
+msgstr "Invia SMS"
+
+#: templates/django_webix_sender/sender.js:231
+msgid "Close"
+msgstr "Chiudi"
+
+#: templates/django_webix_sender/sender.js:265
+msgid "Caution!"
+msgstr "Attenzione!"
+
+#: templates/django_webix_sender/sender.js:266
+msgid "There are no recipients for this communication"
+msgstr "Non ci sono destinatari per questa comunicazione"
+
+#~ msgid "`WEBIX_SENDER` is not configured in your settings.py file"
+#~ msgstr "`WEBIX_SENDER` non è configurato nel tuo file settings.py"
+
+#~ msgid "Attachment model is not valid"
+#~ msgstr "Il modello degli allegati non è valido"
+
+#~ msgid "Recipient model is not valid"
+#~ msgstr "Il modello dei destinatari non è valido"
+
+#~ msgid "User"
+#~ msgstr "Utente"
+
+#~ msgid "Name"
+#~ msgstr "Nome"
+
+#~ msgid "Vat number"
+#~ msgstr "Partita IVA"
+
+#~ msgid "Fiscal code"
+#~ msgstr "Codice fiscale"
+
+#~ msgid "Sms"
+#~ msgstr "Sms"
+
+#~ msgid "Email"
+#~ msgstr "Email"
+
+#~ msgid "Note"
+#~ msgstr "Note"
+
+#~ msgid "Extra"
+#~ msgstr "Extra"
+
+#~ msgid "Customer"
+#~ msgstr "Cliente"
+
+#~ msgid "Customers"
+#~ msgstr "Clienti"
+
+#~ msgid "Customer typology"
+#~ msgstr "Tipologia cliente"
+
+#~ msgid "Customer typologies"
+#~ msgstr "Tipologia clienti"
+
+#~ msgid "External subject"
+#~ msgstr "Soggetto esterno"
+
+#~ msgid "External subjects"
+#~ msgstr "Soggetti esterni"
+
+#~ msgid "External subject typology"
+#~ msgstr "Tipologia soggetto esterno"
+
+#~ msgid "External subject typologies"
+#~ msgstr "Tipologie soggetti esterni"
+
+#~ msgid "Document"
+#~ msgstr "Documento"
+
+#~ msgid "Insert date"
+#~ msgstr "Data inserimento"
+
+#~ msgid "Attachment"
+#~ msgstr "Allegato"
+
+#~ msgid "Attachments"
+#~ msgstr "Allegati"
+
+#~ msgid "Message typology"
+#~ msgstr "Tipologia messaggio"
+
+#~ msgid "Message typologies"
+#~ msgstr "Tipologie messaggi"
+
+#~ msgid "Send method"
+#~ msgstr "Metodo di invio"
+
+#~ msgid "Sent message"
+#~ msgstr "Messaggio inviato"
+
+#~ msgid "Sent messages"
+#~ msgstr "Messaggi inviati"
+
+#~ msgid "Attachments `save_function` must be a callable method"
+#~ msgstr "`save_function` di Allegati deve essere un metodo"
+
+#~ msgid "Message sent"
+#~ msgstr "Messaggio inviato"
+
+#~ msgid "Recipient"
+#~ msgstr "Destinatario"
+
+#~ msgid "Recipients"
+#~ msgstr "Destinatari"
+
+#~ msgid "Invalid characters"
+#~ msgstr "Caratteri invalidi"
+
+#~ msgid "Related is not subclass of `DjangoWebixSender`"
+#~ msgstr "Oggetto collegato non è una sottoclasse di `DjangoWebixSender`"
+
+#~ msgid "Sms sent"
+#~ msgstr "Sms inviati"
+
+#~ msgid "Emails sent"
+#~ msgstr "Email inviate"
+
+#~ msgid "Invalid send method"
+#~ msgstr "Metodo di invio non valido"
 
 #~ msgid "Full name"
 #~ msgstr "Nome completo"

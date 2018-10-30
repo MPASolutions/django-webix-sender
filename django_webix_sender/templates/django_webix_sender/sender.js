@@ -124,7 +124,9 @@ function DjangoWebixSender() {
                     $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
 
                     var data = new FormData();
-                    data.append('typology', $$('django-webix-sender-form-typology').getValue());
+                    {% if typology_model.enabled %}
+                        data.append('typology', $$('django-webix-sender-form-typology').getValue());
+                    {% endif %}
                     data.append('send_method', send_method_original);
                     if (send_method === 'email') {
                         data.append('subject', $$('django-webix-sender-form-subject').getValue());
