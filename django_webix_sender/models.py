@@ -187,7 +187,9 @@ class MessageSent(models.Model):
         verbose_name_plural = _('Sent messages')
 
     def __str__(self):
-        return "[{}] {}".format(self.send_method, self.typology)
+        if CONF['typology_model']['enabled']:
+            return "[{}] {}".format(self.send_method, self.typology)
+        return "{}".format(self.send_method)
 
     def save_attachments(self, files):
         method = my_import(CONF['attachments']['save_function'])
