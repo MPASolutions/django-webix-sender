@@ -102,21 +102,26 @@ class SenderGetList(View):
 
         queryset = queryset.filter(qset).distinct()
 
-        for destinatario in CONF['recipients']:
-            if destinatario['model'].lower() == contentype.lower():
-                destinatari = []
+        for recipient in CONF['recipients']:
+            if recipient['model'].lower() == contentype.lower():
+                recipients = []
                 for record in queryset:
                     _json = {
                         'id': record.pk
                     }
-                    for i in destinatario['datatable_fields']:
+                    for i in recipient['datatable_fields']:
+                        _value = record
+                        for field in i.split('__'):
+                            if _value is None:
+                                break
+                            _value = getattr(_value, field)
                         try:
-                            json.dumps(getattr(record, i))
-                            _json[i] = getattr(record, i)
-                        except:
-                            _json[i] = str(getattr(record, i))
-                    destinatari.append(_json)
-                return JsonResponse(destinatari, safe=False)
+                            json.dumps(_value)
+                            _json[i] = _value
+                        except Exception:
+                            _json[i] = str(_value)
+                    recipients.append(_json)
+                return JsonResponse(recipients, safe=False)
 
         return JsonResponse({})
 
@@ -226,7 +231,14 @@ class SenderSend(View):
             })
 
         # 5. Creo istanza `MessageAttachment` senza collegarlo alla m2m -> da collegare al passo 5
-        attachments = my_import(CONF['attachments']['save_function'])(request.FILES)
+        attachments = my_import(CONF['attachments']['save_function'])(
+            request.FILES,
+            send_method=send_method,
+            typology=typology,
+            subject=subject,
+            body=body,
+            recipients=_recipients
+        )
 
         # 6. aggiungo il link del file in fondo al corpo
         if len(attachments) > 0:

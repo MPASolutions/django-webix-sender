@@ -14,7 +14,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from django_webix_sender.settings import CONF
-from django_webix_sender.utils import my_import
 
 User = get_user_model()
 
@@ -26,7 +25,7 @@ def _get_cost(self, send_method):
 User.get_cost = _get_cost
 
 
-def save_attachments(files):
+def save_attachments(files, *args, **kwargs):
     attachments = []
     for filename, file in files.items():
         attachment = MessageAttachment.objects.create(file=file)
@@ -230,12 +229,6 @@ class MessageSent(models.Model):
         if CONF['typology_model']['enabled']:
             return "[{}] {}".format(self.send_method, self.typology)
         return "{}".format(self.send_method)
-
-    def save_attachments(self, files):
-        method = my_import(CONF['attachments']['save_function'])
-        if not callable(method):
-            raise Exception(_('Attachments `save_function` must be a callable method'))
-        method(self, files)
 
 
 @python_2_unicode_compatible
