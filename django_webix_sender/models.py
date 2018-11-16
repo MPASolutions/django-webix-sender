@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
@@ -14,15 +13,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from django_webix_sender.settings import CONF
-
-User = get_user_model()
-
-
-def _get_cost(self, send_method):
-    raise NotImplementedError("`get_cost` not implemented!")
-
-
-User.get_cost = _get_cost
 
 
 def save_attachments(files, *args, **kwargs):
