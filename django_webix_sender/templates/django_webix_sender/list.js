@@ -29,7 +29,14 @@ $$("content_right").addView({
                             view: "multicombo",
                             placeholder: "{% trans 'Filter the list by applying filters' %}",
                             labelWidth: 0,
-                            options: {{ datatable.filters|safe }},
+                            options: [
+                                {% for filter in datatable.filters %}
+                                {
+                                    'id': "{{ filter.id }}",
+                                    'value': "{{ filter.value|safe|escapejs }}"
+                                },
+                                {% endif %}
+                            ],
                             on: {
                                 onChange: function (newv, oldv) {
                                     var dt = $$("{{ datatable.model }}");
