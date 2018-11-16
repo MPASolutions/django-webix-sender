@@ -35,7 +35,7 @@ $$("content_right").addView({
                                     'id': "{{ filter.id }}",
                                     'value': "{{ filter.value|safe|escapejs }}"
                                 },
-                                {% endif %}
+                                {% endfor %}
                             ],
                             on: {
                                 onChange: function (newv, oldv) {
