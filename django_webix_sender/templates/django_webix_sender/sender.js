@@ -121,8 +121,6 @@ function DjangoWebixSender() {
                         return;
                     }
 
-                    $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
-
                     var data = new FormData();
                     {% if typology_model.enabled %}
                         data.append('typology', $$('django-webix-sender-form-typology').getValue());
@@ -148,14 +146,49 @@ function DjangoWebixSender() {
                         contentType: false,
                         cache: false,
                         timeout: 600000,
-                        success: function () {
-                            $$('content_right').hideOverlay();
-                            webix.message({
-                                type: "info",
-                                expire: 10000,
-                                text: "{% trans 'The messages have been sent' %}"
+                        success: function (result) {
+                            var valids = "{% trans 'Valid recipients: ' %}" + result['valids'];
+                            var invalids = "{% trans 'Invalids recipients: ' %}" + result['invalids'];
+                            var duplicates = "{% trans 'Duplicate recipients: ' %}" + result['duplicates'];
+                            webix.confirm({
+                                title: "{% trans 'Confirmation' %}",
+                                text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{% trans 'Are you sure to send this message?' %}",
+                                ok: "{% trans 'Yes' %}",
+                                cancel: "{% trans 'No' %}",
+                                callback: function (result) {
+                                    if (result) {
+                                        $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
+                                        data.append('presend', false);
+                                        $.ajax({
+                                            type: "POST",
+                                            enctype: 'multipart/form-data',
+                                            url: "{% url 'django_webix_sender.send' %}",
+                                            data: data,
+                                            processData: false,
+                                            contentType: false,
+                                            cache: false,
+                                            timeout: 600000,
+                                            success: function () {
+                                                $$('content_right').hideOverlay();
+                                                webix.message({
+                                                    type: "info",
+                                                    expire: 10000,
+                                                    text: "{% trans 'The messages have been sent' %}"
+                                                });
+                                                sender_window.destructor();
+                                            },
+                                            error: function () {
+                                                $$('content_right').hideOverlay();
+                                                webix.message({
+                                                    type: "error",
+                                                    expire: 10000,
+                                                    text: '{% trans 'Unable to send messages' %}'
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
                             });
-                            sender_window.destructor();
                         },
                         error: function () {
                             $$('content_right').hideOverlay();

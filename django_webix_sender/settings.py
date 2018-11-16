@@ -40,6 +40,7 @@ WEBIX_SENDER = {
             'model': 'django_webix_sender.ExternalSubject',
             'datatable_fields': ['user', 'name', 'sms', 'email']
         },
-    ]
+    ],
+    'invoices_period': 'bimestrial'
 }
 """
