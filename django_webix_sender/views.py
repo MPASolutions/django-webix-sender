@@ -31,14 +31,11 @@ class SenderList(TemplateView):
     template_name = 'django_webix_sender/list.js'
     http_method_names = ['get', 'head', 'options']
 
-    def __init__(self):
-        super(SenderList, self).__init__()
-        self.use_dynamic_filters = apps.is_installed('filter')
-
     def get_context_data(self, **kwargs):
         context = super(SenderList, self).get_context_data(**kwargs)
+        use_dynamic_filters = apps.is_installed('filter')
 
-        context['use_dynamic_filters'] = self.use_dynamic_filters
+        context['use_dynamic_filters'] = use_dynamic_filters
 
         context['send_methods'] = CONF['send_methods']
         context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
@@ -49,11 +46,11 @@ class SenderList(TemplateView):
                 'model': recipient['model'].lower(),
                 'fields': [i for i in recipient['datatable_fields']]
             }
-            if self.use_dynamic_filters:
+            if use_dynamic_filters:
                 _dict['filters'] = [{
                     'id': i.pk,
                     'value': i.label
-                } for i in Filter.objects.filter(model=recipient['model'].lower())]
+                } for i in Filter.objects.filter(model__iexact=recipient['model'].lower())]
             context['datatables'].append(_dict)
 
         return context
@@ -75,11 +72,11 @@ class SenderGetList(View):
         """
 
         contentype = request.GET.get('contentype', None)
-        pks = request.GET.getlist('filters_pk', None)
+        pks = request.GET.getlist('filter_pk', None)
         use_dynamic_filters = apps.is_installed('filter')
 
         if contentype is None or (use_dynamic_filters and pks in [None, '', []]):
-            return JsonResponse({}, status=400)
+            return JsonResponse({'status': 'Invalid content type'}, status=400)
 
         app_label, model = contentype.lower().split(".")
         model_class = apps.get_model(app_label=app_label, model_name=model)
@@ -90,8 +87,8 @@ class SenderGetList(View):
             filters = []
             for pk in pks:
                 filter = get_object_or_404(Filter, pk=pk)
-                if contentype != filter.model:
-                    return JsonResponse({}, status=400)
+                if contentype.lower() != filter.model.lower():
+                    return JsonResponse({'status': 'Content type doesn\'t match'}, status=400)
                 filters.append(filter)
 
             for filter in filters:

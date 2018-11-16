@@ -45,7 +45,7 @@ $$("content_right").addView({
                                     if (newv !== '') {
                                         var pks = newv.split(",");
                                         for (var i = 0; i < pks.length; i++) {
-                                            pks[i] = "pk=" + pks[i];
+                                            pks[i] = "filter_pk=" + pks[i];
                                         }
                                         pks = pks.join("&");
                                         dt.load('{% url 'django_webix_sender.getlist' %}?contentype={{ datatable.model }}&' + pks);
