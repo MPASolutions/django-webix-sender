@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import importlib
 
-from django.core.mail import EmailMessage
+ISO_8859_1_limited = '@èéùìò_ !"#%\\\'()*+,-./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜabcdefghijklmnopqrstuvwxyzäöñüà'
 
 
 def my_import(name):
@@ -13,19 +13,9 @@ def my_import(name):
     return getattr(component, function)
 
 
-ISO_8859_1_limited = '@èéùìò_ !"#%\\\'()*+,-./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜabcdefghijklmnopqrstuvwxyzäöñüà'
+def send_email(recipients, subject, body, message_sent):
+    raise NotImplementedError('`send_email` method not implemented!')
 
 
-def send_email(to, subject, body, from_email, recipient=None):
-    email = EmailMessage(
-        subject=subject,
-        body=body,
-        from_email=from_email,
-        to=[to]
-    )
-    email.content_subtype = "html"
-    email.send()
-
-
-def send_sms(to, body, recipient=None):
+def send_sms(recipients, body, message_sent):
     raise NotImplementedError('`send_sms` method not implemented!')

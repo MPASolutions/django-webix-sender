@@ -3,6 +3,11 @@ Django
 six
 requests
 psycopg2
+amqp>=2.3.2
+billiard>=3.5.0.4
+celery>=4.2.1
+kombu>=4.2.1
+vine>=1.1.4
 
 # Testing
 coverage

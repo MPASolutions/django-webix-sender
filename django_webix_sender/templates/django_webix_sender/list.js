@@ -29,7 +29,14 @@ $$("content_right").addView({
                             view: "multicombo",
                             placeholder: "{% trans 'Filter the list by applying filters' %}",
                             labelWidth: 0,
-                            options: {{ datatable.filters|safe }},
+                            options: [
+                                {% for filter in datatable.filters %}
+                                {
+                                    'id': "{{ filter.id }}",
+                                    'value': "{{ filter.value|safe|escapejs }}"
+                                },
+                                {% endfor %}
+                            ],
                             on: {
                                 onChange: function (newv, oldv) {
                                     var dt = $$("{{ datatable.model }}");
@@ -38,7 +45,7 @@ $$("content_right").addView({
                                     if (newv !== '') {
                                         var pks = newv.split(",");
                                         for (var i = 0; i < pks.length; i++) {
-                                            pks[i] = "pk=" + pks[i];
+                                            pks[i] = "filter_pk=" + pks[i];
                                         }
                                         pks = pks.join("&");
                                         dt.load('{% url 'django_webix_sender.getlist' %}?contentype={{ datatable.model }}&' + pks);

@@ -9,7 +9,7 @@ CONF = getattr(settings, "WEBIX_SENDER", None)
 """
 Sample settings `WEBIX_SENDER` configuration
 
-{
+WEBIX_SENDER = {
     'send_methods': [
         {
             'method': 'sms',
@@ -40,6 +40,7 @@ Sample settings `WEBIX_SENDER` configuration
             'model': 'django_webix_sender.ExternalSubject',
             'datatable_fields': ['user', 'name', 'sms', 'email']
         },
-    ]
+    ],
+    'invoices_period': 'bimestrial'
 }
 """
