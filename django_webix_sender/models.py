@@ -9,6 +9,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models import Q
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -43,6 +44,18 @@ class DjangoWebixSender(models.Model):
     def get_email_related(self):
         return []
 
+    @classmethod
+    def get_select_related(cls):
+        return []
+
+    @classmethod
+    def get_prefetch_related(cls):
+        return []
+
+    @classmethod
+    def get_filters(cls, request):
+        return Q()
+
 
 if any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF['recipients']):
     @python_2_unicode_compatible
@@ -57,7 +70,7 @@ if any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in
         note = models.TextField(blank=True, null=True, verbose_name=_('Note'))
         extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
         typology = models.ForeignKey('django_webix_sender.CustomerTypology', blank=True, null=True,
-                                     verbose_name=_('Typology'))
+                                     on_delete=models.CASCADE, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
         modification_date = models.DateTimeField(auto_now=True, verbose_name=_('Modification data'))
@@ -105,7 +118,7 @@ if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipi
         note = models.TextField(blank=True, null=True, verbose_name=_('Note'))
         extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
         typology = models.ForeignKey('django_webix_sender.ExternalSubjectTypology', blank=True, null=True,
-                                     verbose_name=_('Typology'))
+                                     on_delete=models.CASCADE, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
         modification_date = models.DateTimeField(auto_now=True, verbose_name=_('Modification data'))
@@ -186,6 +199,7 @@ class MessageSent(models.Model):
             'django_webix_sender.MessageTypology',
             blank=not CONF['typology_model']['required'],
             null=not CONF['typology_model']['required'],
+            on_delete=models.CASCADE,
             verbose_name=_('Typology')
         )
     send_method = models.CharField(max_length=255, verbose_name=_('Send method'))
@@ -223,7 +237,8 @@ class MessageSent(models.Model):
 
 @python_2_unicode_compatible
 class MessageRecipient(models.Model):
-    message_sent = models.ForeignKey('django_webix_sender.MessageSent', verbose_name=_('Message sent'))
+    message_sent = models.ForeignKey('django_webix_sender.MessageSent', on_delete=models.CASCADE,
+                                     verbose_name=_('Message sent'))
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     recipient = GenericForeignKey('content_type', 'object_id')

@@ -9,7 +9,7 @@ from django.core.exceptions import FieldDoesNotExist
 register = template.Library()
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_verbose_field_name(context, model, field_name):
     """ Returns verbose_name for a field. """
 
