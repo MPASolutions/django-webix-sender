@@ -9,7 +9,7 @@ from django.core.exceptions import FieldDoesNotExist
 register = template.Library()
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def field_type(context, model, field_name):
     app_label, model = model.split(".")
     model_class = apps.get_model(app_label=app_label, model_name=model)

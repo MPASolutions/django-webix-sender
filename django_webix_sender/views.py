@@ -98,6 +98,9 @@ class SenderGetList(View):
                     queryset = queryset.annotate(*aggregates)
 
         queryset = queryset.filter(qset).distinct()
+        queryset = queryset.select_related(*model_class.get_select_related())
+        queryset = queryset.select_related(*model_class.get_prefetch_related())
+        queryset = queryset.filter(model_class.get_filters(request))
 
         for recipient in CONF['recipients']:
             if recipient['model'].lower() == contentype.lower():
@@ -368,8 +371,10 @@ class InvoiceManagement(TemplateView):
         context['senders'] = []
 
         # Genero la lista dei mesi per periodo
-        _periods = [[i * (12 / len(self.groups[group])) + j for j in range(1, (12 / len(self.groups[group])) + 1)]
-                    for i in range(0, len(self.groups[group]))]
+        _periods = [
+            [i * (12 // len(self.groups[group])) + j for j in range(1, (12 // len(self.groups[group])) + 1)]
+            for i in range(0, len(self.groups[group]))
+        ]
 
         # Per ogni sender creo un dizionario con i vari periodi e costi
         for idx, (sender, send_method) in enumerate(senders):
@@ -387,7 +392,7 @@ class InvoiceManagement(TemplateView):
                 'send_method_code': '{}'.format(send_method),
                 'periods': [],
                 'x': idx % 2,
-                'y': idx / 2
+                'y': idx // 2
             }
 
             # Per ogni periodo estrapolo i dati
@@ -477,8 +482,10 @@ class InvoiceManagement(TemplateView):
             sender = None
 
         # Genero la lista dei mesi per periodo
-        _periods = [[i * (12 / len(self.groups[group])) + j for j in range(1, (12 / len(self.groups[group])) + 1)]
-                    for i in range(0, len(self.groups[group]))]
+        _periods = [
+            [i * (12 // len(self.groups[group])) + j for j in range(1, (12 // len(self.groups[group])) + 1)]
+            for i in range(0, len(self.groups[group]))
+        ]
         _months = _periods[self.groups[group].index(period)]
 
         # Prelevo i messaggi da fatturare
