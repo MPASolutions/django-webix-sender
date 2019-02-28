@@ -99,7 +99,7 @@ class SenderGetList(View):
 
         queryset = queryset.filter(qset).distinct()
         queryset = queryset.select_related(*model_class.get_select_related())
-        queryset = queryset.select_related(*model_class.get_prefetch_related())
+        queryset = queryset.prefetch_related(*model_class.get_prefetch_related())
         queryset = queryset.filter(model_class.get_filters(request))
 
         for recipient in CONF['recipients']:
