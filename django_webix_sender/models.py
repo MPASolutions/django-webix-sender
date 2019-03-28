@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from decimal import Decimal
+from typing import List, Any
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -33,27 +34,27 @@ class DjangoWebixSender(models.Model):
         raise NotImplementedError("`get_sms` not implemented!")
 
     @property
-    def get_email(self):
+    def get_email(self) -> str:
         raise NotImplementedError("`get_email` not implemented!")
 
     @property
-    def get_sms_related(self):
+    def get_sms_related(self) -> List[Any]:
         return []
 
     @property
-    def get_email_related(self):
+    def get_email_related(self) -> List[Any]:
         return []
 
     @classmethod
-    def get_select_related(cls):
+    def get_select_related(cls) -> List[str]:
         return []
 
     @classmethod
-    def get_prefetch_related(cls):
+    def get_prefetch_related(cls) -> List[str]:
         return []
 
     @classmethod
-    def get_filters(cls, request):
+    def get_filters(cls, request) -> Q:
         return Q()
 
 
