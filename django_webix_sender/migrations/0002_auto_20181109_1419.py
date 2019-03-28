@@ -152,3 +152,16 @@ class Migration(migrations.Migration):
         field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
                                 to=settings.AUTH_USER_MODEL, verbose_name='User'),
     ))
+
+    if CONF['typology_model']['enabled']:
+        operations.append(migrations.AddField(
+            model_name='messagetypology',
+            name='creation_date',
+            field=models.DateTimeField(auto_now_add=True, default=None, verbose_name='Creation date'),
+            preserve_default=False,
+        ))
+        operations.append(migrations.AddField(
+            model_name='messagetypology',
+            name='modification_date',
+            field=models.DateTimeField(auto_now=True, verbose_name='Modification data'),
+        ))
