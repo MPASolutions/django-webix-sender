@@ -28,7 +28,7 @@ def send_sms(recipients, body, message_sent):
     raise NotImplementedError('`send_sms` method not implemented!')
 
 
-def send_mixin(send_method: str, typology: Optional[str], subject: str, body: str, recipients: Dict[str, List[int]],
+def send_mixin(send_method: str, typology: Optional[int], subject: str, body: str, recipients: Dict[str, List[int]],
                presend: Optional[Any], **kwargs) -> Tuple[Dict[str, Any], int]:
     """
     Function to send the message
@@ -43,8 +43,8 @@ def send_mixin(send_method: str, typology: Optional[str], subject: str, body: st
     :return: Tuple[Dict, Code]
     """
 
-    user = getattr(kwargs, 'user')
-    files = getattr(kwargs, 'files', {})
+    user = kwargs.get('user')
+    files = kwargs.get('files', {})
 
     # 1.a Recupero la lista delle istanze a cui inviare il messaggio (modello, lista destinatari)
     _recipients_instance = []
