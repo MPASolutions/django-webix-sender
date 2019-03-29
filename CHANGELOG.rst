@@ -11,6 +11,13 @@ All notable changes to this project will be documented in this file.
 The format is based on KeepAChangelog_ and this project adheres to SemanticVersioning_.
 
 
+[0.3.4] - 2019-03-29
+++++++++++++++++++++
+
+* Fixed kwargs in `send_mixin`
+* Added parametric sms functionality
+
+
 [0.3.3] - 2019-03-28
 ++++++++++++++++++++
 
