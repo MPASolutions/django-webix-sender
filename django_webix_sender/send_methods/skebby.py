@@ -181,31 +181,37 @@ class SkebbyGateway(object):
             'Content-type': 'application/json'
         }
 
-    def send(self, recipients, text, sms_type='basic', sender=None):
+    def send(self, recipients, message, message_type='basic', parametric=False, **kwargs):
         """Sends an SMS"""
 
-        if sms_type == 'classic':
-            method = 'TI'
-        elif sms_type == 'report':
-            method = 'GP'
+        if message_type == 'classic':
+            message_type = 'TI'
+        elif message_type == 'report':
+            message_type = 'GP'
         else:
-            method = 'SI'
+            message_type = 'SI'
 
         parameters = {
-            "message": text,
-            "message_type": method,
-            "returnCredits": True,  # False -> sms sent; True -> credit used
-            "allowInvalidRecipients": True,
-            "recipient": recipients
+            "message_type": message_type,
+            "message": message,
+            "recipient": recipients,
+            "sender": kwargs.get('sender', ''),
+            "scheduled_delivery_time": kwargs.get('scheduled_delivery_time'),
+            "returnCredits": kwargs.get('returnCredits', False),  # False -> sms sent; True -> credit used
+            "allowInvalidRecipients": kwargs.get('allowInvalidRecipients', False),
+            "encoding": kwargs.get('encoding', 'gsm'),  # 'gsm' or 'ucs2'
         }
 
-        # If the message type allows a custom TPOA and the field is left empty, the user’s preferred TPOA is used.
-        # Must be empty if the message type does not allow a custom TPOA
-        if sender is not None:
-            parameters['sender'] = sender
+        if kwargs.get('order_id') is not None:
+            parameters['order_id'] = kwargs.get('order_id')
 
         response = requests.post(
-            "{}sms".format(self.url), headers=self.headers, data=json.dumps(parameters, cls=DjangoJSONEncoder)
+            "{}{}".format(
+                self.url,
+                'sms' if not parametric else 'paramsms'
+            ),
+            headers=self.headers,
+            data=json.dumps(parameters, cls=DjangoJSONEncoder)
         )
 
         if response.status_code != 201:
@@ -239,9 +245,9 @@ class SkebbyGateway(object):
                         status='unknown'
                     )
                     for r in _recipients:
-                        if recipient['status'] == 'SENT':
+                        if recipient['status'] in ['SENT', 'DLVRD']:
                             r.status = 'success'
-                        elif recipient['status'] in ['WAITING', 'WAIT4DLVR']:
+                        elif recipient['status'] in ['WAITING', 'WAIT4DLVR', 'SCHEDULED']:
                             r.status = 'unknown'
                         else:
                             r.status = 'failed'
@@ -303,8 +309,8 @@ def send_sms(recipients, body, message_sent):
         )
         result = gateway.send(
             recipients=["+39{}".format(number) for _, number in recipients['valids']],
-            text=body,
-            sms_type=settings.CONFIG_SKEBBY['method'],
+            message=body,
+            message_type=settings.CONFIG_SKEBBY['method'],
             sender=settings.CONFIG_SKEBBY['sender_string']
         )
         _extra = result
