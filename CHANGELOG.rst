@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file.
 The format is based on KeepAChangelog_ and this project adheres to SemanticVersioning_.
 
 
+[0.3.5] - 2019-04-05
+++++++++++++++++++++
+
+* Fixed parametric send method
+
+
 [0.3.4] - 2019-03-29
 ++++++++++++++++++++
 
