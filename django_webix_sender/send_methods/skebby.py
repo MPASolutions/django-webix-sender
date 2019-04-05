@@ -202,6 +202,9 @@ class SkebbyGateway(object):
             "encoding": kwargs.get('encoding', 'gsm'),  # 'gsm' or 'ucs2'
         }
 
+        if parametric:
+            parameters['recipients'] = parameters.pop('recipient')
+
         if kwargs.get('order_id') is not None:
             parameters['order_id'] = kwargs.get('order_id')
 
