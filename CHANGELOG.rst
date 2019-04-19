@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file.
 The format is based on KeepAChangelog_ and this project adheres to SemanticVersioning_.
 
 
+[0.3.6] - 2019-04-19
+++++++++++++++++++++
+
+* Added and/or in list filters
+
+
 [0.3.5] - 2019-04-05
 ++++++++++++++++++++
 

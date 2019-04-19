@@ -25,33 +25,84 @@ $$("content_right").addView({
                     rows: [
                         {% if use_dynamic_filters %}
                         {
-                            id: 'filter_{{ datatable.model }}',
-                            view: "multicombo",
-                            placeholder: "{% trans 'Filter the list by applying filters' %}",
-                            labelWidth: 0,
-                            options: [
-                                {% for filter in datatable.filters %}
+                            cols: [
                                 {
-                                    'id': "{{ filter.id }}",
-                                    'value': "{{ filter.value|safe|escapejs }}"
-                                },
-                                {% endfor %}
-                            ],
-                            on: {
-                                onChange: function (newv, oldv) {
-                                    var dt = $$("{{ datatable.model }}");
-                                    dt.clearAll();
+                                    id: 'filter_switch_{{ datatable.model }}',
+                                    view: "switch",
+                                    value: 0,
+                                    labelAlign: 'right',
+                                    labelWidth: 40,
+                                    label: "{% trans 'AND' %}",
+                                    labelRight: "{% trans 'OR' %}",
+                                    width: 120,
+                                    on: {
+                                        onChange: function (newv, oldv) {
+                                            var dt = $$("{{ datatable.model }}");
+                                            dt.clearAll();
 
-                                    if (newv !== '') {
-                                        var pks = newv.split(",");
-                                        for (var i = 0; i < pks.length; i++) {
-                                            pks[i] = "filter_pk=" + pks[i];
+                                            // Values
+                                            var switchValue = newv === 0 ? 'and' : 'or';
+                                            var filterValue = $$('filter_{{ datatable.model }}').getValue();
+
+                                            // Filtering
+                                            if (filterValue !== '') {
+                                                var pks = filterValue.split(",");
+                                                for (var i = 0; i < pks.length; i++) {
+                                                    pks[i] = "filter_pk=" + pks[i];
+                                                }
+                                                pks = pks.join("&");
+
+                                                var url = '{% url 'django_webix_sender.getlist' %}?';
+                                                url += 'contentype={{ datatable.model }}&';
+                                                url += pks + '&';
+                                                url += 'and_or_filter=' + switchValue;
+
+                                                dt.load(url);
+                                            }
                                         }
-                                        pks = pks.join("&");
-                                        dt.load('{% url 'django_webix_sender.getlist' %}?contentype={{ datatable.model }}&' + pks);
                                     }
-                                }
-                            }
+                                },
+                                {
+                                    id: 'filter_{{ datatable.model }}',
+                                    view: "multicombo",
+                                    placeholder: "{% trans 'Filter the list by applying filters' %}",
+                                    labelWidth: 0,
+                                    options: [
+                                        {% for filter in datatable.filters %}
+                                        {
+                                            'id': "{{ filter.id }}",
+                                            'value': "{{ filter.value|safe|escapejs }}"
+                                        },
+                                        {% endfor %}
+                                    ],
+                                    on: {
+                                        onChange: function (newv, oldv) {
+                                            var dt = $$("{{ datatable.model }}");
+                                            dt.clearAll();
+
+                                            // Values
+                                            var switchValue = $$('filter_switch_{{ datatable.model }}').getValue() === 0 ? 'and' : 'or';
+                                            var filterValue = newv;
+
+                                            // Filtering
+                                            if (filterValue !== '') {
+                                                var pks = filterValue.split(",");
+                                                for (var i = 0; i < pks.length; i++) {
+                                                    pks[i] = "filter_pk=" + pks[i];
+                                                }
+                                                pks = pks.join("&");
+
+                                                var url = '{% url 'django_webix_sender.getlist' %}?';
+                                                url += 'contentype={{ datatable.model }}&';
+                                                url += pks + '&';
+                                                url += 'and_or_filter=' + switchValue;
+
+                                                dt.load(url);
+                                            }
+                                        }
+                                    }
+                                },
+                            ]
                         },
                         {view: "spacer", height: 10},
                         {% endif %}
