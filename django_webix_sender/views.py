@@ -91,9 +91,16 @@ class SenderGetList(View):
                     return JsonResponse({'status': 'Content type doesn\'t match'}, status=400)
                 filters.append(filter)
 
+            and_or_filter = request.GET.get('and_or_filter', 'and')
+            if and_or_filter not in ['and', 'or']:
+                return JsonResponse({'message': _('Not valid and/or filter')})
+
             for filter in filters:
                 aggregates, q = get_aggregates_q_by_id(model, filter.pk)
-                qset &= q
+                if and_or_filter == 'and':
+                    qset &= q
+                elif and_or_filter == 'or':
+                    qset |= q
                 if aggregates:
                     queryset = queryset.annotate(*aggregates)
 
