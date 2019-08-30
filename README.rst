@@ -1,6 +1,31 @@
 Django Webix Sender
 ===================
 
+
+.. image:: https://badge.fury.io/py/django-webix-sender.svg
+    :target: https://badge.fury.io/py/django-webix-sender
+    :alt: Version
+
+.. image:: https://travis-ci.org/MPASolutions/django-webix-sender.svg?branch=master
+    :target: https://travis-ci.org/MPASolutions/django-webix-sender
+    :alt: Build
+
+.. image:: https://codecov.io/gh/MPASolutions/django-webix-sender/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/MPASolutions/django-webix-sender
+    :alt: Codecov
+
+.. image:: https://img.shields.io/github/issues/MPASolutions/django-webix-sender.svg
+    :target: https://github.com/MPASolutions/django-webix-sender/issues
+    :alt: Issues
+
+.. image:: https://img.shields.io/pypi/pyversions/django-webix-sender.svg
+    :target: https://img.shields.io/pypi/pyversions/django-webix-sender.svg
+    :alt: Py versions
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://raw.githubusercontent.com/MPASolutions/django-webix-sender/master/LICENSE
+    :alt: License
+
 Documentation
 -------------
 
