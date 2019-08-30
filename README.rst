@@ -14,6 +14,10 @@ Django Webix Sender
     :target: https://codecov.io/gh/MPASolutions/django-webix-sender
     :alt: Codecov
 
+.. image:: https://api.codeclimate.com/v1/badges/7ed5002646a1b41957e5/maintainability
+   :target: https://codeclimate.com/github/MPASolutions/django-webix-sender/maintainability
+   :alt: Maintainability
+
 .. image:: https://img.shields.io/github/issues/MPASolutions/django-webix-sender.svg
     :target: https://github.com/MPASolutions/django-webix-sender/issues
     :alt: Issues
