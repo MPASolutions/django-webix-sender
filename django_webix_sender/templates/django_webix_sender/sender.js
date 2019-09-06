@@ -157,7 +157,7 @@ function DjangoWebixSender() {
                                 cancel: "{% trans 'No' %}",
                                 callback: function (result) {
                                     if (result) {
-                                        $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
+                                        $$('{{webix_container_id}}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
                                         data.append('presend', false);
                                         $.ajax({
                                             type: "POST",
@@ -169,7 +169,7 @@ function DjangoWebixSender() {
                                             cache: false,
                                             timeout: 600000,
                                             success: function () {
-                                                $$('content_right').hideOverlay();
+                                                $$('{{webix_container_id}}').hideOverlay();
                                                 webix.message({
                                                     type: "info",
                                                     expire: 10000,
@@ -178,7 +178,7 @@ function DjangoWebixSender() {
                                                 sender_window.destructor();
                                             },
                                             error: function () {
-                                                $$('content_right').hideOverlay();
+                                                $$('{{webix_container_id}}').hideOverlay();
                                                 webix.message({
                                                     type: "error",
                                                     expire: 10000,
@@ -191,7 +191,7 @@ function DjangoWebixSender() {
                             });
                         },
                         error: function () {
-                            $$('content_right').hideOverlay();
+                            $$('{{webix_container_id}}').hideOverlay();
                             webix.message({
                                 type: "error",
                                 expire: 10000,

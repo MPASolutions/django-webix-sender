@@ -1,7 +1,7 @@
 {% load static i18n verbose_name field_type %}
 
 {% block content %}
-webix.ui([], $$('content_right'));
+webix.ui([], $$('{{webix_container_id}}'));
 
 var custom_bool = function (obj, common, value) {
   if (value === true)
@@ -14,7 +14,7 @@ function match(a, b) {
     return a.toString() == b;
 }
 
-$$("content_right").addView({
+$$("{{webix_container_id}}").addView({
     rows: [
         {
             padding: 10,
@@ -161,10 +161,10 @@ $$("content_right").addView({
                             data: [],
                             on: {
                                 onBeforeLoad: function () {
-                                    $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
+                                    $$('{{webix_container_id}}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
                                 },
                                 onAfterLoad: function () {
-                                    $$('content_right').hideOverlay();
+                                    $$('{{webix_container_id}}').hideOverlay();
                                 },
                                 onCheck: function (rowId, colId, state) {
                                     if (state) {

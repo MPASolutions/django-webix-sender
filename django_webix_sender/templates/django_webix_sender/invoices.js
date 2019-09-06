@@ -1,9 +1,9 @@
 {% load static i18n verbose_name field_type %}
 
 {% block content %}
-webix.ui([], $$('content_right'));
+webix.ui([], $$('{{webix_container_id}}'));
 
-$$("content_right").addView({
+$$("{{webix_container_id}}").addView({
     rows: [
         {
             view: "toolbar",
