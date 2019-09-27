@@ -1,9 +1,9 @@
 {% load static i18n verbose_name field_type %}
 
 {% block content %}
-webix.ui([], $$('{{webix_container_id}}'));
+webix.ui([], $$('{{ webix_container_id }}'));
 
-$$("{{webix_container_id}}").addView({
+$$("{{ webix_container_id }}").addView({
     rows: [
         {
             view: "toolbar",
@@ -18,10 +18,10 @@ $$("{{webix_container_id}}").addView({
                     options: [
                         {id: "", value: "", $empty: true},
                         {% for send_method in send_methods %}
-                        {
-                            id: "{{ send_method.key|safe|escapejs }}",
-                            value: "{{ send_method.value|safe|escapejs }}"
-                        },
+                            {
+                                id: "{{ send_method.key|safe|escapejs }}",
+                                value: "{{ send_method.value|safe|escapejs }}"
+                            },
                         {% endfor %}
                     ],
                     on: {
