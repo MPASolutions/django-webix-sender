@@ -23,7 +23,7 @@ from django_webix_sender.utils import send_mixin
 
 if apps.is_installed('filter'):
     from filter.models import Filter
-    from filter.utils2 import get_aggregates_q_by_id
+    from filter.utils import get_aggregates_q_by_id
 
 
 @method_decorator(login_required, name='dispatch')
