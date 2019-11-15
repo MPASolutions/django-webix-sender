@@ -33,20 +33,22 @@ if CONF['typology_model']['enabled']:
 
 
 class MessageRecipientInline(admin.TabularInline):
-    _fields = ['recipient', 'recipient_address', 'sent_number', 'status', 'extra', 'creation_date', 'modification_date']
+    _fields = ['recipient', 'recipient_address', 'sent_number', 'status', 'extra', 'creation_date',
+               'modification_date']
 
     model = MessageRecipient
     extra = 0
     fields = _fields
     readonly_fields = _fields
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_delete_permission(self, request, obj=None):
         return False
 
 
+@admin.register(MessageSent)
 class MessageSentAdmin(admin.ModelAdmin):
     _fields = [
         'send_method', 'subject', 'body', 'cost', 'invoiced', 'user', 'sender', 'extra', 'attachments',
@@ -143,6 +145,3 @@ class MessageSentAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-admin.site.register(MessageSent, MessageSentAdmin)

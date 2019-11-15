@@ -2,14 +2,14 @@
 
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+from django.urls import path
 
 from django_webix_sender.views import SenderList, SenderGetList, SenderSend, DjangoWebixSenderWindow, InvoiceManagement
 
 urlpatterns = [
-    url(r'^list$', SenderList.as_view(), name="django_webix_sender.list"),
-    url(r'^getlist$', SenderGetList.as_view(), name="django_webix_sender.getlist"),
-    url(r'^send$', SenderSend.as_view(), name="django_webix_sender.send"),
-    url(r'^sender-window$', DjangoWebixSenderWindow.as_view(), name='django_webix_sender.sender_window'),
-    url(r'^invoices$', InvoiceManagement.as_view(), name='django_webix_sender.invoices'),
+    path('list', SenderList.as_view(), name="django_webix_sender.list"),
+    path('getlist', SenderGetList.as_view(), name="django_webix_sender.getlist"),
+    path('send', SenderSend.as_view(), name="django_webix_sender.send"),
+    path('sender-window', DjangoWebixSenderWindow.as_view(), name='django_webix_sender.sender_window'),
+    path('invoices', InvoiceManagement.as_view(), name='django_webix_sender.invoices'),
 ]
