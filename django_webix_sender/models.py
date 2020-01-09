@@ -31,11 +31,11 @@ class DjangoWebixSender(models.Model):
 
     @property
     def get_sms(self):
-        raise NotImplementedError("`get_sms` not implemented!")
+        raise NotImplementedError(_("`get_sms` not implemented!"))
 
     @property
     def get_email(self) -> str:
-        raise NotImplementedError("`get_email` not implemented!")
+        raise NotImplementedError(_("`get_email` not implemented!"))
 
     @property
     def get_sms_related(self) -> List[Any]:
@@ -129,7 +129,10 @@ if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipi
             verbose_name_plural = _('External subjects')
 
         def __str__(self):
-            return '{}'.format(self.name)
+            if self.name:
+                return self.name
+            else:
+                return _('Not defined')
 
         @property
         def get_sms(self):

@@ -21,11 +21,11 @@ def my_import(name):
 
 
 def send_email(recipients, subject, body, message_sent):
-    raise NotImplementedError('`send_email` method not implemented!')
+    raise NotImplementedError(_('`send_email` method not implemented!'))
 
 
 def send_sms(recipients, body, message_sent):
-    raise NotImplementedError('`send_sms` method not implemented!')
+    raise NotImplementedError(_('`send_sms` method not implemented!'))
 
 
 def send_mixin(send_method: str, typology: Optional[int], subject: str, body: str, recipients: Dict[str, List[int]],

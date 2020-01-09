@@ -88,7 +88,7 @@ class SenderGetList(View):
             for pk in pks:
                 filter = get_object_or_404(Filter, pk=pk)
                 if contentype.lower() != filter.model.lower():
-                    return JsonResponse({'status': 'Content type doesn\'t match'}, status=400)
+                    return JsonResponse({'status': _('Content type doesn\'t match')}, status=400)
                 filters.append(filter)
 
             and_or_filter = request.GET.get('and_or_filter', 'and')
