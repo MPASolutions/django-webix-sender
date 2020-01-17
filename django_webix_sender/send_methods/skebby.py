@@ -237,7 +237,7 @@ class SkebbyGateway(object):
                 message_sent = MessageSent.objects.get(extra__order_id=_order_id)
             except MessageSent.DoesNotExist:
                 return {'status': 'Invalid order id'}
-            if message_sent.messagerecipient_set.filter(status='unknown').count() > 0:
+            if message_sent.messagerecipient_set.filter(status='unknown').exists():
                 response = requests.get("{}sms/{}".format(_gateway.url, _order_id), headers=_gateway.headers)
                 if response.status_code != 200:
                     return {'status': 'Error'}
@@ -257,7 +257,7 @@ class SkebbyGateway(object):
                         r.extra = recipient
                         r.save()
                     message_sent.save()
-                if message_sent.messagerecipient_set.filter(status='unknown').count() > 0:
+                if message_sent.messagerecipient_set.filter(status='unknown').exists():
                     return {'status': 'updated'}
             return {'status': 'all_updated'}
 
