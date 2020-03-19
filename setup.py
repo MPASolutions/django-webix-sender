@@ -58,6 +58,7 @@ setup(
     author='MPA Solutions',
     author_email='info@mpasol.it',
     install_requires=[
+        'requests>=2.23.0',
         'celery>=4.4.0',
         'django-webix>=1.1.0',
     ],
