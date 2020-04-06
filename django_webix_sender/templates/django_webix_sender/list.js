@@ -14,6 +14,8 @@ function match(a, b) {
     return a.toString() == b;
 }
 
+TEMP = null;
+
 $$("{{webix_container_id}}").addView({
     rows: [
         {
@@ -82,13 +84,15 @@ $$("{{webix_container_id}}").addView({
 
                                             // Values
                                             var switchValue = $$('filter_switch_{{ datatable.model }}').getValue() === 0 ? 'and' : 'or';
-                                            var filterValue = newv;
+                                            var filterValue = newv.filter(function (el) {
+                                              return el != '';
+                                            });
 
                                             // Filtering
-                                            if (filterValue !== '') {
-                                                var pks = filterValue.split(",");
-                                                for (var i = 0; i < pks.length; i++) {
-                                                    pks[i] = "filter_pk=" + pks[i];
+                                            if (filterValue.length > 0) {
+                                                var pks = [];
+                                                for (var i = 0; i < filterValue.length; i++) {
+                                                    pks[i] = "filter_pk=" + filterValue[i];
                                                 }
                                                 pks = pks.join("&");
 
