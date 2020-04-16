@@ -9,24 +9,28 @@ from django.utils.translation import ugettext_lazy as _
 from django_webix_sender.models import MessageSent, MessageRecipient
 from django_webix_sender.settings import CONF
 
-if any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF['recipients']):
+if CONF is not None and \
+    any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF['recipients']):
     from django_webix_sender.models import Customer, CustomerTypology
 
     admin.site.register(Customer)
     admin.site.register(CustomerTypology)
 
-if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF['recipients']):
+if CONF is not None and \
+    any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF['recipients']):
     from django_webix_sender.models import ExternalSubject, ExternalSubjectTypology
 
     admin.site.register(ExternalSubject)
     admin.site.register(ExternalSubjectTypology)
 
-if CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
+if CONF is not None and \
+    CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
     from django_webix_sender.models import MessageAttachment
 
     admin.site.register(MessageAttachment)
 
-if CONF['typology_model']['enabled']:
+if CONF is not None and \
+    CONF['typology_model']['enabled']:
     from django_webix_sender.models import MessageTypology
 
     admin.site.register(MessageTypology)
@@ -54,7 +58,7 @@ class MessageSentAdmin(admin.ModelAdmin):
         'send_method', 'subject', 'body', 'cost', 'invoiced', 'user', 'sender', 'extra', 'attachments',
         'creation_date', 'modification_date'
     ]
-    if CONF['typology_model']['enabled']:
+    if CONF is not None and CONF['typology_model']['enabled']:
         _fields.append('typology')
 
     inlines = [MessageRecipientInline]
