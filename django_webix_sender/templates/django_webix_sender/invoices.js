@@ -12,7 +12,7 @@ $$("{{ webix_container_id }}").addView({
                     id: 'send_method',
                     view: 'combo',
                     value: "{{ request.GET.send_method }}",
-                    label: "{% trans 'Send method' %}",
+                    label: "{% trans 'Send method'|escapejs %}",
                     labelWidth: 130,
                     labelAlign: 'right',
                     options: [
@@ -36,7 +36,7 @@ $$("{{ webix_container_id }}").addView({
                 {
                     view: 'label',
                     align: 'right',
-                    label: "{% trans 'Warning! if there are messages with an unknown status, the data is not updated' %}"
+                    label: "{% trans 'Warning! if there are messages with an unknown status, the data is not updated'|escapejs %}"
                 }
             ]
         },
@@ -63,44 +63,44 @@ $$("{{ webix_container_id }}").addView({
                                 columns: [
                                     {
                                         id: "period",
-                                        header: "{% trans 'Period' %}",
+                                        header: "{% trans 'Period'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "messages_unknown",
-                                        header: "{% trans 'Unknowm status' %}",
+                                        header: "{% trans 'Unknowm status'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "messages_fail",
-                                        header: "{% trans 'Not send' %}",
+                                        header: "{% trans 'Not send'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "invoiced",
-                                        header: "{% trans 'Invoiced' %}",
+                                        header: "{% trans 'Invoiced'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "to_be_invoiced",
-                                        header: "{% trans 'To be invoiced' %}",
+                                        header: "{% trans 'To be invoiced'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "price_invoiced",
-                                        header: "{% trans 'Price invoiced' %}",
+                                        header: "{% trans 'Price invoiced'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "price_to_be_invoiced",
-                                        header: "{% trans 'Price to be invoiced' %}",
+                                        header: "{% trans 'Price to be invoiced'|escapejs %}",
                                         fillspace: true
                                     },
                                     {
                                         id: "rating",
                                         header: "",
                                         template: function () {
-                                            return "<div class='webix_el_button'><button class='webixtype_base'>{% trans 'marks as billed' %}</button></div>";
+                                            return "<div class='webix_el_button'><button class='webixtype_base'>{% trans 'marks as billed'|escapejs %}</button></div>";
                                         },
                                         width: 200
                                     }
@@ -143,10 +143,10 @@ var marks_invoiced = function (datatable, id) {
     var sender = datatable.getItem(id.row).sender;
     var masks_billed = function (period) {
         webix.confirm({
-            title: "{% trans 'Confirmation' %}",
-            text: "{% trans 'Are you sure you want to mark these communications as billed?' %}",
-            ok: "{% trans 'Yes' %}",
-            cancel: "{% trans 'No' %}",
+            title: "{% trans 'Confirmation'|escapejs %}",
+            text: "{% trans 'Are you sure you want to mark these communications as billed?'|escapejs %}",
+            ok: "{% trans 'Yes'|escapejs %}",
+            cancel: "{% trans 'No'|escapejs %}",
             callback: function (result) {
                 var data = {
                     'period': period,
@@ -180,8 +180,8 @@ var marks_invoiced = function (datatable, id) {
 
     if (messages_unknown > 0) {
         webix.alert({
-            title: "{% trans 'Caution!' %}",
-            text: "{% trans 'There are unknown status for this communication' %}",
+            title: "{% trans 'Caution!'|escapejs %}",
+            text: "{% trans 'There are unknown status for this communication'|escapejs %}",
             callback: function () {
                 masks_billed(period);
             }
