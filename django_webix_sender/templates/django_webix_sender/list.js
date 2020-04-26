@@ -34,8 +34,8 @@ $$("{{webix_container_id}}").addView({
                                     value: 0,
                                     labelAlign: 'right',
                                     labelWidth: 40,
-                                    label: "{% trans 'AND'|escapejs %}",
-                                    labelRight: "{% trans 'OR'|escapejs %}",
+                                    label: "{{_("AND")|escapejs}}",
+                                    labelRight: "{{_("OR")|escapejs}}",
                                     width: 120,
                                     on: {
                                         onChange: function (newv, oldv) {
@@ -67,7 +67,7 @@ $$("{{webix_container_id}}").addView({
                                 {
                                     id: 'filter_{{ datatable.model }}',
                                     view: "multicombo",
-                                    placeholder: "{% trans 'Filter the list by applying filters'|escapejs %}",
+                                    placeholder: "{{_("Filter the list by applying filters")|escapejs}}",
                                     labelWidth: 0,
                                     options: [
                                         {% for filter in datatable.filters %}
@@ -145,9 +145,9 @@ $$("{{webix_container_id}}").addView({
                                             {
                                                 content: 'selectFilter',
                                                 options: [
-                                                    {id: '', value: '{% trans 'All'|escapejs %}'},
-                                                    {id: 'true', value: '{% trans 'Yes'|escapejs %}'},
-                                                    {id: 'false', value: '{% trans 'No'|escapejs %}'}
+                                                    {id: '', value: '{{_("All")|escapejs}}'},
+                                                    {id: 'true', value: '{{_("Yes")|escapejs}}'},
+                                                    {id: 'false', value: '{{_("No")|escapejs}}'}
                                                 ],
                                                 compare:match
                                             },
@@ -201,7 +201,7 @@ $$("{{webix_container_id}}").addView({
                     id: "action_combo",
                     maxWidth: "300",
                     value: 1,
-                    label: '{% trans 'Action'|escapejs %}',
+                    label: '{{_("Action")|escapejs}}',
                     options: [
                         {id: 1, value: "------------"},
                         {% for send_method in send_methods %}
@@ -212,7 +212,7 @@ $$("{{webix_container_id}}").addView({
                 {
                     view: "button",
                     id: "action_button",
-                    value: "{% trans 'Go'|escapejs %}",
+                    value: "{{_("Go")|escapejs}}",
                     inputWidth: 50,
                     width: 50,
                     on: {
@@ -247,7 +247,7 @@ $$("{{webix_container_id}}").addView({
                 {
                     view: "label",
                     id: "count_bottom_label_selected",
-                    label: "0 {% trans 'selected of'|escapejs %}",
+                    label: "0 {{_("selected of")|escapejs}}",
                     hidden: true,
                     width: 150,
                     paddingX: 0,
@@ -280,7 +280,7 @@ var getDatatablesItems = function () {
         selected += $$('{{ datatable.model }}').getSelectedItem(true).length;
     {% endfor %}
 
-    $$("count_bottom_label_selected").setValue(selected + " {% trans 'selected of'|escapejs %}");
+    $$("count_bottom_label_selected").setValue(selected + " {{_("selected of")|escapejs}}");
     $$("count_bottom_label_total").setValue(total);
     $$("count_bottom_label_selected").show();
     $$("count_bottom_label_total").show();
@@ -320,7 +320,7 @@ $.ajax({
         webix.message({
             type: "error",
             expire: 10000,
-            text: '{% trans 'Unable to load sender class'|escapejs %}'
+            text: '{{_("Unable to load sender class")|escapejs}}'
         });
     }
 });
