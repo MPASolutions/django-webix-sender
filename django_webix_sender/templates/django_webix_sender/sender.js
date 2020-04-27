@@ -151,7 +151,7 @@ function DjangoWebixSender() {
                             var invalids = "{{_("Invalids recipients: ")|escapejs}}" + result['invalids'];
                             var duplicates = "{{_("Duplicate recipients: ")|escapejs}}" + result['duplicates'];
                             webix.confirm({
-                                title: "{% trans 'Confirmation' |escapejs%}",
+                                title: "{{ _('Confirmation')|escapejs }}",
                                 text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{{_("Are you sure to send this message?")|escapejs}}",
                                 ok: "{{_("Yes")|escapejs}}",
                                 cancel: "{{_("No")|escapejs}}",
