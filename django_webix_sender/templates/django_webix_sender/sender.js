@@ -43,9 +43,15 @@ function DjangoWebixSender() {
             {
                 view: "combo",
                 id: 'django-webix-sender-form-typology',
-                name: 'typology',
                 label: '{{_("Typology")|escapejs}}',
-                options: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology'
+                suggest: {
+                    view: "suggest",
+                    keyPressTimeout: 400,
+                    body: {
+                        dataFeed: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology'
+                    },
+                    url: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology&filter[value]='
+                }
             },
             {
                 view: "template",
