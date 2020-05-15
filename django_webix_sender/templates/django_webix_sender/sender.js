@@ -43,6 +43,7 @@ function DjangoWebixSender() {
             {
                 view: "combo",
                 id: 'django-webix-sender-form-typology',
+                name: 'typology',
                 label: '{{_("Typology")|escapejs}}',
                 suggest: {
                     view: "suggest",
