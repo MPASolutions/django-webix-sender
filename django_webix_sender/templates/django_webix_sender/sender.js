@@ -44,8 +44,15 @@ function DjangoWebixSender() {
                 view: "combo",
                 id: 'django-webix-sender-form-typology',
                 name: 'typology',
-                label: '{% trans 'Typology' %}',
-                options: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology'
+                label: '{{_("Typology")|escapejs}}',
+                suggest: {
+                    view: "suggest",
+                    keyPressTimeout: 400,
+                    body: {
+                        dataFeed: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology'
+                    },
+                    url: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology&filter[value]='
+                }
             },
             {
                 view: "template",
@@ -60,12 +67,12 @@ function DjangoWebixSender() {
                 view: 'text',
                 id: 'django-webix-sender-form-subject',
                 name: 'subject',
-                label: '{% trans 'Subject' %}'
+                label: '{{_("Subject")|escapejs}}'
             });
         }
         elements.push({
             view: 'label',
-            label: '{% trans 'Body' %}'
+            label: '{{_("Body")|escapejs}}'
         });
         elements.push({
             view: "textarea",
@@ -78,7 +85,7 @@ function DjangoWebixSender() {
                     if (send_method === 'sms') {
                         webix.delay(function () {
                             var count = $$("django-webix-sender-form-body").getValue().length;
-                            $$("django-webix-sender-form-length").setValue(count + " {% trans 'characters' %}");
+                            $$("django-webix-sender-form-length").setValue(count + " {{_("characters")|escapejs}}");
                         });
                     }
                 }
@@ -88,7 +95,7 @@ function DjangoWebixSender() {
             elements.push({
                 view: "label",
                 id: "django-webix-sender-form-length",
-                label: "0 {% trans 'characters' %}",
+                label: "0 {{_("characters")|escapejs}}",
                 align: "right"
             });
         }
@@ -96,7 +103,7 @@ function DjangoWebixSender() {
             elements.push({
                 view: "uploader",
                 id: "django-webix-sender-form-attachments",
-                value: "{% trans 'Attach file' %}",
+                value: "{{_("Attach file")|escapejs}}",
                 link: "django-webix-sender-form-attachments_list",
                 autosend: false
             });
@@ -109,14 +116,14 @@ function DjangoWebixSender() {
         }
         elements.push({
             view: 'button',
-            label: '{% trans 'Send' %}',
+            label: '{{_("Send")|escapejs}}',
             on: {
                 onItemClick: function () {
                     if (!$$("django-webix-sender-form").validate({hidden: true})) {
                         webix.message({
                             type: "error",
                             expire: 10000,
-                            text: '{% trans 'You have to fill in all the required fields' %}'
+                            text: '{{_("You have to fill in all the required fields")|escapejs}}'
                         });
                         return;
                     }
@@ -147,17 +154,17 @@ function DjangoWebixSender() {
                         cache: false,
                         timeout: 600000,
                         success: function (result) {
-                            var valids = "{% trans 'Valid recipients: ' %}" + result['valids'];
-                            var invalids = "{% trans 'Invalids recipients: ' %}" + result['invalids'];
-                            var duplicates = "{% trans 'Duplicate recipients: ' %}" + result['duplicates'];
+                            var valids = "{{_("Valid recipients: ")|escapejs}}" + result['valids'];
+                            var invalids = "{{_("Invalids recipients: ")|escapejs}}" + result['invalids'];
+                            var duplicates = "{{_("Duplicate recipients: ")|escapejs}}" + result['duplicates'];
                             webix.confirm({
-                                title: "{% trans 'Confirmation' %}",
-                                text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{% trans 'Are you sure to send this message?' %}",
-                                ok: "{% trans 'Yes' %}",
-                                cancel: "{% trans 'No' %}",
+                                title: "{{ _('Confirmation')|escapejs }}",
+                                text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{{_("Are you sure to send this message?")|escapejs}}",
+                                ok: "{{_("Yes")|escapejs}}",
+                                cancel: "{{_("No")|escapejs}}",
                                 callback: function (result) {
                                     if (result) {
-                                        $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
+                                        $$('{{webix_container_id}}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
                                         data.append('presend', false);
                                         $.ajax({
                                             type: "POST",
@@ -169,20 +176,20 @@ function DjangoWebixSender() {
                                             cache: false,
                                             timeout: 600000,
                                             success: function () {
-                                                $$('content_right').hideOverlay();
+                                                $$('{{webix_container_id}}').hideOverlay();
                                                 webix.message({
                                                     type: "info",
                                                     expire: 10000,
-                                                    text: "{% trans 'The messages have been sent' %}"
+                                                    text: "{{_("The messages have been sent")|escapejs}}"
                                                 });
                                                 sender_window.destructor();
                                             },
                                             error: function () {
-                                                $$('content_right').hideOverlay();
+                                                $$('{{webix_container_id}}').hideOverlay();
                                                 webix.message({
                                                     type: "error",
                                                     expire: 10000,
-                                                    text: '{% trans 'Unable to send messages' %}'
+                                                    text: '{{_("Unable to send messages")|escapejs}}'
                                                 });
                                             }
                                         });
@@ -191,11 +198,11 @@ function DjangoWebixSender() {
                             });
                         },
                         error: function () {
-                            $$('content_right').hideOverlay();
+                            $$('{{webix_container_id}}').hideOverlay();
                             webix.message({
                                 type: "error",
                                 expire: 10000,
-                                text: '{% trans 'Unable to send messages' %}'
+                                text: '{{_("Unable to send messages")|escapejs}}'
                             });
                         }
                     });
@@ -240,10 +247,10 @@ function DjangoWebixSender() {
         send_method = send_method_original.split(".")[0];
         var title = '';
         if (send_method === 'email') {
-            title = "{% trans 'Send email' %}";
+            title = "{{_("Send email")|escapejs}}";
         }
         else if (send_method === 'sms') {
-            title = "{% trans 'Send SMS' %}";
+            title = "{{_("Send SMS")|escapejs}}";
         }
 
         return new webix.ui({
@@ -263,7 +270,7 @@ function DjangoWebixSender() {
                     },
                     {
                         view: "button",
-                        label: '{% trans 'Close' %}',
+                        label: '{{_("Close")|escapejs}}',
                         width: 100,
                         align: 'right',
                         click: "$$('django-webix-sender').destructor();"
@@ -297,8 +304,8 @@ function DjangoWebixSender() {
 
         if (total == 0) {
             webix.alert({
-                title: "{% trans 'Caution!' %}",
-                text: "{% trans 'There are no recipients for this communication' %}",
+                title: "{{_("Caution!")|escapejs}}",
+                text: "{{_("There are no recipients for this communication")|escapejs}}",
                 callback: function () {
                     check_recipients_count(send_methods, recipients, default_text);
                 }

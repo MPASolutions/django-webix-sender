@@ -58,12 +58,9 @@ setup(
     author='MPA Solutions',
     author_email='info@mpasol.it',
     install_requires=[
-        'Django>=2.0',
-        'psycopg2',
-        'six',
-        'requests',
-        'celery',
-        'django-webix',
+        'requests>=2.23.0',
+        'celery>=4.4.0',
+        'django-webix>=1.1.0',
     ],
     classifiers=[
         'Environment :: Web Environment',

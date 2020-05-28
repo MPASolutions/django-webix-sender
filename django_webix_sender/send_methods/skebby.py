@@ -11,157 +11,9 @@ from celery import shared_task
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
-from django_webix_sender.models import MessageRecipient, MessageSent
-
 
 class SkebbyException(Exception):
     pass
-
-
-class SkebbyGatewayOld(object):
-    def __init__(self, username, password, text, sms_type='basic', sender_number='', sender_string='',
-                 charset='ISO-8859-1', headers=None):
-        self.url = "http://gateway.skebby.it/api/send/smseasy/advanced/http.php"
-        self.sender_number = sender_number
-        self.sender_string = sender_string
-        self.headers = headers if headers is not None else {'User-Agent': 'Generic Client'}
-
-        if sms_type == 'classic':
-            method = 'send_sms_classic'
-        elif sms_type == 'report':
-            method = 'send_sms_classic_report'
-        else:
-            method = 'send_sms_basic'
-
-        self.parameters = {
-            'method': method,
-            'username': username,
-            'password': password,
-            'text': text,
-            'charset': 'UTF-8' if charset != 'ISO-8859-1' else 'ISO-8859-1'
-        }
-
-        # Sender number
-        if sender_number != '':
-            self.parameters['sender_number'] = sender_number
-        if sender_string != '':
-            self.parameters['sender_string'] = sender_string
-
-    def send(self, recipients):
-        if self.sender_number != '' and self.sender_string != '':
-            return {
-                'status': 'failed',
-                'message': "Puoi specificare solo un tipo di mittente, numerico o alfanumerico"
-            }
-
-        self.parameters['recipients'] = recipients
-
-        response = requests.post(self.url, data=self.parameters, headers=self.headers)
-
-        if response.status_code != 200:
-            result = {
-                'status': 'failed',
-                'code': '{}'.format(response.status_code),
-                'message': response.text
-            }
-        else:
-            results = response.text.split('&')
-            result = {}
-            for r in results:
-                temp = r.split('=')
-                result[temp[0]] = temp[1]
-        return result
-
-
-def send_sms_old(recipients, body, message_sent):
-    # Controllo correttezza parametri
-    if not isinstance(recipients, dict) or \
-        'valids' not in recipients or not isinstance(recipients['valids'], list) or \
-        'duplicates' not in recipients or not isinstance(recipients['duplicates'], list) or \
-        'invalids' not in recipients or not isinstance(recipients['invalids'], list):
-        raise Exception("`recipients` must be a dict")
-    if not isinstance(body, six.string_types):
-        raise Exception("`body` must be a string")
-    if not isinstance(message_sent, MessageSent):
-        raise Exception("`message_sent` must be MessageSent instance")
-
-    _extra = {}
-
-    gateway = SkebbyGatewayOld
-    try:
-        gateway = SkebbyGatewayOld(
-            username=settings.CONFIG_SKEBBY['username'],
-            password=settings.CONFIG_SKEBBY['password'],
-            text=body,
-            sms_type=settings.CONFIG_SKEBBY['method'],
-            sender_number=settings.CONFIG_SKEBBY['sender_number'],
-            sender_string=settings.CONFIG_SKEBBY['sender_string'],
-            charset=settings.CONFIG_SKEBBY['charset'],
-        )
-    except SkebbyException as e:
-        _extra['error'] = '{}'.format(e)
-
-    # Per ogni istanza di destinatario ciclo
-    for recipient, recipient_address in recipients['valids']:
-        _result = ""
-        message_recipient = MessageRecipient(
-            message_sent=message_sent,
-            recipient=recipient,
-            sent_number=1
-        )
-
-        try:
-            result = gateway.send(["+39{}".format(recipient_address)])
-
-            if result['status'] == 'success':
-                message_recipient.status = result['status']
-                _result = "SMS {} ({}) inviato con successo, rimanenti: {}".format(
-                    recipient_address,
-                    recipient,
-                    result['remaining_sms']
-                )
-            else:
-                message_recipient.status = result['status']
-                _result = "Invio fallito  {} ({}), Codice: {}, Motivo: {}".format(
-                    recipient_address,
-                    recipient,
-                    result['code'],
-                    result['message']
-                )
-        except Exception as e:
-            message_recipient.status = 'failed'
-            _result = '{}'.format(e)
-
-        message_recipient.extra = {'status': _result}
-        message_recipient.save()
-
-    # Salvo i destinatari senza numero e quindi ai quali non è stato inviato il messaggio
-    for recipient in recipients['invalids']:
-        message_recipient = MessageRecipient(
-            message_sent=message_sent,
-            recipient=recipient,
-            sent_number=0,
-            status='invalid',
-            extra={'status': "Cellulare non presente ({}) e quindi SMS non inviato".format(recipient)}
-        )
-        message_recipient.save()
-
-    # Salvo i destinatari duplicati e quindi ai quali non è stato inviato il messaggio
-    for recipient, recipient_address in recipients['duplicates']:
-        message_recipient = MessageRecipient(
-            message_sent=message_sent,
-            recipient=recipient,
-            sent_number=0,
-            status='duplicate',
-            recipient_address="+39{}".format(recipient_address),
-            extra={'status': "Numero telefonico duplicato".format(recipient)}
-        )
-        message_recipient.save()
-
-    message_sent.extra = _extra
-    message_sent.save()
-
-    return message_sent
 
 
 class SkebbyGateway(object):
@@ -232,12 +84,14 @@ class SkebbyGateway(object):
     @shared_task
     def check_state(order_id, times=1, interval=60 * 5):
         def _state(_gateway, _order_id):
+            from django_webix_sender.models import MessageRecipient, MessageSent
+
             # ### Funzione per aggiornare lo stato dei log degli sms
             try:
                 message_sent = MessageSent.objects.get(extra__order_id=_order_id)
             except MessageSent.DoesNotExist:
                 return {'status': 'Invalid order id'}
-            if message_sent.messagerecipient_set.filter(status='unknown').count() > 0:
+            if message_sent.messagerecipient_set.filter(status='unknown').exists():
                 response = requests.get("{}sms/{}".format(_gateway.url, _order_id), headers=_gateway.headers)
                 if response.status_code != 200:
                     return {'status': 'Error'}
@@ -257,9 +111,12 @@ class SkebbyGateway(object):
                         r.extra = recipient
                         r.save()
                     message_sent.save()
-                if message_sent.messagerecipient_set.filter(status='unknown').count() > 0:
+                if message_sent.messagerecipient_set.filter(status='unknown').exists():
                     return {'status': 'updated'}
             return {'status': 'all_updated'}
+
+        if 'django_webix_sender' not in settings.INSTALLED_APPS:
+            raise Exception("Django Webix Sender is not in INSTALLED_APPS")
 
         try:
             gateway = SkebbyGateway(
@@ -289,6 +146,11 @@ class SkebbyGateway(object):
 
 
 def send_sms(recipients, body, message_sent):
+    if 'django_webix_sender' not in settings.INSTALLED_APPS:
+        raise Exception("Django Webix Sender is not in INSTALLED_APPS")
+
+    from django_webix_sender.models import MessageRecipient, MessageSent
+
     # Controllo correttezza parametri
     if not isinstance(recipients, dict) or \
         'valids' not in recipients or not isinstance(recipients['valids'], list) or \

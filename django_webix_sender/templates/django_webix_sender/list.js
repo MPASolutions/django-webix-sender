@@ -1,7 +1,7 @@
 {% load static i18n verbose_name field_type %}
 
 {% block content %}
-webix.ui([], $$('content_right'));
+webix.ui([], $$('{{webix_container_id}}'));
 
 var custom_bool = function (obj, common, value) {
   if (value === true)
@@ -14,7 +14,9 @@ function match(a, b) {
     return a.toString() == b;
 }
 
-$$("content_right").addView({
+TEMP = null;
+
+$$("{{webix_container_id}}").addView({
     rows: [
         {
             padding: 10,
@@ -32,8 +34,8 @@ $$("content_right").addView({
                                     value: 0,
                                     labelAlign: 'right',
                                     labelWidth: 40,
-                                    label: "{% trans 'AND' %}",
-                                    labelRight: "{% trans 'OR' %}",
+                                    label: "{{_("AND")|escapejs}}",
+                                    labelRight: "{{_("OR")|escapejs}}",
                                     width: 120,
                                     on: {
                                         onChange: function (newv, oldv) {
@@ -65,7 +67,7 @@ $$("content_right").addView({
                                 {
                                     id: 'filter_{{ datatable.model }}',
                                     view: "multicombo",
-                                    placeholder: "{% trans 'Filter the list by applying filters' %}",
+                                    placeholder: "{{_("Filter the list by applying filters")|escapejs}}",
                                     labelWidth: 0,
                                     options: [
                                         {% for filter in datatable.filters %}
@@ -82,13 +84,15 @@ $$("content_right").addView({
 
                                             // Values
                                             var switchValue = $$('filter_switch_{{ datatable.model }}').getValue() === 0 ? 'and' : 'or';
-                                            var filterValue = newv;
+                                            var filterValue = newv.filter(function (el) {
+                                              return el != '';
+                                            });
 
                                             // Filtering
-                                            if (filterValue !== '') {
-                                                var pks = filterValue.split(",");
-                                                for (var i = 0; i < pks.length; i++) {
-                                                    pks[i] = "filter_pk=" + pks[i];
+                                            if (filterValue.length > 0) {
+                                                var pks = [];
+                                                for (var i = 0; i < filterValue.length; i++) {
+                                                    pks[i] = "filter_pk=" + filterValue[i];
                                                 }
                                                 pks = pks.join("&");
 
@@ -141,9 +145,9 @@ $$("content_right").addView({
                                             {
                                                 content: 'selectFilter',
                                                 options: [
-                                                    {id: '', value: '{% trans 'All' %}'},
-                                                    {id: 'true', value: '{% trans 'Yes' %}'},
-                                                    {id: 'false', value: '{% trans 'No' %}'}
+                                                    {id: '', value: '{{_("All")|escapejs}}'},
+                                                    {id: 'true', value: '{{_("Yes")|escapejs}}'},
+                                                    {id: 'false', value: '{{_("No")|escapejs}}'}
                                                 ],
                                                 compare:match
                                             },
@@ -161,10 +165,10 @@ $$("content_right").addView({
                             data: [],
                             on: {
                                 onBeforeLoad: function () {
-                                    $$('content_right').showOverlay("<img src='{% static 'webix_custom/loading.gif' %}'>");
+                                    $$('{{webix_container_id}}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
                                 },
                                 onAfterLoad: function () {
-                                    $$('content_right').hideOverlay();
+                                    $$('{{webix_container_id}}').hideOverlay();
                                 },
                                 onCheck: function (rowId, colId, state) {
                                     if (state) {
@@ -197,7 +201,7 @@ $$("content_right").addView({
                     id: "action_combo",
                     maxWidth: "300",
                     value: 1,
-                    label: '{% trans 'Action' %}',
+                    label: '{{_("Action")|escapejs}}',
                     options: [
                         {id: 1, value: "------------"},
                         {% for send_method in send_methods %}
@@ -208,7 +212,7 @@ $$("content_right").addView({
                 {
                     view: "button",
                     id: "action_button",
-                    value: "{% trans 'Go' %}",
+                    value: "{{_("Go")|escapejs}}",
                     inputWidth: 50,
                     width: 50,
                     on: {
@@ -243,7 +247,7 @@ $$("content_right").addView({
                 {
                     view: "label",
                     id: "count_bottom_label_selected",
-                    label: "0 {% trans 'selected of' %}",
+                    label: "0 {{_("selected of")|escapejs}}",
                     hidden: true,
                     width: 150,
                     paddingX: 0,
@@ -276,7 +280,7 @@ var getDatatablesItems = function () {
         selected += $$('{{ datatable.model }}').getSelectedItem(true).length;
     {% endfor %}
 
-    $$("count_bottom_label_selected").setValue(selected + " {% trans 'selected of' %}");
+    $$("count_bottom_label_selected").setValue(selected + " {{_("selected of")|escapejs}}");
     $$("count_bottom_label_total").setValue(total);
     $$("count_bottom_label_selected").show();
     $$("count_bottom_label_total").show();
@@ -316,7 +320,7 @@ $.ajax({
         webix.message({
             type: "error",
             expire: 10000,
-            text: '{% trans 'Unable to load sender class' %}'
+            text: '{{_("Unable to load sender class")|escapejs}}'
         });
     }
 });

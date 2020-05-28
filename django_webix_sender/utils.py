@@ -21,11 +21,11 @@ def my_import(name):
 
 
 def send_email(recipients, subject, body, message_sent):
-    raise NotImplementedError('`send_email` method not implemented!')
+    raise NotImplementedError(_('`send_email` method not implemented!'))
 
 
 def send_sms(recipients, body, message_sent):
-    raise NotImplementedError('`send_sms` method not implemented!')
+    raise NotImplementedError(_('`send_sms` method not implemented!'))
 
 
 def send_mixin(send_method: str, typology: Optional[int], subject: str, body: str, recipients: Dict[str, List[int]],
@@ -154,10 +154,14 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
     )
 
     # 6. aggiungo il link del file in fondo al corpo
-    if len(attachments) > 0:
+    if len(attachments) > 0 and method == "sms":
         body += "\n\n"
         for attachment in attachments:
-            body += "%s\n" % attachment.get_url()
+            body += "{attachment}\n".format(attachment=attachment.get_url())
+    elif len(attachments) > 0 and method == "email":
+        body += "</br></br>"
+        for attachment in attachments:
+            body += "<a href='{attachment}'>{attachment}</a></br>".format(attachment=attachment.get_url())
 
     # 7. Creo il log e collego gli allegati
     # Costo del messaggio

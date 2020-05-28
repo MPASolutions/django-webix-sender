@@ -14,8 +14,8 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View, TemplateView
-
+from django.views.generic import View
+from django_webix.views import WebixTemplateView
 from django_webix_sender.models import MessageSent
 from django_webix_sender.send_methods.skebby import SkebbyGateway
 from django_webix_sender.settings import CONF
@@ -23,11 +23,11 @@ from django_webix_sender.utils import send_mixin
 
 if apps.is_installed('filter'):
     from filter.models import Filter
-    from filter.utils2 import get_aggregates_q_by_id
+    from filter.utils import get_aggregates_q_by_id
 
 
 @method_decorator(login_required, name='dispatch')
-class SenderList(TemplateView):
+class SenderList(WebixTemplateView):
     template_name = 'django_webix_sender/list.js'
     http_method_names = ['get', 'head', 'options']
 
@@ -88,7 +88,7 @@ class SenderGetList(View):
             for pk in pks:
                 filter = get_object_or_404(Filter, pk=pk)
                 if contentype.lower() != filter.model.lower():
-                    return JsonResponse({'status': 'Content type doesn\'t match'}, status=400)
+                    return JsonResponse({'status': _('Content type doesn\'t match')}, status=400)
                 filters.append(filter)
 
             and_or_filter = request.GET.get('and_or_filter', 'and')
@@ -160,7 +160,7 @@ class SenderSend(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class DjangoWebixSenderWindow(TemplateView):
+class DjangoWebixSenderWindow(WebixTemplateView):
     template_name = 'django_webix_sender/sender.js'
 
     def get_context_data(self, **kwargs):
@@ -175,7 +175,7 @@ class DjangoWebixSenderWindow(TemplateView):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-class InvoiceManagement(TemplateView):
+class InvoiceManagement(WebixTemplateView):
     template_name = 'django_webix_sender/invoices.js'
 
     groups = {

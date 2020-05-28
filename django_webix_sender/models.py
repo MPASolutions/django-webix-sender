@@ -11,10 +11,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django_webix_sender.settings import CONF
+from six import python_2_unicode_compatible
 
 
 def save_attachments(files, *args, **kwargs):
@@ -31,11 +30,11 @@ class DjangoWebixSender(models.Model):
 
     @property
     def get_sms(self):
-        raise NotImplementedError("`get_sms` not implemented!")
+        raise NotImplementedError(_("`get_sms` not implemented!"))
 
     @property
     def get_email(self) -> str:
-        raise NotImplementedError("`get_email` not implemented!")
+        raise NotImplementedError(_("`get_email` not implemented!"))
 
     @property
     def get_sms_related(self) -> List[Any]:
@@ -58,7 +57,8 @@ class DjangoWebixSender(models.Model):
         return Q()
 
 
-if any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF['recipients']):
+if CONF is not None and \
+    any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF.get('recipients', [])):
     @python_2_unicode_compatible
     class Customer(DjangoWebixSender):
         user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
@@ -106,7 +106,8 @@ if any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in
         def __str__(self):
             return '{}'.format(self.typology)
 
-if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF['recipients']):
+if CONF is not None and \
+    any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF.get('recipients', [])):
     @python_2_unicode_compatible
     class ExternalSubject(DjangoWebixSender):
         user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
@@ -129,7 +130,10 @@ if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipi
             verbose_name_plural = _('External subjects')
 
         def __str__(self):
-            return '{}'.format(self.name)
+            if self.name:
+                return self.name
+            else:
+                return _('Not defined')
 
         @property
         def get_sms(self):
@@ -154,7 +158,7 @@ if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipi
         def __str__(self):
             return '{}'.format(self.typology)
 
-if CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
+if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
     @python_2_unicode_compatible
     class MessageAttachment(models.Model):
         file = models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name=_('Document'))
@@ -173,7 +177,7 @@ if CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
         def get_url(self):
             return '{}'.format(self.file.url)
 
-if CONF['typology_model']['enabled']:
+if CONF is not None and CONF['typology_model']['enabled']:
     @python_2_unicode_compatible
     class MessageTypology(models.Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
@@ -195,7 +199,7 @@ if CONF['typology_model']['enabled']:
 
 @python_2_unicode_compatible
 class MessageSent(models.Model):
-    if CONF['typology_model']['enabled']:
+    if CONF is not None and CONF['typology_model']['enabled']:
         typology = models.ForeignKey(
             'django_webix_sender.MessageTypology',
             blank=not CONF['typology_model']['required'],
@@ -207,12 +211,13 @@ class MessageSent(models.Model):
     subject = models.TextField(blank=True, null=True, verbose_name=_('Subject'))
     body = models.TextField(blank=True, null=True, verbose_name=_('Body'))
     extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
-    attachments = models.ManyToManyField(
-        CONF['attachments']['model'],
-        blank=True,
-        db_constraint=False,
-        verbose_name=_('Attachments')
-    )
+    if CONF is not None:
+        attachments = models.ManyToManyField(
+            CONF['attachments']['model'],
+            blank=True,
+            db_constraint=False,
+            verbose_name=_('Attachments')
+        )
 
     # Invoice
     cost = models.DecimalField(max_digits=6, decimal_places=4, default=Decimal('0.0000'), verbose_name=_('Cost'))
@@ -231,7 +236,7 @@ class MessageSent(models.Model):
         verbose_name_plural = _('Sent messages')
 
     def __str__(self):
-        if CONF['typology_model']['enabled']:
+        if CONF is not None and CONF['typology_model']['enabled']:
             return "[{}] {}".format(self.send_method, self.typology)
         return "{}".format(self.send_method)
 
