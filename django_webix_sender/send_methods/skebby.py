@@ -179,6 +179,12 @@ def send_sms(recipients, body, message_sent):
             sender=settings.CONFIG_SKEBBY['sender_string']
         )
         _extra = result
+        if 'message' in _extra and isinstance(_extra['message'], bytes):
+            _extra['message'] = _extra['message'].decode("utf-8")
+        try:
+            _extra['message'] = json.loads(_extra['message'])
+        except:
+            pass
     except SkebbyException as e:
         _extra['error'] = '{}'.format(e)
 

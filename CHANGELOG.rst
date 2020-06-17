@@ -11,6 +11,14 @@ All notable changes to this project will be documented in this file.
 The format is based on KeepAChangelog_ and this project adheres to SemanticVersioning_.
 
 
+[Unreleased]
+++++++++++++
+
+Fixed
+~~~~~~~
+* Cast skebby results as str from byte string and try to convert as dict
+
+
 [1.0.0] - 2020-05-28
 ++++++++++++++++++++
 
