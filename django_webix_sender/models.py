@@ -8,7 +8,6 @@ from typing import List, Any
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
@@ -69,7 +68,7 @@ if CONF is not None and \
         sms = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Sms'))
         email = models.EmailField(max_length=255, blank=True, null=True, verbose_name=_('Email'))
         note = models.TextField(blank=True, null=True, verbose_name=_('Note'))
-        extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
+        extra = models.JSONField(blank=True, null=True, verbose_name=_('Extra'))
         typology = models.ForeignKey('django_webix_sender.CustomerTypology', blank=True, null=True,
                                      on_delete=models.CASCADE, verbose_name=_('Typology'))
 
@@ -118,7 +117,7 @@ if CONF is not None and \
         sms = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Sms'))
         email = models.EmailField(max_length=255, blank=True, null=True, verbose_name=_('Email'))
         note = models.TextField(blank=True, null=True, verbose_name=_('Note'))
-        extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
+        extra = models.JSONField(blank=True, null=True, verbose_name=_('Extra'))
         typology = models.ForeignKey('django_webix_sender.ExternalSubjectTypology', blank=True, null=True,
                                      on_delete=models.CASCADE, verbose_name=_('Typology'))
 
@@ -210,7 +209,7 @@ class MessageSent(models.Model):
     send_method = models.CharField(max_length=255, verbose_name=_('Send method'))
     subject = models.TextField(blank=True, null=True, verbose_name=_('Subject'))
     body = models.TextField(blank=True, null=True, verbose_name=_('Body'))
-    extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
+    extra = models.JSONField(blank=True, null=True, verbose_name=_('Extra'))
     if CONF is not None:
         attachments = models.ManyToManyField(
             CONF['attachments']['model'],
