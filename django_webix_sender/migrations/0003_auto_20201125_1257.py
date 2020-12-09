@@ -2,6 +2,11 @@
 
 from django.db import migrations, models
 
+try:
+    from django.db.models import JSONField
+except ImportError:
+    from django.contrib.postgres.fields import JSONField
+
 
 class Migration(migrations.Migration):
 
@@ -13,6 +18,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='messagesent',
             name='extra',
-            field=models.JSONField(blank=True, null=True, verbose_name='Extra'),
+            field=JSONField(blank=True, null=True, verbose_name='Extra'),
         ),
     ]
