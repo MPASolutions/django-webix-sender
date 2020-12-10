@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import importlib
 from typing import List, Dict, Any, Optional, Tuple
 
+import phonenumbers
 from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
 
@@ -18,14 +19,6 @@ def my_import(name):
     module, function = name.rsplit('.', 1)
     component = importlib.import_module(module)
     return getattr(component, function)
-
-
-def send_email(recipients, subject, body, message_sent):
-    raise NotImplementedError(_('`send_email` method not implemented!'))
-
-
-def send_sms(recipients, body, message_sent):
-    raise NotImplementedError(_('`send_sms` method not implemented!'))
 
 
 def send_mixin(send_method: str, typology: Optional[int], subject: str, body: str, recipients: Dict[str, List[int]],
@@ -79,7 +72,10 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
             'recipients': [],
             'address': []
         },
-        'invalids': []
+        'invalids': {
+            'recipients': [],
+            'address': []
+        }
     }
     if method == "sms":
         for recipient in _recipients_instance:
@@ -90,17 +86,24 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
 
             # Per ogni numero verifico il suo stato e lo aggiungo alla chiave corretta
             for _sms in _get_sms:
-                # Contatto non ancora presente nella lista
-                if _sms and not _sms in _recipients['valids']['address']:
-                    _recipients['valids']['address'].append(_sms)
-                    _recipients['valids']['recipients'].append(recipient)
-                # Contatto già presente nella lista (duplicato)
-                elif _sms:
-                    _recipients['duplicates']['address'].append(_sms)
-                    _recipients['duplicates']['recipients'].append(recipient)
-                # Indirizzo non presente
-                else:
-                    _recipients['invalids'].append(recipient)
+                # Verifico che il numero sia valido
+                try:
+                    number = phonenumbers.parse(_sms, CONF['region'])
+                    _sms = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
+                    # Contatto non ancora presente nella lista
+                    if phonenumbers.is_valid_number(number) and _sms not in _recipients['valids']['address']:
+                        _recipients['valids']['address'].append(_sms)
+                        _recipients['valids']['recipients'].append(recipient)
+                    # Contatto già presente nella lista (duplicato)
+                    elif phonenumbers.is_valid_number(number):
+                        _recipients['duplicates']['address'].append(_sms)
+                        _recipients['duplicates']['recipients'].append(recipient)
+                    # Indirizzo non presente o non valido
+                    else:
+                        raise Exception("Invalid number")
+                except Exception:
+                    _recipients['invalids']['address'].append(_sms)
+                    _recipients['invalids']['recipients'].append(recipient)
     elif method == "email":
         for recipient in _recipients_instance:
             # Prelevo l'indirizzo email e lo metto in una lista se non è già una lista
@@ -120,12 +123,15 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
                     _recipients['duplicates']['recipients'].append(recipient)
                 # Indirizzo non presente
                 else:
-                    _recipients['invalids'].append(recipient)
+                    _recipients['invalids']['address'].append(_email)
+                    _recipients['invalids']['recipients'].append(recipient)
 
+    # Convert dict in list of tuples
     _recipients['valids'] = list(zip(_recipients['valids']['recipients'], _recipients['valids']['address']))
     _recipients['duplicates'] = list(
         zip(_recipients['duplicates']['recipients'], _recipients['duplicates']['address'])
     )
+    _recipients['invalids'] = list(zip(_recipients['invalids']['recipients'], _recipients['invalids']['address']))
 
     # 4 Verifica prima dell'invio (opzionale)
     if presend is None:

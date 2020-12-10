@@ -44,3 +44,17 @@ WEBIX_SENDER = {
     'invoices_period': 'bimestrial'
 }
 """
+
+"""
+Sample settings `CONFIG_SKEBBY` configuration
+
+from django_webix_sender.send_methods.skebby.enums import SkebbyMessageType
+
+CONFIG_SKEBBY = {
+    'region': "IT",
+    'method': SkebbyMessageType.GP,
+    'username': 'user',
+    'password': '*******',
+    'sender_string': 'SenderName',
+}
+"""

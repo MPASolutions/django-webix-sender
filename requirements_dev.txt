@@ -8,6 +8,7 @@ billiard>=3.5.0.4
 celery>=4.2.1
 kombu>=4.2.1
 vine>=1.1.4
+phonenumbers>=8.12.13
 
 # Testing
 coverage

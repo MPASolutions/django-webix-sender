@@ -17,9 +17,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django_webix.views import WebixTemplateView
 from django_webix_sender.models import MessageSent
-from django_webix_sender.send_methods.skebby import SkebbyGateway
 from django_webix_sender.settings import CONF
 from django_webix_sender.utils import send_mixin
+from django_webix_sender.send_methods.skebby.tasks import check_state
 
 if apps.is_installed('filter'):
     from filter.models import Filter
@@ -221,7 +221,7 @@ class InvoiceManagement(WebixTemplateView):
                 Case(When(messagerecipient__status='unknown', then=1), default=0, output_field=IntegerField())
             )
         ).filter(unknown_sum__gt=0):
-            SkebbyGateway.check_state.delay(messagesent.extra['order_id'])
+            check_state.delay(messagesent.extra['order_id'])
 
         # Controllo che i filtri siano validi
         if not group in self.groups:

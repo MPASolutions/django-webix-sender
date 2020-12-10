@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 import six
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -52,12 +50,13 @@ def send_email(recipients, subject, body, message_sent):
         )
 
     # Salvo i destinatari senza numero e quindi ai quali non è stato inviato il messaggio
-    for recipient in recipients['invalids']:
+    for recipient, recipient_address in recipients['invalids']:
         message_recipient = MessageRecipient(
             message_sent=message_sent,
             recipient=recipient,
             sent_number=0,
             status='invalid',
+            recipient_address=recipient_address,
             extra={'status': "Email non presente ({}) e quindi non inviata".format(recipient)}
         )
         message_recipient.save()

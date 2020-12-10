@@ -61,6 +61,7 @@ setup(
         'requests>=2.23.0',
         'celery>=4.4.0',
         'django-webix>=1.1.0',
+        'phonenumbers>=8.12.13',
     ],
     classifiers=[
         'Environment :: Web Environment',

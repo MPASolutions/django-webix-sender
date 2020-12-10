@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
+import phonenumbers
 from django.apps import AppConfig, apps
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 
 class DjangoWebixSenderConfig(AppConfig):
@@ -20,6 +20,16 @@ class DjangoWebixSenderConfig(AppConfig):
         # Try to import all functions
         for send_method in CONF['send_methods']:
             my_import(send_method['function'])
+
+            # Check Skebby config
+            if send_method['function'] == 'django_webix_sender.send_methods.skebby.send_sms':
+                if not hasattr(settings, 'CONFIG_SKEBBY') or \
+                    not 'region' in settings.CONFIG_SKEBBY or \
+                    not 'method' in settings.CONFIG_SKEBBY or \
+                    not 'username' in settings.CONFIG_SKEBBY or \
+                    not 'password' in settings.CONFIG_SKEBBY or \
+                    not 'sender_string' in settings.CONFIG_SKEBBY:
+                        raise Exception(_('`CONFIG_SKEBBY` is not configured in your settings.py file'))
 
         app_label, model = CONF['attachments']['model'].lower().split(".")
         try:
