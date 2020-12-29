@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Count, Sum, Case, When, IntegerField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django_webix_sender.models import MessageSent, MessageRecipient
-from django_webix_sender.settings import CONF
+
+CONF = getattr(settings, "WEBIX_SENDER", None)
 
 if CONF is not None and \
     any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF['recipients']):

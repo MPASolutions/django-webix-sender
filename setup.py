@@ -62,6 +62,7 @@ setup(
         'celery>=4.4.0',
         'django-webix>=1.1.0',
         'phonenumbers>=8.12.13',
+        'python-telegram-bot>=13.1',
     ],
     classifiers=[
         'Environment :: Web Environment',

@@ -4,6 +4,8 @@ from __future__ import unicode_literals, absolute_import
 
 import django
 
+from django_webix_sender.send_methods.skebby.enums import SkebbyMessageType
+
 DEBUG = True
 USE_TZ = True
 
@@ -74,14 +76,35 @@ TEMPLATES = [
 WEBIX_SENDER = {
     'send_methods': [
         {
-            'method': 'sms',
-            'verbose_name': 'Send sms',
-            'function': 'django_webix_sender.utils.send_sms'
-        },
-        {
             'method': 'email',
             'verbose_name': 'Send email',
-            'function': 'django_webix_sender.utils.send_email'
+            'function': 'django_webix_sender.send_methods.email.send',
+            'config': {
+                'from_email': 'info@mpasol.it'
+            }
+        },
+        {
+            'method': 'skebby',
+            'verbose_name': 'Send sms',
+            'function': 'django_webix_sender.send_methods.skebby.send',
+            'config': {
+                'region': "IT",
+                'method': SkebbyMessageType.GP,
+                'username': 'username',
+                'password': 'password',
+                'sender_string': 'Sender',
+            }
+        },
+        {
+            'method': 'telegram',
+            'verbose_name': 'Send telegram',
+            'function': 'django_webix_sender.send_methods.telegram.send',
+            'config': {
+                "bot_token": "token",
+                "webhooks": [],
+                'commands': [],
+                'handlers': []
+            }
         }
     ],
     'attachments': {
@@ -96,11 +119,12 @@ WEBIX_SENDER = {
     'recipients': [
         {
             'model': 'django_webix_sender.Customer',
-            'datatable_fields': ['user', 'name', 'sms', 'email']
+            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
         },
         {
             'model': 'django_webix_sender.ExternalSubject',
-            'datatable_fields': ['user', 'name', 'sms', 'email']
+            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
         },
-    ]
+    ],
+    'invoices_period': 'bimestrial'
 }

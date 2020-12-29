@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 from decimal import Decimal
 from typing import List, Any
 
@@ -10,15 +8,14 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-from six import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 
 try:
     from django.db.models import JSONField
 except ImportError:
     from django.contrib.postgres.fields import JSONField
 
-from django_webix_sender.settings import CONF
+CONF = getattr(settings, "WEBIX_SENDER", None)
 
 
 def save_attachments(files, *args, **kwargs):
@@ -42,11 +39,31 @@ class DjangoWebixSender(models.Model):
         raise NotImplementedError(_("`get_email` not implemented!"))
 
     @property
+    def get_telegram(self) -> str:
+        raise NotImplementedError(_("`get_telegram` not implemented!"))
+
+    @staticmethod
+    def get_sms_fieldpath() -> str:
+        return NotImplementedError(_("`get_sms_fieldpath` not implemented!"))
+
+    @staticmethod
+    def get_email_fieldpath() -> str:
+        return NotImplementedError(_("`get_email_fieldpath` not implemented!"))
+
+    @staticmethod
+    def get_telegram_fieldpath() -> str:
+        return NotImplementedError(_("`get_telegram_fieldpath` not implemented!"))
+
+    @property
     def get_sms_related(self) -> List[Any]:
         return []
 
     @property
     def get_email_related(self) -> List[Any]:
+        return []
+
+    @property
+    def get_telegram_related(self) -> List[Any]:
         return []
 
     @classmethod
@@ -64,7 +81,6 @@ class DjangoWebixSender(models.Model):
 
 if CONF is not None and \
     any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF.get('recipients', [])):
-    @python_2_unicode_compatible
     class Customer(DjangoWebixSender):
         user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                  verbose_name=_('User'))
@@ -73,6 +89,7 @@ if CONF is not None and \
         fiscal_code = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Fiscal code'))
         sms = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Sms'))
         email = models.EmailField(max_length=255, blank=True, null=True, verbose_name=_('Email'))
+        telegram = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Telegram'))
         note = models.TextField(blank=True, null=True, verbose_name=_('Note'))
         extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
         typology = models.ForeignKey('django_webix_sender.CustomerTypology', blank=True, null=True,
@@ -89,15 +106,30 @@ if CONF is not None and \
             return '{}'.format(self.name)
 
         @property
-        def get_sms(self):
+        def get_sms(self) -> str:
             return self.sms
 
         @property
-        def get_email(self):
+        def get_email(self) -> str:
             return self.email
 
+        @property
+        def get_telegram(self) -> str:
+            return self.telegram
 
-    @python_2_unicode_compatible
+        @staticmethod
+        def get_sms_fieldpath() -> str:
+            return "sms"
+
+        @staticmethod
+        def get_email_fieldpath() -> str:
+            return "email"
+
+        @staticmethod
+        def get_telegram_fieldpath() -> str:
+            return "telegram"
+
+
     class CustomerTypology(models.Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
@@ -113,7 +145,6 @@ if CONF is not None and \
 
 if CONF is not None and \
     any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF.get('recipients', [])):
-    @python_2_unicode_compatible
     class ExternalSubject(DjangoWebixSender):
         user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                  verbose_name=_('User'))
@@ -122,6 +153,7 @@ if CONF is not None and \
         fiscal_code = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Fiscal code'))
         sms = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Sms'))
         email = models.EmailField(max_length=255, blank=True, null=True, verbose_name=_('Email'))
+        telegram = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Telegram'))
         note = models.TextField(blank=True, null=True, verbose_name=_('Note'))
         extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
         typology = models.ForeignKey('django_webix_sender.ExternalSubjectTypology', blank=True, null=True,
@@ -141,15 +173,30 @@ if CONF is not None and \
                 return _('Not defined')
 
         @property
-        def get_sms(self):
+        def get_sms(self) -> str:
             return self.sms
 
         @property
-        def get_email(self):
+        def get_email(self) -> str:
             return self.email
 
+        @property
+        def get_telegram(self) -> str:
+            return self.telegram
 
-    @python_2_unicode_compatible
+        @staticmethod
+        def get_sms_fieldpath() -> str:
+            return "sms"
+
+        @staticmethod
+        def get_email_fieldpath() -> str:
+            return "email"
+
+        @staticmethod
+        def get_telegram_fieldpath() -> str:
+            return "telegram"
+
+
     class ExternalSubjectTypology(models.Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
@@ -164,7 +211,6 @@ if CONF is not None and \
             return '{}'.format(self.typology)
 
 if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
-    @python_2_unicode_compatible
     class MessageAttachment(models.Model):
         file = models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name=_('Document'))
         insert_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Insert date'))
@@ -183,7 +229,6 @@ if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.Mes
             return '{}'.format(self.file.url)
 
 if CONF is not None and CONF['typology_model']['enabled']:
-    @python_2_unicode_compatible
     class MessageTypology(models.Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
@@ -202,7 +247,6 @@ if CONF is not None and CONF['typology_model']['enabled']:
             return "typology__icontains",
 
 
-@python_2_unicode_compatible
 class MessageSent(models.Model):
     if CONF is not None and CONF['typology_model']['enabled']:
         typology = models.ForeignKey(
@@ -246,7 +290,6 @@ class MessageSent(models.Model):
         return "{}".format(self.send_method)
 
 
-@python_2_unicode_compatible
 class MessageRecipient(models.Model):
     message_sent = models.ForeignKey('django_webix_sender.MessageSent', on_delete=models.CASCADE,
                                      verbose_name=_('Message sent'))
@@ -273,3 +316,15 @@ class MessageRecipient(models.Model):
 
     def __str__(self):
         return str(self.recipient)
+
+
+# Telegram
+class TelegramPersistence(models.Model):
+    typology = models.CharField(max_length=32, choices=[
+        (i, i) for i in ['user_data', 'chat_data', 'bot_data', 'conversations']
+    ], unique=True)
+    data = JSONField()
+
+    class Meta:
+        verbose_name = _("Telegram Persistence")
+        verbose_name_plural = _("Telegram Persistences")

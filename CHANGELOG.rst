@@ -14,10 +14,20 @@ The format is based on KeepAChangelog_ and this project adheres to SemanticVersi
 [Unreleased]
 ++++++++++++
 
+Added
+~~~~~
+* Added Telegram support
+* New Skebby gateway APIs
+
+Changed
+~~~~~~~
+* Changed send_methods path
+* Moved `CONFIG_SKEBBY` to Skebby `send_method` configuration
+
 Fixed
 ~~~~~~~
 * Cast skebby results as str from byte string and try to convert as dict
-
+* Invoices list fixes
 
 [1.0.0] - 2020-05-28
 ++++++++++++++++++++

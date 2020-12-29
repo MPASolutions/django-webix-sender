@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Dict, List
+
 import six
 from django.conf import settings
 
@@ -8,11 +10,20 @@ from django_webix_sender.send_methods.skebby.exceptions import SkebbyException
 from django_webix_sender.send_methods.skebby.gateway import Skebby
 
 
-def send_sms(recipients, body, message_sent):
-    if 'django_webix_sender' not in settings.INSTALLED_APPS:
-        raise Exception("Django Webix Sender is not in INSTALLED_APPS")
+def send(recipients: Dict[str, List[int]], body: str, message_sent):
+    """
+    Send Sebby sms
+
+    :param recipients: Dict {'<app_label>.<model>': [<id>, <id>]}
+    :param body: Body of message
+    :param message_sent: MessageSent instance
+    :return: MessageSent instance
+    """
 
     from django_webix_sender.models import MessageRecipient, MessageSent
+
+    if 'django_webix_sender' not in settings.INSTALLED_APPS:
+        raise Exception("Django Webix Sender is not in INSTALLED_APPS")
 
     # Controllo correttezza parametri
     if not isinstance(recipients, dict) or \
@@ -29,29 +40,33 @@ def send_sms(recipients, body, message_sent):
     sent_per_recipient = 0
 
     try:
+        CONFIG_SKEBBY = next(
+            (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "skebby"), {}
+        ).get("config")
+
         # Connection
         skebby = Skebby()
         skebby.authentication.session_key(
-            username=settings.CONFIG_SKEBBY['username'],
-            password=settings.CONFIG_SKEBBY['password']
+            username=CONFIG_SKEBBY['username'],
+            password=CONFIG_SKEBBY['password']
         )
 
         # Set message configuration
         send_configuration = {
-            "message_type": settings.CONFIG_SKEBBY['method'],
+            "message_type": CONFIG_SKEBBY['method'],
             "message": body,
             "recipient": [number for _, number in recipients['valids']],
-            "sender": settings.CONFIG_SKEBBY['sender_string'],
+            "sender": CONFIG_SKEBBY['sender_string'],
             "return_credits": SkebbyBoolean.TRUE
         }
-        if 'encoding' in settings.CONFIG_SKEBBY:
-            send_configuration['encoding'] = settings.CONFIG_SKEBBY['encoding']
-        if 'truncate' in settings.CONFIG_SKEBBY:
-            send_configuration['truncate'] = settings.CONFIG_SKEBBY['truncate']
-        if 'max_fragments' in settings.CONFIG_SKEBBY:
-            send_configuration['max_fragments'] = settings.CONFIG_SKEBBY['max_fragments']
-        if 'allow_invalid_recipients' in settings.CONFIG_SKEBBY:
-            send_configuration['allow_invalid_recipients'] = settings.CONFIG_SKEBBY['allow_invalid_recipients']
+        if 'encoding' in CONFIG_SKEBBY:
+            send_configuration['encoding'] = CONFIG_SKEBBY['encoding']
+        if 'truncate' in CONFIG_SKEBBY:
+            send_configuration['truncate'] = CONFIG_SKEBBY['truncate']
+        if 'max_fragments' in CONFIG_SKEBBY:
+            send_configuration['max_fragments'] = CONFIG_SKEBBY['max_fragments']
+        if 'allow_invalid_recipients' in CONFIG_SKEBBY:
+            send_configuration['allow_invalid_recipients'] = CONFIG_SKEBBY['allow_invalid_recipients']
 
         # Send message
         result = skebby.sms_send.send_sms(**send_configuration)

@@ -230,14 +230,20 @@ $$("{{webix_container_id}}").addView({
                                 })
                             {% endfor %}
 
-                            {% if 'sms' in send_method_types %}
-                            if (action === "sms") {
+                            {% if 'skebby' in send_method_types %}
+                            if (action === "skebby") {
                                 django_webix_sender.open(action_original, recipients);
                             }
                             {% endif %}
 
                             {% if 'email' in send_method_types %}
                             if (action === "email") {
+                                django_webix_sender.open(action_original, recipients);
+                            }
+                            {% endif %}
+
+                            {% if 'telegram' in send_method_types %}
+                            if (action === "telegram") {
                                 django_webix_sender.open(action_original, recipients);
                             }
                             {% endif %}

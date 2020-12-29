@@ -82,7 +82,7 @@ function DjangoWebixSender() {
             value: default_text !== undefined ? default_text : '',
             on: {
                 onKeyPress: function () {
-                    if (send_method === 'sms') {
+                    if (send_method === 'skebby') {
                         webix.delay(function () {
                             var count = $$("django-webix-sender-form-body").getValue().length;
                             $$("django-webix-sender-form-length").setValue(count + " {{_("characters")|escapejs}}");
@@ -91,7 +91,7 @@ function DjangoWebixSender() {
                 }
             }
         });
-        if (send_method === 'sms') {
+        if (send_method === 'skebby') {
             elements.push({
                 view: "label",
                 id: "django-webix-sender-form-length",
@@ -249,8 +249,11 @@ function DjangoWebixSender() {
         if (send_method === 'email') {
             title = "{{_("Send email")|escapejs}}";
         }
-        else if (send_method === 'sms') {
-            title = "{{_("Send SMS")|escapejs}}";
+        else if (send_method === 'skebby') {
+            title = "{{_("Send Skebby")|escapejs}}";
+        }
+        else if (send_method === 'telegram') {
+            title = "{{_("Send Telegram")|escapejs}}";
         }
 
         return new webix.ui({
@@ -302,7 +305,7 @@ function DjangoWebixSender() {
             total += recipients[key].length
         });
 
-        if (total == 0) {
+        if (total === 0) {
             webix.alert({
                 title: "{{_("Caution!")|escapejs}}",
                 text: "{{_("There are no recipients for this communication")|escapejs}}",

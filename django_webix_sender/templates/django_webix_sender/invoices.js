@@ -14,6 +14,7 @@ $$("{{ webix_container_id }}").addView({
                     value: "{{ request.GET.send_method }}",
                     label: "{{_("Send method")|escapejs}}",
                     labelWidth: 130,
+                    width: 400,
                     labelAlign: 'right',
                     options: [
                         {id: "", value: "", $empty: true},
@@ -31,12 +32,6 @@ $$("{{ webix_container_id }}").addView({
                             load_js(url);
                         }
                     }
-                },
-                {$template: "Spacer", width: 100},
-                {
-                    view: 'label',
-                    align: 'right',
-                    label: "{{_("Warning! if there are messages with an unknown status, the data is not updated")|escapejs}}"
                 }
             ]
         },
@@ -60,47 +55,61 @@ $$("{{ webix_container_id }}").addView({
                                 autoheight: true,
                                 select: false,
                                 navigation: false,
+                                footer: true,
                                 columns: [
                                     {
                                         id: "period",
                                         header: "{{_("Period")|escapejs}}",
+                                        footer: "<b>{{_("TOTAL")|escapejs}}</b>",
+                                        fillspace: true
+                                    },
+                                    {
+                                        id: "messages_success",
+                                        header: "{{_("Success")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
                                         id: "messages_unknown",
                                         header: "{{_("Unknowm status")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
                                         id: "messages_fail",
                                         header: "{{_("Not send")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
-                                        id: "invoiced",
+                                        id: "messages_invoiced",
                                         header: "{{_("Invoiced")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
-                                        id: "to_be_invoiced",
+                                        id: "messages_to_be_invoiced",
                                         header: "{{_("To be invoiced")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
                                         id: "price_invoiced",
                                         header: "{{_("Price invoiced")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
                                         id: "price_to_be_invoiced",
                                         header: "{{_("Price to be invoiced")|escapejs}}",
+                                        footer: {content: "summColumn"},
                                         fillspace: true
                                     },
                                     {
                                         id: "rating",
                                         header: "",
                                         template: function () {
-                                            return "<div class='webix_el_button'><button class='webixtype_base'>{{_("marks as billed")|escapejs}}</button></div>";
+                                            return '<div class="webix_view webix_control webix_el_button webix_secondary"><div class="webix_el_box"><button type="button" class="webix_button">{{_("marks as billed")|escapejs}}</button></div></div>';
                                         },
                                         width: 200
                                     }
@@ -109,10 +118,11 @@ $$("{{ webix_container_id }}").addView({
                                     {% for period in sender.periods %}
                                     {
                                         'period': "{{ period.period|safe|escapejs }}",
+                                        'messages_success': {{ period.messages_success|default:0|safe|escapejs }},
                                         'messages_unknown': {{ period.messages_unknown|default:0|safe|escapejs }},
                                         'messages_fail': "{{ period.messages_fail|default:0|safe|escapejs }}",
-                                        'invoiced': "{{ period.invoiced|default:0|safe|escapejs }}",
-                                        'to_be_invoiced': "{{ period.to_be_invoiced|default:0|safe|escapejs }}",
+                                        'messages_invoiced': "{{ period.messages_invoiced|default:0|safe|escapejs }}",
+                                        'messages_to_be_invoiced': "{{ period.messages_to_be_invoiced|default:0|safe|escapejs }}",
                                         'price_invoiced': "{{ period.price_invoiced|default:0|safe|escapejs }}",
                                         'price_to_be_invoiced': "{{ period.price_to_be_invoiced|default:0|safe|escapejs }}",
                                         'send_method_code': "{{ sender.send_method_code|safe|escapejs }}",
@@ -121,13 +131,13 @@ $$("{{ webix_container_id }}").addView({
                                     {% endfor %}
                                 ],
                                 onClick: {
-                                    webixtype_base: function (ev, id) {
+                                    webix_button: function (ev, id) {
                                         marks_invoiced(this, id);
                                     }
                                 }
                             }
                         ],
-                        padding: 10
+                        paddingY: 10
                     },
                     {% endfor %}
                 ]
@@ -135,6 +145,10 @@ $$("{{ webix_container_id }}").addView({
         }
     ]
 });
+
+{% for sender in senders %}
+  //$$('datatable_{{ forloop.counter0 }}').adjustRowHeight();
+{% endfor %}
 
 var marks_invoiced = function (datatable, id) {
     var period = datatable.getItem(id.row).period;
