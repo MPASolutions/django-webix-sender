@@ -105,7 +105,12 @@ WEBIX_SENDER = {
                 'commands': [],
                 'handlers': []
             }
-        }
+        },
+        {
+            'method': 'storage',
+            'verbose_name': 'Store online',
+            'function': 'django_webix_sender.send_methods.storage.send',
+        },
     ],
     'attachments': {
         'model': 'django_webix_sender.MessageAttachment',

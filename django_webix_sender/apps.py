@@ -72,6 +72,10 @@ class DjangoWebixSenderConfig(AppConfig):
                     bot = telegram.Bot(token=send_method['config']['bot_token'])
                     bot.set_my_commands(send_method['config']['commands'])
 
+            # Init storage
+            elif send_method['method'] == 'storage':
+                pass  # Nothing to check
+
         # Check attachments model
         app_label, model = CONF['attachments']['model'].lower().split(".")
         try:

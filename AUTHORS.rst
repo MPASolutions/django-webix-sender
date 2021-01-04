@@ -7,6 +7,7 @@ Development Lead
 ----------------
 
 * Alessio Bazzanella <bazzanella@mpasol.it>
+* Alessandro Regolini <regolini@mpasol.it>
 
 Contributors
 ------------

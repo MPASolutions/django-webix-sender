@@ -260,13 +260,12 @@ class MessageSent(models.Model):
     subject = models.TextField(blank=True, null=True, verbose_name=_('Subject'))
     body = models.TextField(blank=True, null=True, verbose_name=_('Body'))
     extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
-    if CONF is not None:
-        attachments = models.ManyToManyField(
-            CONF['attachments']['model'],
-            blank=True,
-            db_constraint=False,
-            verbose_name=_('Attachments')
-        )
+    attachments = models.ManyToManyField(
+        CONF['attachments']['model'],
+        blank=True,
+        db_constraint=False,
+        verbose_name=_('Attachments')
+    )
 
     # Invoice
     cost = models.DecimalField(max_digits=6, decimal_places=4, default=Decimal('0.0000'), verbose_name=_('Cost'))

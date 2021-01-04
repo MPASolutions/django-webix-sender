@@ -247,6 +247,12 @@ $$("{{webix_container_id}}").addView({
                                 django_webix_sender.open(action_original, recipients);
                             }
                             {% endif %}
+
+                            {% if 'storage' in send_method_types %}
+                            if (action === "storage") {
+                                django_webix_sender.open(action_original, recipients);
+                            }
+                            {% endif %}
                         }
                     }
                 },

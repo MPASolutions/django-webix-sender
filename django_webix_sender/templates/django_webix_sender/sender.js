@@ -62,7 +62,7 @@ function DjangoWebixSender() {
             },
             {% endif %}
         ];
-        if (send_method === 'email') {
+        if (send_method === 'email' || send_method === 'storage') {
             elements.push({
                 view: 'text',
                 id: 'django-webix-sender-form-subject',
@@ -99,7 +99,7 @@ function DjangoWebixSender() {
                 align: "right"
             });
         }
-        if (send_method === 'email') {
+        if (send_method === 'email' || send_method === 'storage') {
             elements.push({
                 view: "uploader",
                 id: "django-webix-sender-form-attachments",
@@ -133,11 +133,11 @@ function DjangoWebixSender() {
                         data.append('typology', $$('django-webix-sender-form-typology').getValue());
                     {% endif %}
                     data.append('send_method', send_method_original);
-                    if (send_method === 'email') {
+                    if (send_method === 'email' || send_method === 'storage') {
                         data.append('subject', $$('django-webix-sender-form-subject').getValue());
                     }
                     data.append('body', $$('django-webix-sender-form-body').getValue());
-                    if (send_method === 'email') {
+                    if (send_method === 'email' || send_method === 'storage') {
                         $$("django-webix-sender-form-attachments").files.data.each(function (obj) {
                             data.append('file_' + obj.id, obj.file);
                         });

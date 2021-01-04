@@ -28,8 +28,8 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
 
     :param send_method: <skebby|email|telegram>.<function> (eg. "skebby.django_webix_sender.utils.send")
     :param typology: MessageTypology ID
-    :param subject: Subject of email
-    :param body: Body of message (email, skebby or telegram)
+    :param subject: Subject of message
+    :param body: Body of message (email, skebby, telegram or storage)
     :param recipients: Dict {'<app_label>.<model>': [<id>, <id>]}
     :param presend: None: verify before the send; Otherwise: send the message
     :param kwargs: `user` and `files` (default: user=None, files={})
@@ -141,7 +141,7 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
                     _recipients['invalids']['recipients'].append(recipient)
     elif method == "telegram":
         for recipient in _recipients_instance:
-            # Prelevo l'indirizzo email e lo metto in una lista se non è già una lista
+            # Prelevo l'ID telegram e lo metto in una lista se non è già una lista
             _get_telegram = recipient.get_telegram
             if not isinstance(_get_telegram, list):
                 _get_telegram = [_get_telegram]
@@ -160,6 +160,20 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
                 else:
                     _recipients['invalids']['address'].append(_telegram)
                     _recipients['invalids']['recipients'].append(recipient)
+    elif method == "storage":
+        for recipient in _recipients_instance:
+            # Prelevo l'ID user e lo metto in una lista se non è già una lista
+            if not recipient.pk in _recipients['valids']['address']:
+                _recipients['valids']['address'].append(recipient.pk)
+                _recipients['valids']['recipients'].append(recipient)
+            # Contatto già presente nella lista (duplicato)
+            elif recipient.pk in _recipients['valids']['address']:
+                _recipients['duplicates']['address'].append(recipient.pk)
+                _recipients['duplicates']['recipients'].append(recipient)
+            # Indirizzo non presente
+            else:
+                _recipients['invalids']['address'].append(recipient.pk)
+                _recipients['invalids']['recipients'].append(recipient)
 
     # Convert dict in list of tuples
     _recipients['valids'] = list(zip(_recipients['valids']['recipients'], _recipients['valids']['address']))
@@ -205,6 +219,8 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
             body += "<a href='{attachment}'>{attachment}</a></br>".format(attachment=attachment.get_url())
     elif len(attachments) > 0 and method == "telegram":
         pass  # TODO: create attachments function
+    elif len(attachments) > 0 and method == "storage":
+        pass  # ignore this step, file already in db
 
     # 7. Creo il log e collego gli allegati
     # Costo del messaggio
@@ -233,16 +249,16 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
 
     # 8. Send messages
     if method == "skebby":
-        # Invio i messaggi
         result = send_function(_recipients, body, message_sent)
         return {'status': _('Skebby sent'), 'extra': result.extra}, 200
     elif method == "email":
-        # Invio i messaggi
         result = send_function(_recipients, subject, body, message_sent)
         return {'status': _('Emails sent'), 'extra': result.extra}, 200
     elif method == "telegram":
-        # Invio i messaggi
         result = send_function(_recipients, body, message_sent)
         return {'status': _('Telegram sent'), 'extra': result.extra}, 200
+    elif method == "storage":
+        result = send_function(_recipients, subject, body, message_sent)
+        return {'status': _('Storage sent'), 'extra': result.extra}, 200
     else:
         return {'status': _('Invalid send method')}, 400

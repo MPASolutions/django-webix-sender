@@ -54,7 +54,7 @@ Create the models (e.g. <app_name>/models.py)
 
 .. code-block:: python
 
-    from django.utils.translation import ugettext_lazy as _
+    from django.utils.translation import gettext_lazy as _
     from django_webix_sender.send_methods.telegram.handlers import start, check_user
 
     WEBIX_SENDER = {
@@ -96,7 +96,12 @@ Create the models (e.g. <app_name>/models.py)
                         CommandHandler("start", start),  # Example
                     ]
                 }
-            }
+            },
+            {
+                'method': 'storage',
+                'verbose_name': _('Store online'),
+                'function': 'django_webix_sender.send_methods.storage.send',
+            },
         ],
         'attachments': {
             'model': 'django_webix_sender.MessageAttachment',
@@ -132,6 +137,8 @@ Create the models (e.g. <app_name>/models.py)
     - ``email``
 
     - ``telegram``
+
+    - ``storage``
 
 
     The methods already implemented in this package are:
@@ -194,7 +201,19 @@ Create the models (e.g. <app_name>/models.py)
                         CommandHandler("start", start),  # Example
                     ]
                 }
-            },
+            }
+
+    - ``django_webix_sender.send_methods.storage.send``
+
+        Storage method
+
+        .. code:: python
+
+            {
+                'method': 'storage',
+                'verbose_name': _('Store online'),
+                'function': 'django_webix_sender.send_methods.storage.send',
+            }
 
 
 .. attribute:: WEBIX_SENDER['attachments']
@@ -230,7 +249,7 @@ Create the models (e.g. <app_name>/models.py)
 
         {
             'model': 'django_webix_sender.Customer',
-            'datatable_fields': ['user', 'name', 'sms', 'email']
+            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
         }
 
 
@@ -323,14 +342,13 @@ Send method
         # ...
 
         for recipient, recipient_address in recipients['valids']:
-            message_recipient = MessageRecipient(
+            MessageRecipient.objects.create(
                 message_sent=message_sent,
                 recipient=recipient,
                 sent_number=1,
                 status='success',
                 recipient_address=recipient_address
             )
-            message_recipient.save()
         for recipient, recipient_address in recipients['invalids']:
             pass
         for recipient, recipient_address in recipients['duplicates']:
