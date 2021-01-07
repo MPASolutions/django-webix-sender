@@ -1,7 +1,7 @@
 {% load static i18n verbose_name field_type %}
 
 {% block content %}
-webix.ui([], $$('{{webix_container_id}}'));
+webix.ui([], $$('{{ webix_container_id }}'));
 
 var custom_bool = function (obj, common, value) {
   if (value === true)
@@ -34,8 +34,8 @@ $$("{{webix_container_id}}").addView({
                                     value: 0,
                                     labelAlign: 'right',
                                     labelWidth: 40,
-                                    label: "{{_("AND")|escapejs}}",
-                                    labelRight: "{{_("OR")|escapejs}}",
+                                    label: "{{ _("AND")|escapejs }}",
+                                    labelRight: "{{ _("OR")|escapejs }}",
                                     width: 120,
                                     on: {
                                         onChange: function (newv, oldv) {
@@ -105,7 +105,7 @@ $$("{{webix_container_id}}").addView({
                                             }
                                         }
                                     }
-                                },
+                                }
                             ]
                         },
                         {view: "spacer", height: 10},
@@ -145,11 +145,11 @@ $$("{{webix_container_id}}").addView({
                                             {
                                                 content: 'selectFilter',
                                                 options: [
-                                                    {id: '', value: '{{_("All")|escapejs}}'},
-                                                    {id: 'true', value: '{{_("Yes")|escapejs}}'},
-                                                    {id: 'false', value: '{{_("No")|escapejs}}'}
+                                                    {id: '', value: '{{ _("All")|escapejs }}'},
+                                                    {id: 'true', value: '{{ _("Yes")|escapejs }}'},
+                                                    {id: 'false', value: '{{ _("No")|escapejs }}'}
                                                 ],
-                                                compare:match
+                                                compare: match
                                             },
                                         {% else %}
                                             {content: "textFilter"}
@@ -165,10 +165,10 @@ $$("{{webix_container_id}}").addView({
                             data: [],
                             on: {
                                 onBeforeLoad: function () {
-                                    $$('{{webix_container_id}}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
+                                    $$('{{ webix_container_id }}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
                                 },
                                 onAfterLoad: function () {
-                                    $$('{{webix_container_id}}').hideOverlay();
+                                    $$('{{ webix_container_id }}').hideOverlay();
                                 },
                                 onCheck: function (rowId, colId, state) {
                                     if (state) {
@@ -201,24 +201,23 @@ $$("{{webix_container_id}}").addView({
                     id: "action_combo",
                     maxWidth: "300",
                     value: 1,
-                    label: '{{_("Action")|escapejs}}',
+                    label: '{{ _("Action")|escapejs }}',
                     options: [
                         {id: 1, value: "------------"},
-                        {% for send_method in send_methods %}
-                            {id: "{{ send_method.method }}.{{ send_method.function }}", value: "{{ send_method.verbose_name }}"},
-                        {% endfor %}
+                        {% if send_methods|length > 0 %}
+                            {id: "send", value: "{{ _("Send")|escapejs }}"},
+                        {% endif %}
                     ]
                 },
                 {
                     view: "button",
                     id: "action_button",
-                    value: "{{_("Go")|escapejs}}",
+                    value: "{{ _("Go")|escapejs }}",
                     inputWidth: 50,
                     width: 50,
                     on: {
                         onItemClick: function () {
-                            var action_original = $$("action_combo").getValue();
-                            action = action_original.split(".")[0];
+                            var action = $$("action_combo").getValue();
 
                             var recipients = {};
                             {% for datatable in datatables %}
@@ -230,28 +229,10 @@ $$("{{webix_container_id}}").addView({
                                 })
                             {% endfor %}
 
-                            {% if 'skebby' in send_method_types %}
-                            if (action === "skebby") {
-                                django_webix_sender.open(action_original, recipients);
-                            }
-                            {% endif %}
-
-                            {% if 'email' in send_method_types %}
-                            if (action === "email") {
-                                django_webix_sender.open(action_original, recipients);
-                            }
-                            {% endif %}
-
-                            {% if 'telegram' in send_method_types %}
-                            if (action === "telegram") {
-                                django_webix_sender.open(action_original, recipients);
-                            }
-                            {% endif %}
-
-                            {% if 'storage' in send_method_types %}
-                            if (action === "storage") {
-                                django_webix_sender.open(action_original, recipients);
-                            }
+                            {% if send_methods|length > 0 %}
+                                if (action === "send") {
+                                    django_webix_sender.open(recipients);
+                                }
                             {% endif %}
                         }
                     }
@@ -259,7 +240,7 @@ $$("{{webix_container_id}}").addView({
                 {
                     view: "label",
                     id: "count_bottom_label_selected",
-                    label: "0 {{_("selected of")|escapejs}}",
+                    label: "0 {{ _("selected of")|escapejs }}",
                     hidden: true,
                     width: 150,
                     paddingX: 0,
@@ -303,10 +284,10 @@ var getDatatablesItems = function () {
 {# Attach events to datatables and loads data if `filters` is not installed #}
 {% for datatable in datatables %}
     $$("{{ datatable.model }}").on_click.webix_cell = function () {
-      return false;
+        return false;
     };
     $$("{{ datatable.model }}").$view.oncontextmenu = function () {
-      return false;
+        return false;
     };
 
     $$('{{ datatable.model }}').attachEvent("onAfterLoad", getDatatablesItems);
@@ -332,7 +313,7 @@ $.ajax({
         webix.message({
             type: "error",
             expire: 10000,
-            text: '{{_("Unable to load sender class")|escapejs}}'
+            text: '{{ _("Unable to load sender class")|escapejs }}'
         });
     }
 });

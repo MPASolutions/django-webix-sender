@@ -150,17 +150,24 @@ class SenderSend(View):
         :return: Json con lo stato dell'invio della corrispondenza
         """
 
-        send_method = request.POST.get("send_method", None)
+        send_methods = request.POST.get("send_methods", None)
         typology = request.POST.get("typology", None)
         subject = request.POST.get("subject", "")
         body = request.POST.get("body", "")
         recipients = json.loads(request.POST.get("recipients", "{}"))
         presend = request.POST.get("presend", None)
 
-        result, status = send_mixin(send_method, typology, subject, body, recipients, presend,
-                                    user=request.user, files=request.FILES)
+        results = []
+        for send_method in send_methods.split(","):
+            result, status = send_mixin(send_method, typology, subject, body, recipients, presend,
+                                        user=request.user, files=request.FILES)
+            results.append({
+                "send_method": send_method,
+                "result": result,
+                "status": status
+            })
 
-        return JsonResponse(result, status=status)
+        return JsonResponse(results, safe=False)  #, status=200 if all(i["status"] == 200 for i in results) else 400)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -172,6 +179,8 @@ class DjangoWebixSenderWindow(WebixTemplateView):
 
         context['send_methods'] = CONF['send_methods']
         context['typology_model'] = CONF['typology_model']
+        context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
+        context['initial_send_methods'] = CONF.get('initial_send_methods', [])
 
         return context
 

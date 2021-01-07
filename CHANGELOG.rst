@@ -24,6 +24,7 @@ Changed
 ~~~~~~~
 * Changed send_methods path
 * Moved `CONFIG_SKEBBY` to Skebby `send_method` configuration
+* Changed send window to allow multiple send methods at the same time
 
 Fixed
 ~~~~~~~
