@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 import importlib
 from typing import List, Dict, Any, Optional, Tuple
 
 import phonenumbers
 from django.apps import apps
-from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 from django_webix_sender.models import MessageSent, DjangoWebixSender
-from django_webix_sender.settings import CONF
+
+CONF = getattr(settings, "WEBIX_SENDER", None)
 
 ISO_8859_1_limited = '@èéùìò_ !"#%\\\'()*+,-./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜabcdefghijklmnopqrstuvwxyzäöñüà'
 
@@ -26,10 +26,10 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
     """
     Function to send the message
 
-    :param send_method: <sms|email>.<function> (eg. "sms.django_webix_sender.utils.send_sms")
+    :param send_method: <skebby|email|telegram>.<function> (eg. "skebby.django_webix_sender.utils.send")
     :param typology: MessageTypology ID
-    :param subject: Subject of email
-    :param body: Body of message (email or sms)
+    :param subject: Subject of message
+    :param body: Body of message (email, skebby, telegram or storage)
     :param recipients: Dict {'<app_label>.<model>': [<id>, <id>]}
     :param presend: None: verify before the send; Otherwise: send the message
     :param kwargs: `user` and `files` (default: user=None, files={})
@@ -56,6 +56,16 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
                 if not issubclass(related.__class__, DjangoWebixSender):
                     raise Exception(_('Related is not subclass of `DjangoWebixSender`'))
                 _recipients_instance.append(related)
+        if hasattr(_recipient, 'get_email_related'):
+            for related in _recipient.get_email_related:
+                if not issubclass(related.__class__, DjangoWebixSender):
+                    raise Exception(_('Related is not subclass of `DjangoWebixSender`'))
+                _recipients_instance.append(related)
+        if hasattr(_recipient, 'get_telegram_related'):
+            for related in _recipient.get_telegram_related:
+                if not issubclass(related.__class__, DjangoWebixSender):
+                    raise Exception(_('Related is not subclass of `DjangoWebixSender`'))
+                _recipients_instance.append(related)
     _recipients_instance = list(set(_recipients_instance))
 
     # 2. Recupero la funzione per inviare
@@ -77,7 +87,11 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
             'address': []
         }
     }
-    if method == "sms":
+    if method == "skebby":
+        CONFIG_SKEBBY = next(
+            (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "skebby"), {}
+        ).get("config")
+
         for recipient in _recipients_instance:
             # Prelevo il numero di telefono e lo metto in una lista se non è già una lista
             _get_sms = recipient.get_sms
@@ -88,7 +102,7 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
             for _sms in _get_sms:
                 # Verifico che il numero sia valido
                 try:
-                    number = phonenumbers.parse(_sms, CONF['region'])
+                    number = phonenumbers.parse(_sms, CONFIG_SKEBBY['region'])
                     _sms = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
                     # Contatto non ancora presente nella lista
                     if phonenumbers.is_valid_number(number) and _sms not in _recipients['valids']['address']:
@@ -125,6 +139,41 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
                 else:
                     _recipients['invalids']['address'].append(_email)
                     _recipients['invalids']['recipients'].append(recipient)
+    elif method == "telegram":
+        for recipient in _recipients_instance:
+            # Prelevo l'ID telegram e lo metto in una lista se non è già una lista
+            _get_telegram = recipient.get_telegram
+            if not isinstance(_get_telegram, list):
+                _get_telegram = [_get_telegram]
+
+            # Per ogni email verifico il suo stato e lo aggiungo alla chiave corretta
+            for _telegram in _get_telegram:
+                # Contatto non ancora presente nella lista
+                if _telegram and not _telegram in _recipients['valids']['address']:
+                    _recipients['valids']['address'].append(_telegram)
+                    _recipients['valids']['recipients'].append(recipient)
+                # Contatto già presente nella lista (duplicato)
+                elif _telegram:
+                    _recipients['duplicates']['address'].append(_telegram)
+                    _recipients['duplicates']['recipients'].append(recipient)
+                # Indirizzo non presente
+                else:
+                    _recipients['invalids']['address'].append(_telegram)
+                    _recipients['invalids']['recipients'].append(recipient)
+    elif method == "storage":
+        for recipient in _recipients_instance:
+            # Prelevo l'ID user e lo metto in una lista se non è già una lista
+            if not recipient.pk in _recipients['valids']['address']:
+                _recipients['valids']['address'].append(recipient.pk)
+                _recipients['valids']['recipients'].append(recipient)
+            # Contatto già presente nella lista (duplicato)
+            elif recipient.pk in _recipients['valids']['address']:
+                _recipients['duplicates']['address'].append(recipient.pk)
+                _recipients['duplicates']['recipients'].append(recipient)
+            # Indirizzo non presente
+            else:
+                _recipients['invalids']['address'].append(recipient.pk)
+                _recipients['invalids']['recipients'].append(recipient)
 
     # Convert dict in list of tuples
     _recipients['valids'] = list(zip(_recipients['valids']['recipients'], _recipients['valids']['address']))
@@ -135,7 +184,7 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
 
     # 4 Verifica prima dell'invio (opzionale)
     if presend is None:
-        if method == "sms":
+        if method == "skebby":
             # Verifico che il corpo dell'sms sia valido
             invalid_characters = ''
             for c in body:
@@ -160,7 +209,7 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
     )
 
     # 6. aggiungo il link del file in fondo al corpo
-    if len(attachments) > 0 and method == "sms":
+    if len(attachments) > 0 and method == "skebby":
         body += "\n\n"
         for attachment in attachments:
             body += "{attachment}\n".format(attachment=attachment.get_url())
@@ -168,6 +217,10 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
         body += "</br></br>"
         for attachment in attachments:
             body += "<a href='{attachment}'>{attachment}</a></br>".format(attachment=attachment.get_url())
+    elif len(attachments) > 0 and method == "telegram":
+        pass  # TODO: create attachments function
+    elif len(attachments) > 0 and method == "storage":
+        pass  # ignore this step, file already in db
 
     # 7. Creo il log e collego gli allegati
     # Costo del messaggio
@@ -195,13 +248,17 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
     message_sent.attachments.add(*attachments)
 
     # 8. Send messages
-    if method == "sms":
-        # Invio i messaggi
+    if method == "skebby":
         result = send_function(_recipients, body, message_sent)
-        return {'status': _('Sms sent'), 'extra': result.extra}, 200
+        return {'status': _('Skebby sent'), 'extra': result.extra}, 200
     elif method == "email":
-        # Invio i messaggi
         result = send_function(_recipients, subject, body, message_sent)
         return {'status': _('Emails sent'), 'extra': result.extra}, 200
+    elif method == "telegram":
+        result = send_function(_recipients, body, message_sent)
+        return {'status': _('Telegram sent'), 'extra': result.extra}, 200
+    elif method == "storage":
+        result = send_function(_recipients, subject, body, message_sent)
+        return {'status': _('Storage sent'), 'extra': result.extra}, 200
     else:
         return {'status': _('Invalid send method')}, 400

@@ -3,13 +3,14 @@
 from celery import shared_task
 from django.conf import settings
 
-from django_webix_sender.models import MessageSent, MessageRecipient
 from django_webix_sender.send_methods.skebby.exceptions import SkebbyException
 from django_webix_sender.send_methods.skebby.gateway import Skebby
 
 
 @shared_task
 def check_state(order_id):
+    from django_webix_sender.models import MessageSent
+
     if 'django_webix_sender' not in settings.INSTALLED_APPS:
         raise Exception("Django Webix Sender is not in INSTALLED_APPS")
 
@@ -19,10 +20,14 @@ def check_state(order_id):
         return {'status': 'Invalid order id'}
 
     try:
+        CONFIG_SKEBBY = next(
+            (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "skebby"), {}
+        ).get("config")
+
         skebby = Skebby()
         skebby.authentication.session_key(
-            username=settings.CONFIG_SKEBBY['username'],
-            password=settings.CONFIG_SKEBBY['password']
+            username=CONFIG_SKEBBY['username'],
+            password=CONFIG_SKEBBY['password']
         )
 
         if message_sent.messagerecipient_set.filter(status='unknown').exists():
@@ -57,17 +62,23 @@ def check_state_history(same_sender_name=True):
     if 'django_webix_sender' not in settings.INSTALLED_APPS:
         raise Exception("Django Webix Sender is not in INSTALLED_APPS")
 
+    from django_webix_sender.models import MessageRecipient
+
     try:
+        CONFIG_SKEBBY = next(
+            (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "skebby"), {}
+        ).get("config")
+
         # Connection
         skebby = Skebby()
         skebby.authentication.session_key(
-            username=settings.CONFIG_SKEBBY['username'],
-            password=settings.CONFIG_SKEBBY['password']
+            username=CONFIG_SKEBBY['username'],
+            password=CONFIG_SKEBBY['password']
         )
 
         # Recupero tutti i destinatari con stato unknown
         recipients = MessageRecipient.objects.filter(
-            message_sent__send_method='sms.django_webix_sender.send_methods.skebby.send_sms',
+            message_sent__send_method='skebby.django_webix_sender.send_methods.skebby.send',
             status='unknown'
         ).values_list('recipient_address', flat=True).order_by().distinct()
 
@@ -75,7 +86,7 @@ def check_state_history(same_sender_name=True):
         for recipient in recipients:
             # Recupero il messaggio più vecchio di questo destinatario
             date_from = MessageRecipient.objects.filter(
-                message_sent__send_method='sms.django_webix_sender.send_methods.skebby.send_sms',
+                message_sent__send_method='skebby.django_webix_sender.send_methods.skebby.send',
                 status='unknown',
                 recipient_address=recipient
             ).values_list('creation_date', flat=True).order_by('creation_date').first()
@@ -87,12 +98,12 @@ def check_state_history(same_sender_name=True):
             )
 
             for communication in results['rcpthistory']:
-                if same_sender_name is True and communication['sender'] != settings.CONFIG_SKEBBY['sender_string']:
+                if same_sender_name is True and communication['sender'] != CONFIG_SKEBBY['sender_string']:
                     continue
 
                 # Estraggo la comunicazione con lo stesso order_id
                 message_recipient = MessageRecipient.objects.filter(
-                    message_sent__send_method='sms.django_webix_sender.send_methods.skebby.send_sms',
+                    message_sent__send_method='skebby.django_webix_sender.send_methods.skebby.send',
                     message_sent__extra__order_id=communication['order_id'],
                     status='unknown',
                     recipient_address=recipient,
@@ -122,7 +133,7 @@ def check_state_history(same_sender_name=True):
 
     return {
         'remaining': MessageRecipient.objects.filter(
-            message_sent__send_method='sms.django_webix_sender.send_methods.skebby.send_sms',
+            message_sent__send_method='skebby.django_webix_sender.send_methods.skebby.send',
             status='unknown'
         ).count()
     }

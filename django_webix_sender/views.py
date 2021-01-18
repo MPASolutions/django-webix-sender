@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 import json
 from decimal import Decimal
 
+import telegram
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q, Sum, F, DecimalField, Case, When, IntegerField
 from django.http import JsonResponse, Http404
@@ -15,15 +15,19 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+from telegram import Update
+from telegram.ext import Dispatcher
+
 from django_webix.views import WebixTemplateView
 from django_webix_sender.models import MessageSent
-from django_webix_sender.settings import CONF
+from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
-from django_webix_sender.send_methods.skebby.tasks import check_state
 
 if apps.is_installed('filter'):
     from filter.models import Filter
     from filter.utils import get_aggregates_q_by_id
+
+CONF = getattr(settings, "WEBIX_SENDER", None)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -146,17 +150,24 @@ class SenderSend(View):
         :return: Json con lo stato dell'invio della corrispondenza
         """
 
-        send_method = request.POST.get("send_method", None)
+        send_methods = request.POST.get("send_methods", None)
         typology = request.POST.get("typology", None)
         subject = request.POST.get("subject", "")
         body = request.POST.get("body", "")
         recipients = json.loads(request.POST.get("recipients", "{}"))
         presend = request.POST.get("presend", None)
 
-        result, status = send_mixin(send_method, typology, subject, body, recipients, presend,
-                                    user=request.user, files=request.FILES)
+        results = []
+        for send_method in send_methods.split(","):
+            result, status = send_mixin(send_method, typology, subject, body, recipients, presend,
+                                        user=request.user, files=request.FILES)
+            results.append({
+                "send_method": send_method,
+                "result": result,
+                "status": status
+            })
 
-        return JsonResponse(result, status=status)
+        return JsonResponse(results, safe=False)  #, status=200 if all(i["status"] == 200 for i in results) else 400)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -168,6 +179,8 @@ class DjangoWebixSenderWindow(WebixTemplateView):
 
         context['send_methods'] = CONF['send_methods']
         context['typology_model'] = CONF['typology_model']
+        context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
+        context['initial_send_methods'] = CONF.get('initial_send_methods', [])
 
         return context
 
@@ -211,18 +224,6 @@ class InvoiceManagement(WebixTemplateView):
         send_method = self.request.GET.get('send_method', None)
         group = CONF.get('invoices_period', 'monthly')
 
-        # Aggiorno tutti i messaggi
-        for messagesent in MessageSent.objects.filter(
-            send_method='sms.django_webix_sender.send_methods.skebby.send_sms',
-            creation_date__year=year,
-            extra__order_id__isnull=False
-        ).annotate(
-            unknown_sum=Sum(
-                Case(When(messagerecipient__status='unknown', then=1), default=0, output_field=IntegerField())
-            )
-        ).filter(unknown_sum__gt=0):
-            check_state.delay(messagesent.extra['order_id'])
-
         # Controllo che i filtri siano validi
         if not group in self.groups:
             return Http404
@@ -253,7 +254,7 @@ class InvoiceManagement(WebixTemplateView):
                 send_method=send_method
             )
             if not sender:
-                sender = _('Not specified')
+                sender = _('Sender not specified')
 
             _sender = {
                 'name': '{}'.format(sender),
@@ -270,6 +271,14 @@ class InvoiceManagement(WebixTemplateView):
                 for _month in period:
                     _filter |= Q(creation_date__month=_month)
                 totals = qs.filter(_filter).aggregate(
+                    messages_success=Sum(Case(
+                        When(
+                            messagerecipient__status='success',
+                            then=F('messagerecipient__sent_number')
+                        ),
+                        default=0,
+                        output_field=IntegerField()
+                    )),
                     messages_unknown=Sum(Case(
                         When(
                             messagerecipient__status='unknown',
@@ -286,15 +295,7 @@ class InvoiceManagement(WebixTemplateView):
                         default=0,
                         output_field=IntegerField()
                     )),
-                    messages_success=Sum(Case(
-                        When(
-                            messagerecipient__status='success',
-                            then=F('messagerecipient__sent_number')
-                        ),
-                        default=0,
-                        output_field=IntegerField()
-                    )),
-                    invoiced=Sum(Case(
+                    messages_invoiced=Sum(Case(
                         When(
                             invoiced=True,
                             messagerecipient__status='success',
@@ -303,7 +304,7 @@ class InvoiceManagement(WebixTemplateView):
                         default=Decimal('0'),
                         output_field=IntegerField()
                     )),
-                    to_be_invoiced=Sum(Case(
+                    messages_to_be_invoiced=Sum(Case(
                         When(
                             invoiced=False,
                             messagerecipient__status='success',
@@ -347,7 +348,7 @@ class InvoiceManagement(WebixTemplateView):
             return JsonResponse({'status': _('Invalid period')}, status=400)
         if send_method is None:
             return JsonResponse({'status': _('Invalid send method')}, status=400)
-        if sender == _('Not specified'):
+        if sender == _('Sender not specified'):
             sender = None
 
         # Genero la lista dei mesi per periodo
@@ -372,3 +373,30 @@ class InvoiceManagement(WebixTemplateView):
         qs.update(invoiced=True)
 
         return JsonResponse({'status': _('Invoiced')})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class TelegramWebhookView(View):
+    def post(self, request, *args, **kwargs):
+        CONFIG_TELEGRAM = next(
+            (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "telegram"), {}
+        ).get("config")
+
+        print(json.loads(request.body))
+
+        bot = telegram.Bot(token=CONFIG_TELEGRAM.get('bot_token'))
+        dispatcher = Dispatcher(bot, None, workers=0, persistence=DatabaseTelegramPersistence())
+
+        # Set handlers
+        for handler in CONFIG_TELEGRAM.get('handlers', []):
+            if isinstance(handler, dict):
+                dispatcher.add_handler(**handler)
+            elif isinstance(handler, tuple):
+                dispatcher.add_handler(*handler)
+            else:
+                dispatcher.add_handler(handler)
+
+        # Update dispatcher
+        dispatcher.process_update(Update.de_json(json.loads(request.body), bot))
+
+        return JsonResponse({"ok": "POST request processed"})

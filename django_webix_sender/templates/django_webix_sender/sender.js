@@ -13,67 +13,107 @@ function DjangoWebixSender() {
      */
     var sender_window = undefined;
 
+    var initialSendMethods = [
+        {% for initial_send_method in initial_send_methods %}
+            "{{ initial_send_method.method }}.{{ initial_send_method.function }}",
+        {% endfor %}
+    ];
+
     /**
      * Create window helper
      *
-     * @param send_method
      * @param recipients
      * @param default_text
      */
-    var check_recipients_count = function (send_method, recipients, default_text) {
+    var check_recipients_count = function (recipients, default_text) {
         if (sender_window) {
             sender_window.destructor();
         }
-        sender_window = create_window(send_method, recipients, default_text);
+        sender_window = create_window(recipients, default_text);
         sender_window.show();
     }
 
     /**
      * Returns form elements
      *
-     * @param send_method
-     * @param send_method_original
      * @param recipients
      * @param default_text
      * @returns {*[]}
      */
-    var get_elements = function (send_method, send_method_original, recipients, default_text) {
-        var elements = [
-            {% if typology_model.enabled %}
-            {
+    var get_elements = function (recipients, default_text) {
+        var elements = [];
+
+        elements.push({
+            view: "multicombo",
+            id: 'django-webix-sender-form-send_methods',
+            name: 'send_methods',
+            label: "{{ _("Send methods")|escapejs }}",
+            labelWidth: 140,
+            labelAlign: 'right',
+            value: initialSendMethods.toString(),
+            options: [
+                {% for send_method in send_methods %}
+                    {
+                        id: "{{ send_method.method }}.{{ send_method.function }}",
+                        value: "{{ send_method.verbose_name }}"
+                    },
+                {% endfor %}
+            ],
+            on: {
+                onChange(newVal, oldVal) {
+                    set_rules(newVal);
+                    {% if 'email' in send_method_types or 'storage' in send_method_types %}
+                        if (newVal.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length > 0) {
+                            $$('django-webix-sender-form-subject').show();
+                            $$("django-webix-sender-form-attachments").show();
+                            $$("django-webix-sender-form-attachments_list").show();
+                        } else {
+                            $$('django-webix-sender-form-subject').hide();
+                            $$("django-webix-sender-form-attachments").hide();
+                            $$("django-webix-sender-form-attachments_list").hide();
+                            $$('django-webix-sender-form-subject').setValue();
+                            $$("django-webix-sender-form-attachments").setValue();
+                        }
+                    {% endif %}
+                }
+            }
+        });
+        elements.push({
+            view: "template",
+            template: "<hr />",
+            type: "clean",
+            height: 20
+        });
+
+        {% if typology_model.enabled %}
+            elements.push({
                 view: "combo",
                 id: 'django-webix-sender-form-typology',
                 name: 'typology',
-                label: '{{_("Typology")|escapejs}}',
+                label: '{{ _("Typology")|escapejs }}',
+                labelWidth: 140,
+                labelAlign: 'right',
                 suggest: {
                     view: "suggest",
                     keyPressTimeout: 400,
                     body: {
-                        dataFeed: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology'
+                        dataFeed: "{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology"
                     },
-                    url: '{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology&filter[value]='
+                    url: "{% url 'webix_autocomplete_lookup' %}?app_label=django_webix_sender&model_name=messagetypology&filter[value]="
                 }
-            },
-            {
-                view: "template",
-                template: "<hr />",
-                type: "clean",
-                height: 20
-            },
-            {% endif %}
-        ];
-        if (send_method === 'email') {
+            });
+        {% endif %}
+        {% if 'email' in send_method_types or 'storage' in send_method_types %}
             elements.push({
                 view: 'text',
                 id: 'django-webix-sender-form-subject',
                 name: 'subject',
-                label: '{{_("Subject")|escapejs}}'
+                label: '{{ _("Subject")|escapejs }}',
+                labelWidth: 140,
+                labelAlign: 'right',
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length === 0
             });
-        }
-        elements.push({
-            view: 'label',
-            label: '{{_("Body")|escapejs}}'
-        });
+        {% endif %}
         elements.push({
             view: "textarea",
             id: 'django-webix-sender-form-body',
@@ -82,66 +122,64 @@ function DjangoWebixSender() {
             value: default_text !== undefined ? default_text : '',
             on: {
                 onKeyPress: function () {
-                    if (send_method === 'sms') {
-                        webix.delay(function () {
-                            var count = $$("django-webix-sender-form-body").getValue().length;
-                            $$("django-webix-sender-form-length").setValue(count + " {{_("characters")|escapejs}}");
-                        });
-                    }
+                    webix.delay(function () {
+                        var count = $$("django-webix-sender-form-body").getValue().length;
+                        $$("django-webix-sender-form-length").setValue(count + " {{ _("characters")|escapejs }}");
+                    });
                 }
             }
         });
-        if (send_method === 'sms') {
-            elements.push({
-                view: "label",
-                id: "django-webix-sender-form-length",
-                label: "0 {{_("characters")|escapejs}}",
-                align: "right"
-            });
-        }
-        if (send_method === 'email') {
+        elements.push({
+            view: "label",
+            id: "django-webix-sender-form-length",
+            label: "0 {{ _("characters")|escapejs }}",
+            align: "right"
+        });
+        {% if 'email' in send_method_types or 'storage' in send_method_types %}
             elements.push({
                 view: "uploader",
                 id: "django-webix-sender-form-attachments",
-                value: "{{_("Attach file")|escapejs}}",
+                value: "{{ _("Attach file")|escapejs }}",
                 link: "django-webix-sender-form-attachments_list",
-                autosend: false
+                autosend: false,
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length === 0
             });
             elements.push({
                 view: "list",
                 id: "django-webix-sender-form-attachments_list",
                 type: "uploader",
-                autoheight: true
+                autoheight: true,
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length === 0
             });
-        }
+        {% endif %}
         elements.push({
             view: 'button',
-            label: '{{_("Send")|escapejs}}',
+            label: '{{ _("Send")|escapejs }}',
             on: {
                 onItemClick: function () {
                     if (!$$("django-webix-sender-form").validate({hidden: true})) {
                         webix.message({
                             type: "error",
                             expire: 10000,
-                            text: '{{_("You have to fill in all the required fields")|escapejs}}'
+                            text: '{{ _("You have to fill in all the required fields")|escapejs }}'
                         });
                         return;
                     }
 
                     var data = new FormData();
+                    data.append('send_methods', $$('django-webix-sender-form-send_methods').getValue());
                     {% if typology_model.enabled %}
                         data.append('typology', $$('django-webix-sender-form-typology').getValue());
                     {% endif %}
-                    data.append('send_method', send_method_original);
-                    if (send_method === 'email') {
+                    {% if 'email' in send_method_types or 'storage' in send_method_types %}
                         data.append('subject', $$('django-webix-sender-form-subject').getValue());
-                    }
+                    {% endif %}
                     data.append('body', $$('django-webix-sender-form-body').getValue());
-                    if (send_method === 'email') {
+                    {% if 'email' in send_method_types or 'storage' in send_method_types %}
                         $$("django-webix-sender-form-attachments").files.data.each(function (obj) {
                             data.append('file_' + obj.id, obj.file);
                         });
-                    }
+                    {% endif %}
                     data.append('recipients', JSON.stringify(recipients));
 
                     $.ajax({
@@ -154,17 +192,17 @@ function DjangoWebixSender() {
                         cache: false,
                         timeout: 600000,
                         success: function (result) {
-                            var valids = "{{_("Valid recipients: ")|escapejs}}" + result['valids'];
-                            var invalids = "{{_("Invalids recipients: ")|escapejs}}" + result['invalids'];
-                            var duplicates = "{{_("Duplicate recipients: ")|escapejs}}" + result['duplicates'];
+                            var valids = "{{ _("Valid recipients: ")|escapejs }}" + result['valids'];
+                            var invalids = "{{ _("Invalids recipients: ")|escapejs }}" + result['invalids'];
+                            var duplicates = "{{ _("Duplicate recipients: ")|escapejs }}" + result['duplicates'];
                             webix.confirm({
                                 title: "{{ _('Confirmation')|escapejs }}",
-                                text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{{_("Are you sure to send this message?")|escapejs}}",
-                                ok: "{{_("Yes")|escapejs}}",
-                                cancel: "{{_("No")|escapejs}}",
+                                text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{{ _("Are you sure to send this message?")|escapejs }}",
+                                ok: "{{ _("Yes")|escapejs }}",
+                                cancel: "{{ _("No")|escapejs }}",
                                 callback: function (result) {
                                     if (result) {
-                                        $$('{{webix_container_id}}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
+                                        $$('{{ webix_container_id }}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
                                         data.append('presend', false);
                                         $.ajax({
                                             type: "POST",
@@ -175,21 +213,27 @@ function DjangoWebixSender() {
                                             contentType: false,
                                             cache: false,
                                             timeout: 600000,
-                                            success: function () {
-                                                $$('{{webix_container_id}}').hideOverlay();
-                                                webix.message({
-                                                    type: "info",
-                                                    expire: 10000,
-                                                    text: "{{_("The messages have been sent")|escapejs}}"
+                                            success: function (data) {
+                                                // Generate message string
+                                                var result = "";
+                                                data.forEach(function (element) {
+                                                    result += element["result"]["status"];
+                                                    result += "</br>"
+                                                });
+
+                                                $$('{{ webix_container_id }}').hideOverlay();
+                                                webix.alert({
+                                                    title: "{{ _("Results")|escapejs }}",
+                                                    text: result
                                                 });
                                                 sender_window.destructor();
                                             },
                                             error: function () {
-                                                $$('{{webix_container_id}}').hideOverlay();
+                                                $$('{{ webix_container_id }}').hideOverlay();
                                                 webix.message({
                                                     type: "error",
                                                     expire: 10000,
-                                                    text: '{{_("Unable to send messages")|escapejs}}'
+                                                    text: '{{ _("Unable to send messages")|escapejs }}'
                                                 });
                                             }
                                         });
@@ -198,11 +242,11 @@ function DjangoWebixSender() {
                             });
                         },
                         error: function () {
-                            $$('{{webix_container_id}}').hideOverlay();
+                            $$('{{ webix_container_id }}').hideOverlay();
                             webix.message({
                                 type: "error",
                                 expire: 10000,
-                                text: '{{_("Unable to send messages")|escapejs}}'
+                                text: '{{ _("Unable to send messages")|escapejs }}'
                             });
                         }
                     });
@@ -216,64 +260,66 @@ function DjangoWebixSender() {
     /**
      * Return form rules
      *
-     * @param send_method
-     * @returns dictionary
+     * @param send_methods
+     * @returns {*}
      */
-    var get_rules = function (send_method) {
+    var get_rules = function (send_methods) {
         var rules = {
+            "send_methods": webix.rules.isNotEmpty,
             {% if typology_model.enabled and typology_model.required %}
                 "typology": webix.rules.isNotEmpty,
             {% endif %}
             "body": webix.rules.isNotEmpty
         };
 
-        if (send_method === 'email') {
-            rules['subject'] = webix.rules.isNotEmpty
+        // Add subject not empty rule
+        if (send_methods.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length > 0) {
+            rules['subject'] = webix.rules.isNotEmpty;
         }
 
         return rules;
     }
 
     /**
+     * Set form rules
+     *
+     * @param send_methods
+     */
+    var set_rules = function (send_methods) {
+        $$("django-webix-sender-form").config.rules = get_rules(send_methods);
+    }
+
+    /**
      * Create webix window form
      *
-     * @param send_method
      * @param recipients
      * @param default_text
      * @returns {webix.ui.baseview | webix.ui}
      */
-    var create_window = function (send_method, recipients, default_text) {
-        var send_method_original = send_method;
-        send_method = send_method_original.split(".")[0];
-        var title = '';
-        if (send_method === 'email') {
-            title = "{{_("Send email")|escapejs}}";
-        }
-        else if (send_method === 'sms') {
-            title = "{{_("Send SMS")|escapejs}}";
-        }
-
+    var create_window = function (recipients, default_text) {
         return new webix.ui({
             view: "window",
             id: "django-webix-sender",
-            width: 600,
+            width: 800,
             height: 500,
             modal: true,
             move: true,
-            resize: false,
+            resize: true,
             position: "center",
             head: {
                 view: "toolbar", cols: [
                     {
                         view: "label",
-                        label: title
+                        label: '{{ _("Send")|escapejs }}'
                     },
                     {
                         view: "button",
-                        label: '{{_("Close")|escapejs}}',
+                        label: '{{ _("Close")|escapejs }}',
                         width: 100,
                         align: 'right',
-                        click: "$$('django-webix-sender').destructor();"
+                        click: function () {
+                          $$('django-webix-sender').destructor();
+                        }
                     }
                 ]
             },
@@ -282,36 +328,36 @@ function DjangoWebixSender() {
                     view: 'form',
                     id: 'django-webix-sender-form',
                     padding: 10,
-                    elements: get_elements(send_method, send_method_original, recipients, default_text),
-                    rules: get_rules(send_method)
+                    elements: get_elements(recipients, default_text),
+                    rules: get_rules(initialSendMethods)  // Initial send methods
                 }]
-            }
+            },
+            footer: {}
         });
     }
 
     /**
      * Open django webix sender window
      *
-     * @param send_methods
      * @param recipients
      * @param default_text
      */
-    this.open = function (send_methods, recipients, default_text) {
+    this.open = function (recipients, default_text) {
         var total = 0;
         Object.keys(recipients).forEach(function (key) {
-            total += recipients[key].length
+            total += recipients[key].length;
         });
 
-        if (total == 0) {
+        if (total === 0) {
             webix.alert({
-                title: "{{_("Caution!")|escapejs}}",
-                text: "{{_("There are no recipients for this communication")|escapejs}}",
+                title: "{{ _("Caution!")|escapejs }}",
+                text: "{{ _("There are no recipients for this communication")|escapejs }}",
                 callback: function () {
-                    check_recipients_count(send_methods, recipients, default_text);
+                    check_recipients_count(recipients, default_text);
                 }
             });
         } else {
-            check_recipients_count(send_methods, recipients, default_text);
+            check_recipients_count(recipients, default_text);
         }
     }
 }

@@ -4,7 +4,6 @@ from typing import Dict, List
 
 import six
 from django.conf import settings
-from django.core.mail import EmailMessage
 
 
 def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent):
@@ -12,7 +11,7 @@ def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent
     Send email
 
     :param recipients: Dict {'<app_label>.<model>': [<id>, <id>]}
-    :param subject: Subject of email
+    :param subject: Subject of message
     :param body: Body of message
     :param message_sent: MessageSent instance
     :return: MessageSent instance
@@ -36,60 +35,34 @@ def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent
     if not isinstance(message_sent, MessageSent):
         raise Exception("`message_sent` must be MessageSent instance")
 
-    CONFIG_EMAIL = next(
-        (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "email"), {}
-    ).get("config")
-
     # Per ogni istanza di destinatario ciclo
     for recipient, recipient_address in recipients['valids']:
-        email = EmailMessage(
-            subject=subject,
-            body=body,
-            from_email=CONFIG_EMAIL['from_email'],
-            to=[recipient_address]
-        )
-        email.content_subtype = "html"
-
-        try:
-            email.send()
-
-            _extra = {'status': "Email {} ({}) inviata con successo".format(recipient_address, recipient)}
-            _status = 'success'
-        except Exception as e:
-            _extra = {'status': "{}".format(e)}
-            _status = 'failed'
-
         MessageRecipient.objects.create(
             message_sent=message_sent,
             recipient=recipient,
             sent_number=1,
-            status=_status,
+            status='success',
             recipient_address=recipient_address,
-            extra=_extra,
         )
 
-    # Salvo i destinatari senza numero e quindi ai quali non è stato inviato il messaggio
+    # Salvo i destinatari non validi
     for recipient, recipient_address in recipients['invalids']:
-        message_recipient = MessageRecipient(
+        MessageRecipient.objects.create(
             message_sent=message_sent,
             recipient=recipient,
             sent_number=0,
             status='invalid',
             recipient_address=recipient_address,
-            extra={'status': "Email non presente ({}) e quindi non inviata".format(recipient)}
         )
-        message_recipient.save()
 
-    # Salvo i destinatari duplicati e quindi ai quali non è stato inviato il messaggio
+    # Salvo i destinatari duplicati
     for recipient, recipient_address in recipients['duplicates']:
-        message_recipient = MessageRecipient(
+        MessageRecipient.objects.create(
             message_sent=message_sent,
             recipient=recipient,
             sent_number=0,
             status='duplicate',
             recipient_address=recipient_address,
-            extra={'status': "Email duplicata".format(recipient)}
         )
-        message_recipient.save()
 
     return message_sent
