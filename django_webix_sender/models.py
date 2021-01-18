@@ -20,6 +20,11 @@ except ImportError:
 
 from django_webix_sender.settings import CONF
 
+try:
+    from mpadjango.db.models import MpaModel as Model
+except ImportError:
+    from django.db.models import Model
+
 
 def save_attachments(files, *args, **kwargs):
     attachments = []
@@ -29,7 +34,7 @@ def save_attachments(files, *args, **kwargs):
     return attachments
 
 
-class DjangoWebixSender(models.Model):
+class DjangoWebixSender(Model):
     class Meta:
         abstract = True
 
@@ -98,7 +103,7 @@ if CONF is not None and \
 
 
     @python_2_unicode_compatible
-    class CustomerTypology(models.Model):
+    class CustomerTypology(Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -150,7 +155,7 @@ if CONF is not None and \
 
 
     @python_2_unicode_compatible
-    class ExternalSubjectTypology(models.Model):
+    class ExternalSubjectTypology(Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -165,7 +170,7 @@ if CONF is not None and \
 
 if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
     @python_2_unicode_compatible
-    class MessageAttachment(models.Model):
+    class MessageAttachment(Model):
         file = models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name=_('Document'))
         insert_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Insert date'))
 
@@ -184,7 +189,7 @@ if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.Mes
 
 if CONF is not None and CONF['typology_model']['enabled']:
     @python_2_unicode_compatible
-    class MessageTypology(models.Model):
+    class MessageTypology(Model):
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -203,7 +208,7 @@ if CONF is not None and CONF['typology_model']['enabled']:
 
 
 @python_2_unicode_compatible
-class MessageSent(models.Model):
+class MessageSent(Model):
     if CONF is not None and CONF['typology_model']['enabled']:
         typology = models.ForeignKey(
             'django_webix_sender.MessageTypology',
@@ -247,7 +252,7 @@ class MessageSent(models.Model):
 
 
 @python_2_unicode_compatible
-class MessageRecipient(models.Model):
+class MessageRecipient(Model):
     message_sent = models.ForeignKey('django_webix_sender.MessageSent', on_delete=models.CASCADE,
                                      verbose_name=_('Message sent'))
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
