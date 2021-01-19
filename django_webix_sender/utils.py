@@ -15,7 +15,14 @@ CONF = getattr(settings, "WEBIX_SENDER", None)
 ISO_8859_1_limited = '@èéùìò_ !"#%\\\'()*+,-./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜabcdefghijklmnopqrstuvwxyzäöñüà'
 
 
-def my_import(name):
+def my_import(name: str) -> callable:
+    """
+    Load a function from a string
+
+    :param name: function path name (e.g. django_webix_sender.send_methods.email.send_utils)
+    :return: callable
+    """
+
     module, function = name.rsplit('.', 1)
     component = importlib.import_module(module)
     return getattr(component, function)
@@ -26,7 +33,7 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
     """
     Function to send the message
 
-    :param send_method: <skebby|email|telegram>.<function> (eg. "skebby.django_webix_sender.utils.send")
+    :param send_method: <skebby|email|telegram|storage>.<function> (eg. "skebby.django_webix_sender.send_methods.email.send_utils")
     :param typology: MessageTypology ID
     :param subject: Subject of message
     :param body: Body of message (email, skebby, telegram or storage)
@@ -241,7 +248,6 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
         user=user,
         sender=_sender
     )
-    _extra = {}
     if CONF['typology_model']['enabled']:
         message_sent.typology_id = typology
     message_sent.save()
@@ -250,15 +256,24 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
     # 8. Send messages
     if method == "skebby":
         result = send_function(_recipients, body, message_sent)
-        return {'status': _('Skebby sent'), 'extra': result.extra}, 200
+        status = _('Skebby sent')
     elif method == "email":
         result = send_function(_recipients, subject, body, message_sent)
-        return {'status': _('Emails sent'), 'extra': result.extra}, 200
+        status = _('Emails sent')
     elif method == "telegram":
         result = send_function(_recipients, body, message_sent)
-        return {'status': _('Telegram sent'), 'extra': result.extra}, 200
+        status = _('Telegram sent')
     elif method == "storage":
         result = send_function(_recipients, subject, body, message_sent)
-        return {'status': _('Storage sent'), 'extra': result.extra}, 200
+        status = _('Storage sent')
     else:
         return {'status': _('Invalid send method')}, 400
+
+    # Add optional extra params
+    if kwargs.get('extra') is not None and isinstance(kwargs.get('extra'), dict):
+        if result.extra is None:
+            result.extra = {}
+        result.extra.update(kwargs.get('extra'))
+        result.save()
+
+    return {'status': status, 'extra': result.extra}, 200

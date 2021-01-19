@@ -6,20 +6,22 @@ from decimal import Decimal
 import telegram
 from django.apps import apps
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Q, Sum, F, DecimalField, Case, When, IntegerField
+from django.db.models import Q, Sum, F, DecimalField, Case, When, IntegerField, Value, CharField, Subquery, OuterRef
+from django.db.models.functions import StrIndex, Substr
 from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from telegram import Update
 from telegram.ext import Dispatcher
 
-from django_webix.views import WebixTemplateView
-from django_webix_sender.models import MessageSent
+from django_webix.views import WebixTemplateView, WebixListView
+from django_webix_sender.models import MessageSent, MessageRecipient
 from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
 
@@ -29,9 +31,15 @@ if apps.is_installed('filter'):
 
 CONF = getattr(settings, "WEBIX_SENDER", None)
 
+User = get_user_model()
+
 
 @method_decorator(login_required, name='dispatch')
 class SenderList(WebixTemplateView):
+    """
+    Sender list page
+    """
+
     template_name = 'django_webix_sender/list.js'
     http_method_names = ['get', 'head', 'options']
 
@@ -111,7 +119,7 @@ class SenderGetList(View):
         queryset = queryset.filter(qset).distinct()
         queryset = queryset.select_related(*model_class.get_select_related())
         queryset = queryset.prefetch_related(*model_class.get_prefetch_related())
-        queryset = queryset.filter(model_class.get_filters(request))
+        queryset = queryset.filter(model_class.get_filters_viewers(request.user, request=request))
 
         for recipient in CONF['recipients']:
             if recipient['model'].lower() == contentype.lower():
@@ -167,7 +175,7 @@ class SenderSend(View):
                 "status": status
             })
 
-        return JsonResponse(results, safe=False)  #, status=200 if all(i["status"] == 200 for i in results) else 400)
+        return JsonResponse(results, safe=False)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -181,6 +189,205 @@ class DjangoWebixSenderWindow(WebixTemplateView):
         context['typology_model'] = CONF['typology_model']
         context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
         context['initial_send_methods'] = CONF.get('initial_send_methods', [])
+
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class DjangoWebixSenderMessagesList(WebixListView):
+    model = MessageRecipient
+
+    fields = [
+        {
+            'field_name': 'send_method_type',
+            'datalist_column': '''{id: "send_method_type", header: ["Send method", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+        },
+        {
+            'field_name': 'message_sent__subject',
+            'datalist_column': '''{id: "message_sent__subject", header: ["Subject", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+        },
+        {
+            'field_name': 'message_sent__body',
+            'datalist_column': '''{id: "message_sent__body", header: ["Body", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+        },
+    ]
+
+    url_pattern_list = 'django_webix_sender.messages_list'
+    add_permission = False
+    change_permission = False
+    delete_permission = False
+    enable_column_delete = False
+    enable_column_copy = False
+    enable_row_click = False
+    enable_json_loading = True
+
+    def get_queryset(self, initial_queryset=None):
+        qs = super().get_queryset(initial_queryset=initial_queryset)
+
+        # Only sent messages
+        qs = qs.filter(message_sent__status='sent')
+
+        # Limit filter by user
+        if self.request.user.is_anonymous:
+            qs = qs.none()
+        qset = Q()
+        for recipient_config in CONF['recipients']:
+            app_label, model = recipient_config['model'].lower().split(".")
+            model_class = apps.get_model(app_label=app_label, model_name=model)
+            recipient_queryset = model_class.objects.all()
+            recipient_queryset = recipient_queryset.select_related(*model_class.get_select_related())
+            recipient_queryset = recipient_queryset.prefetch_related(*model_class.get_prefetch_related())
+            recipient_queryset = recipient_queryset.filter(
+                model_class.get_filters_viewers(self.request.user, request=self.request)
+            )
+            qset |= Q(**{"{}_message_recipients__in".format(model): recipient_queryset})
+        qs = qs.filter(qset)
+
+        # Limit queryset to only list enabled in settings
+        methods_show = ["{}.{}".format(i['method'], i['function']) for i in filter(
+            lambda x: x['show_in_list'] is True,
+            CONF['send_methods']
+        )]
+        qs = qs.filter(message_sent__send_method__in=methods_show)
+
+        # Annotate send method types
+        qs = qs.annotate(
+            send_method_type=Substr(
+                expression=F('message_sent__send_method'),
+                pos=1,
+                length=StrIndex(F('message_sent__send_method'), Value('.')) - 1,
+                output_field=CharField()
+            )
+        )
+
+        # Filter by send_method
+        if self.request.GET.get('send_method') is not None:
+            qs = qs.filter(send_method_type=self.request.GET.get('send_method'))
+
+        return qs.distinct()
+
+
+@method_decorator(login_required, name='dispatch')
+class DjangoWebixSenderMessagesChat(WebixTemplateView):
+    template_name = "django_webix_sender/chat.js"
+
+    def get_template_names(self):
+        template_name = None
+        section = self.kwargs.get("section", "users")
+        if section == "users":
+            template_name = "django_webix_sender/chat.js"
+        elif section == "messages":
+            template_name = "django_webix_sender/chat_messages.js"
+        return [template_name]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        section = kwargs.get("section", "users")
+        contenttype = self.request.GET.get("contenttype")
+        send_method = self.request.GET.get("send_method")
+        recipient_pk = self.request.GET.get("recipient")
+
+        # Get enable chat methods
+        methods_show = ["{}.{}".format(i['method'], i['function']) for i in filter(
+            lambda x: x['show_in_chat'] is True,
+            CONF['send_methods']
+        )]
+
+        if section == "users":
+            recipients = []
+            for recipient_config in CONF['recipients']:
+                app_label, model = recipient_config['model'].lower().split(".")
+                model_class = apps.get_model(app_label=app_label, model_name=model)
+                recipient_queryset = model_class.objects.all()
+                recipient_queryset = recipient_queryset.select_related(*model_class.get_select_related())
+                recipient_queryset = recipient_queryset.prefetch_related(*model_class.get_prefetch_related())
+                recipient_queryset = recipient_queryset.filter(
+                    model_class.get_filters_viewers(self.request.user, request=self.request)
+                ).annotate(
+                    send_method=F("message_recipients__message_sent__send_method"),
+                )
+                recipient_queryset = recipient_queryset.filter(send_method__in=methods_show)
+                recipient_queryset = recipient_queryset.annotate(
+                    contenttype=Value(recipient_config['model'].lower(), output_field=CharField()),
+                    last_message=Subquery(MessageRecipient.objects.filter(**{
+                        "{}_message_recipients".format(model): OuterRef('pk'),
+                        "message_sent__send_method": OuterRef('send_method')
+                    }).order_by('-message_sent__creation_date').values('message_sent__creation_date')[:1]),
+                ).filter(last_message__isnull=False).values(
+                    'id',
+                    'contenttype',
+                    'last_message',
+                    representation=model_class.get_representation(),
+                    send_method=F("message_recipients__message_sent__send_method")
+                ).order_by().distinct()
+                recipients += list(recipient_queryset)
+            context['recipients'] = sorted(recipients, key=lambda x: x['last_message'], reverse=True)
+        elif section == "messages" and contenttype is not None and recipient_pk is not None and send_method is not None:
+            app_label, model = contenttype.split(".")
+            model_class = apps.get_model(app_label=app_label, model_name=model)
+            recipient_queryset = model_class.objects.all()
+            recipient_queryset = recipient_queryset.select_related(*model_class.get_select_related())
+            recipient_queryset = recipient_queryset.prefetch_related(*model_class.get_prefetch_related())
+            recipient_queryset = recipient_queryset.filter(
+                model_class.get_filters_viewers(self.request.user, request=self.request)
+            )
+            recipient_queryset = recipient_queryset.filter(pk=recipient_pk)
+            recipient_queryset = recipient_queryset.annotate(representation=model_class.get_representation())
+            recipient = recipient_queryset.first()
+
+            if recipient is not None:
+                messages = (MessageSent.objects.filter(
+                    status='sent',
+                    pk__in=recipient.message_recipients.filter(
+                        Q(message_sent__send_method=send_method) &
+                        Q(message_sent__send_method__in=methods_show),
+                        Q(**{"{}_message_recipients".format(model): recipient})
+                    ).values('message_sent')
+                ) | MessageSent.objects.filter(
+                    status='received',
+                    pk__in=recipient.message_recipients.filter(
+                        Q(message_sent__send_method=send_method) &
+                        Q(message_sent__send_method__in=methods_show),
+                        Q(**{"{}_message_recipients".format(model): recipient}),
+                        Q(is_sender=True)
+                    ).values('message_sent'),
+                ).order_by('creation_date')).order_by('creation_date')
+
+                # Set messages as read
+                recipients = model_class.objects.filter(**{model_class.get_user_fieldpath(): self.request.user})
+                for message in messages.filter(**{
+                    "messagerecipient__{}_message_recipients__in".format(model): recipients,
+                    "messagerecipient__read": False
+                }).distinct():
+                    messagerecipients = message.messagerecipient_set.filter(**{
+                        "{}_message_recipients__in".format(model): recipients,
+                        "read": False
+                    })
+                    messagerecipients.update(read=True)
+
+                context['typology_model'] = CONF['typology_model']
+                context['send_method'] = send_method
+                context['send_method_type'] = send_method.split(".", 1)[0]
+                context['send_method'] = send_method
+                context['recipient'] = recipient
+                if CONF is not None and CONF['typology_model']['enabled']:
+                    from django_webix_sender.models import MessageTypology
+                    context['typology'], _ = MessageTypology.objects.get_or_create(typology='Response')
+                context['contenttype'] = contenttype
+                context['messages'] = [{
+                    'id': message.pk,
+                    'sender': message.sender,
+                    'body': message.body,
+                    'status': message.status,
+                    'creation_date': message.creation_date,
+                    'user': message.user,
+                    'position': 'left' if message.user != self.request.user else 'right',
+                    'backgroundcolor': '#e3e3e5' if message.user != self.request.user else '#1982fb',
+                    'color': '#262626' if message.user != self.request.user else "#fbfdff"
+                } for message in messages]
+        else:
+            raise Http404("Invalid request")
 
         return context
 
@@ -230,7 +437,8 @@ class InvoiceManagement(WebixTemplateView):
 
         # Prendo tutti i tipi di sender dei vari messaggi per i filtri impostati
         senders = MessageSent.objects.filter(
-            creation_date__year=year
+            creation_date__year=year,
+            status='sent'
         )
         if send_method:
             senders = senders.filter(send_method=send_method)
@@ -251,7 +459,8 @@ class InvoiceManagement(WebixTemplateView):
             qs = MessageSent.objects.filter(
                 creation_date__year=year,
                 sender=sender,
-                send_method=send_method
+                send_method=send_method,
+                status='sent'
             )
             if not sender:
                 sender = _('Sender not specified')
@@ -362,7 +571,8 @@ class InvoiceManagement(WebixTemplateView):
         qs = MessageSent.objects.filter(
             creation_date__year=year,
             sender=sender,
-            send_method=send_method
+            send_method=send_method,
+            status='sent'
         )
         _filter = Q()
         for _month in _months:
@@ -378,12 +588,60 @@ class InvoiceManagement(WebixTemplateView):
 @method_decorator(csrf_exempt, name='dispatch')
 class TelegramWebhookView(View):
     def post(self, request, *args, **kwargs):
-        CONFIG_TELEGRAM = next(
+        TELEGRAM = next(
             (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "telegram"), {}
-        ).get("config")
+        )
+        CONFIG_TELEGRAM = TELEGRAM.get("config")
 
-        print(json.loads(request.body))
+        response = json.loads(request.body)
 
+        # Check user
+        recipients = []
+        for recipient in CONF['recipients']:
+            app_label, model = recipient['model'].lower().split(".")
+            model_class = apps.get_model(app_label=app_label, model_name=model)
+            recipients += list(model_class.objects.filter(
+                **{model_class.get_telegram_fieldpath(): response['message']['from']['id']}
+            ))
+
+        # Save only text messages (exclude commands)
+        if "message" in response and "text" in response["message"] and not response["message"]["text"].startswith("/"):
+            # Create db record
+            for recipient in recipients:
+                message_sent_data = {
+                    "send_method": "{}.{}".format(TELEGRAM['method'], TELEGRAM['function']),
+                    "subject": None,
+                    "body": response['message']['text'],
+                    "status": 'received',
+                    "extra": response,
+                    "user": recipient.get_user,
+                    "sender": response['message']['from']['username'],
+                }
+                if CONF is not None and CONF['typology_model']['enabled']:
+                    from django_webix_sender.models import MessageTypology
+                    message_sent_data["typology"], _ = MessageTypology.objects.get_or_create(typology='Response')
+                message_sent = MessageSent.objects.create(**message_sent_data)
+
+                model_class = recipient._meta.model
+                recipient_queryset = model_class.objects.all()
+                recipient_queryset = recipient_queryset.select_related(*model_class.get_select_related())
+                recipient_queryset = recipient_queryset.prefetch_related(*model_class.get_prefetch_related())
+                recipient_queryset = recipient_queryset.filter(
+                    model_class.get_filters_view_list(recipient.get_user, request=self.request)
+                )
+
+                for r in recipient_queryset:
+                    MessageRecipient.objects.create(
+                        message_sent=message_sent,
+                        recipient=r,
+                        recipient_address='webhook',
+                        sent_number=1,
+                        status='success',
+                        read=r == recipient,
+                        is_sender=r == recipient
+                    )
+
+        # Create bot instance
         bot = telegram.Bot(token=CONFIG_TELEGRAM.get('bot_token'))
         dispatcher = Dispatcher(bot, None, workers=0, persistence=DatabaseTelegramPersistence())
 

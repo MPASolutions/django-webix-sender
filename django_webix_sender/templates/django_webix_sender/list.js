@@ -14,8 +14,6 @@ function match(a, b) {
     return a.toString() == b;
 }
 
-TEMP = null;
-
 $$("{{webix_container_id}}").addView({
     rows: [
         {

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from decimal import Decimal
-from typing import List, Any
+from typing import List, Any, Dict
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils.translation import gettext_lazy as _
 
 try:
@@ -15,15 +15,24 @@ try:
 except ImportError:
     from django.contrib.postgres.fields import JSONField
 
-CONF = getattr(settings, "WEBIX_SENDER", None)
-
 try:
     from mpadjango.db.models import MpaModel as Model
 except ImportError:
     from django.db.models import Model
 
+CONF = getattr(settings, "WEBIX_SENDER", None)
 
-def save_attachments(files, *args, **kwargs):
+
+def save_attachments(files: Dict[str, Any], *args, **kwargs):
+    """
+    Save attachments function
+
+    :param files: a dict with attachments
+    :param args: Optional arguments
+    :param kwargs: optional keyword arguments
+    :return: list of MessageAttachment instances
+    """
+
     attachments = []
     for filename, file in files.items():
         attachment = MessageAttachment.objects.create(file=file)
@@ -32,61 +41,189 @@ def save_attachments(files, *args, **kwargs):
 
 
 class DjangoWebixSender(Model):
+    """
+    Abstract model with basic configuration
+    """
+
+    message_recipients = GenericRelation('django_webix_sender.MessageRecipient',
+                                         related_query_name='%(class)s_message_recipients')
+
     class Meta:
         abstract = True
 
     @property
-    def get_sms(self):
+    def get_user(self):
+        """
+        Get user instance
+
+        :return: user instance
+        """
+
+        raise NotImplementedError(_("`get_user` not implemented!"))
+
+    @property
+    def get_sms(self) -> str:
+        """
+        Get sms number
+
+        :return: sms number
+        """
+
         raise NotImplementedError(_("`get_sms` not implemented!"))
 
     @property
     def get_email(self) -> str:
+        """
+        Get email address
+
+        :return: email address
+        """
+
         raise NotImplementedError(_("`get_email` not implemented!"))
 
     @property
     def get_telegram(self) -> str:
+        """
+        Get telegram id
+
+        :return: telegram id
+        """
         raise NotImplementedError(_("`get_telegram` not implemented!"))
 
     @staticmethod
+    def get_user_fieldpath() -> str:
+        """
+        Get user field name (or complete path with fks)
+
+        :return: string with user fieldname
+        """
+
+        return NotImplementedError(_("`get_user_fieldpath` not implemented!"))
+
+    @staticmethod
     def get_sms_fieldpath() -> str:
+        """
+        Get sms field name (or complete path with fks)
+
+        :return: string with sms fieldname
+        """
+
         return NotImplementedError(_("`get_sms_fieldpath` not implemented!"))
 
     @staticmethod
     def get_email_fieldpath() -> str:
+        """
+        Get email field name (or complete path with fks)
+
+        :return: string with email fieldname
+        """
+
         return NotImplementedError(_("`get_email_fieldpath` not implemented!"))
 
     @staticmethod
     def get_telegram_fieldpath() -> str:
+        """
+        Get telegram field name (or complete path with fks)
+
+        :return: string with telegram fieldname
+        """
+
         return NotImplementedError(_("`get_telegram_fieldpath` not implemented!"))
 
     @property
     def get_sms_related(self) -> List[Any]:
+        """
+        Get all sms related recipients to this instance
+
+        :return: list of instances of related recipients
+        """
+
         return []
 
     @property
     def get_email_related(self) -> List[Any]:
+        """
+        Get all email related recipients to this instance
+
+        :return: list of instances of related recipients
+        """
+
         return []
 
     @property
     def get_telegram_related(self) -> List[Any]:
+        """
+        Get all email related recipients to this instance
+
+        :return: list of instances of related recipients
+        """
+
         return []
 
     @classmethod
     def get_select_related(cls) -> List[str]:
+        """
+        Related field to optimize django queries
+
+        :return: list of select related fields
+        """
+
         return []
 
     @classmethod
     def get_prefetch_related(cls) -> List[str]:
+        """
+        Related field to optimize django queries
+
+        :return: list of prefetch related fields
+        """
+
         return []
 
     @classmethod
-    def get_filters(cls, request) -> Q:
-        return Q()
+    def get_filters_viewers(cls, user, *args, **kwargs) -> Q:
+        """
+        Filters recipients that can be seen by this user
+
+        :param user: user instance
+        :param args: Optional arguments
+        :param kwargs: optional keyword arguments
+        :return: Q object with filters
+        """
+
+        return NotImplementedError(_("`get_filters_viewers` not implemented!"))
+
+    @classmethod
+    def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
+        """
+        Filters recipients who can see this user
+
+        :param user: user instance
+        :param args: Optional arguments
+        :param kwargs: optional keyword arguments
+        :return: Q object with filters
+        """
+
+        return NotImplementedError(_("`get_filters_view_list` not implemented!"))
+
+    @classmethod
+    def get_representation(cls) -> F:
+        """
+        Get field to create a sql rapresentation
+
+        :return: F object
+        """
+
+        return NotImplementedError(_("`get_representation` not implemented!"))
 
 
 if CONF is not None and \
     any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF.get('recipients', [])):
     class Customer(DjangoWebixSender):
+        """
+        Customer model
+        """
+
         user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                  verbose_name=_('User'))
         name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Name'))
@@ -111,6 +248,10 @@ if CONF is not None and \
             return '{}'.format(self.name)
 
         @property
+        def get_user(self):
+            return self.user
+
+        @property
         def get_sms(self) -> str:
             return self.sms
 
@@ -121,6 +262,10 @@ if CONF is not None and \
         @property
         def get_telegram(self) -> str:
             return self.telegram
+
+        @staticmethod
+        def get_user_fieldpath() -> str:
+            return "user"
 
         @staticmethod
         def get_sms_fieldpath() -> str:
@@ -134,8 +279,34 @@ if CONF is not None and \
         def get_telegram_fieldpath() -> str:
             return "telegram"
 
+        @classmethod
+        def get_filters_viewers(cls, user, *args, **kwargs) -> Q:
+            if user is None:
+                return Q(pk__isnull=True)  # Fake filter, empty queryset
+            if user.is_anonymous:
+                return Q(pk__isnull=True)  # Fake filter, empty queryset
+            if not user.is_superuser:
+                return Q(user=user)
+            return Q()  # Non filters
+
+        @classmethod
+        def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
+            if user is None:
+                return Q(user__is_superuser=True)  # Not associated user can be views only by superuser
+            if user.is_anonymous:
+                return Q(pk__isnull=True)  # Fake filter, empty queryset
+            return Q(user=user) | Q(user__is_superuser=True)
+
+        @classmethod
+        def get_representation(cls) -> F:
+            return F('name')
+
 
     class CustomerTypology(Model):
+        """
+        Customer typology model
+        """
+
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -151,6 +322,10 @@ if CONF is not None and \
 if CONF is not None and \
     any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF.get('recipients', [])):
     class ExternalSubject(DjangoWebixSender):
+        """
+        External subject model
+        """
+
         user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                  verbose_name=_('User'))
         name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Name'))
@@ -178,6 +353,10 @@ if CONF is not None and \
                 return _('Not defined')
 
         @property
+        def get_user(self):
+            return self.user
+
+        @property
         def get_sms(self) -> str:
             return self.sms
 
@@ -188,6 +367,10 @@ if CONF is not None and \
         @property
         def get_telegram(self) -> str:
             return self.telegram
+
+        @staticmethod
+        def get_user_fieldpath() -> str:
+            return "user"
 
         @staticmethod
         def get_sms_fieldpath() -> str:
@@ -201,8 +384,34 @@ if CONF is not None and \
         def get_telegram_fieldpath() -> str:
             return "telegram"
 
+        @classmethod
+        def get_filters_viewers(cls, user, *args, **kwargs) -> Q:
+            if user is None:
+                return Q(pk__isnull=True)  # Fake filter, empty queryset
+            if user.is_anonymous:
+                return Q(pk__isnull=True)  # Fake filter, empty queryset
+            if not user.is_superuser:
+                return Q(user=user)
+            return Q()  # Non filters
+
+        @classmethod
+        def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
+            if user is None:
+                return Q(user__is_superuser=True)  # Not associated user can be views only by superuser
+            if user.is_anonymous:
+                return Q(pk__isnull=True)  # Fake filter, empty queryset
+            return Q(user=user) | Q(user__is_superuser=True)
+
+        @classmethod
+        def get_representation(cls) -> F:
+            return F('name')
+
 
     class ExternalSubjectTypology(Model):
+        """
+        External subject typology model
+        """
+
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -217,6 +426,10 @@ if CONF is not None and \
 
 if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.MessageAttachment':
     class MessageAttachment(Model):
+        """
+        Message attachments model
+        """
+
         file = models.FileField(upload_to=CONF['attachments']['upload_folder'], verbose_name=_('Document'))
         insert_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Insert date'))
 
@@ -235,6 +448,10 @@ if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.Mes
 
 if CONF is not None and CONF['typology_model']['enabled']:
     class MessageTypology(Model):
+        """
+        Message typology model
+        """
+
         typology = models.CharField(max_length=255, unique=True, verbose_name=_('Typology'))
 
         creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -253,6 +470,10 @@ if CONF is not None and CONF['typology_model']['enabled']:
 
 
 class MessageSent(Model):
+    """
+    Message sent model
+    """
+
     if CONF is not None and CONF['typology_model']['enabled']:
         typology = models.ForeignKey(
             'django_webix_sender.MessageTypology',
@@ -264,6 +485,10 @@ class MessageSent(Model):
     send_method = models.CharField(max_length=255, verbose_name=_('Send method'))
     subject = models.TextField(blank=True, null=True, verbose_name=_('Subject'))
     body = models.TextField(blank=True, null=True, verbose_name=_('Body'))
+    status = models.CharField(max_length=16, choices=(
+        ('sent', _('Sent')),
+        ('received', _('Received')),
+    ), default='sent')
     extra = JSONField(blank=True, null=True, verbose_name=_('Extra'))
     attachments = models.ManyToManyField(
         CONF['attachments']['model'],
@@ -295,6 +520,10 @@ class MessageSent(Model):
 
 
 class MessageRecipient(Model):
+    """
+    Message recipient model
+    """
+
     message_sent = models.ForeignKey('django_webix_sender.MessageSent', on_delete=models.CASCADE,
                                      verbose_name=_('Message sent'))
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -311,6 +540,10 @@ class MessageRecipient(Model):
     ), default='unknown')
     extra = models.TextField(blank=True, null=True, verbose_name=_('Extra'))
 
+    # Message status
+    read = models.BooleanField(blank=True, default=False)
+    is_sender = models.BooleanField(blank=True, default=False)
+
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
     modification_date = models.DateTimeField(auto_now=True, verbose_name=_('Modification data'))
 
@@ -324,6 +557,10 @@ class MessageRecipient(Model):
 
 # Telegram
 class TelegramPersistence(Model):
+    """
+    Telegram persistence model
+    """
+
     typology = models.CharField(max_length=32, choices=[
         (i, i) for i in ['user_data', 'chat_data', 'bot_data', 'conversations']
     ], unique=True)

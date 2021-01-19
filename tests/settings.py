@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sites",
 
+    "django_webix",
+    "tests.app_name",
     "django_webix_sender",
 ]
 
@@ -73,12 +75,22 @@ TEMPLATES = [
     },
 ]
 
+# Django-Webix
+
+WEBIX_VERSION = '7.0.3'
+WEBIX_LICENSE = 'PRO'
+WEBIX_CONTAINER_ID = 'content_right'
+
+# Django-Webix-Sender
+
 WEBIX_SENDER = {
     'send_methods': [
         {
             'method': 'email',
             'verbose_name': 'Send email',
             'function': 'django_webix_sender.send_methods.email.send',
+            'show_in_list': True,
+            'show_in_chat': False,
             'config': {
                 'from_email': 'info@mpasol.it'
             }
@@ -87,6 +99,8 @@ WEBIX_SENDER = {
             'method': 'skebby',
             'verbose_name': 'Send sms',
             'function': 'django_webix_sender.send_methods.skebby.send',
+            'show_in_list': True,
+            'show_in_chat': False,
             'config': {
                 'region': "IT",
                 'method': SkebbyMessageType.GP,
@@ -99,6 +113,8 @@ WEBIX_SENDER = {
             'method': 'telegram',
             'verbose_name': 'Send telegram',
             'function': 'django_webix_sender.send_methods.telegram.send',
+            'show_in_list': False,
+            'show_in_chat': True,
             'config': {
                 "bot_token": "token",
                 "webhooks": [],
@@ -110,6 +126,8 @@ WEBIX_SENDER = {
             'method': 'storage',
             'verbose_name': 'Store online',
             'function': 'django_webix_sender.send_methods.storage.send',
+            'show_in_list': True,
+            'show_in_chat': False,
         },
     ],
     'attachments': {

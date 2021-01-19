@@ -3,6 +3,8 @@
 import telegram
 from django.apps import AppConfig, apps
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
 
@@ -13,27 +15,43 @@ class DjangoWebixSenderConfig(AppConfig):
     def ready(self):
         from django_webix_sender.utils import my_import
 
+        User = get_user_model()
+
         CONF = getattr(settings, "WEBIX_SENDER", None)
 
         if CONF is None:
-            raise Exception(_('`WEBIX_SENDER` is not configured in your settings.py file'))
+            raise ImproperlyConfigured(_('`WEBIX_SENDER` is not configured in your settings.py file'))
 
         # Check configurations
         for send_method in CONF['send_methods']:
+            # Check common keys
+            if 'method' not in send_method:
+                raise ImproperlyConfigured(_("`method` is not configured in send method"))
+            if 'verbose_name' not in send_method:
+                raise ImproperlyConfigured(_("`verbose_name` is not configured in send method"))
+            if 'function' not in send_method:
+                raise ImproperlyConfigured(_("`function` is not configured in send method"))
+            if 'show_in_list' not in send_method:
+                raise ImproperlyConfigured(_("`show_in_list` is not configured in send method"))
+            if 'show_in_chat' not in send_method:
+                raise ImproperlyConfigured(_("`show_in_chat` is not configured in send method"))
+
             # Try to import function
             my_import(send_method['function'])
 
             # Count method
             num = len([i for i in CONF['send_methods'] if i['method'] == send_method['method']])
             if num > 1:
-                raise Exception(_('`{}` method is used {} times instead of 1'.format(send_method['method'], num)))
+                raise ImproperlyConfigured(
+                    _('`{}` method is used {} times instead of 1'.format(send_method['method'], num))
+                )
 
             # Init Email
             if send_method['method'] == 'email':
                 # Check Email config
                 if not 'config' in send_method or \
                     not 'from_email' in send_method['config']:
-                    raise Exception(_('Email `config` is not configured in your settings.py file'))
+                    raise ImproperlyConfigured(_('Email `config` is not configured in your settings.py file'))
 
             # Init Skebby
             elif send_method['method'] == 'skebby':
@@ -44,14 +62,14 @@ class DjangoWebixSenderConfig(AppConfig):
                     not 'username' in send_method['config'] or \
                     not 'password' in send_method['config'] or \
                     not 'sender_string' in send_method['config']:
-                    raise Exception(_('Skebby `config` is not configured in your settings.py file'))
+                    raise ImproperlyConfigured(_('Skebby `config` is not configured in your settings.py file'))
 
             # Init Telegram
             elif send_method['method'] == 'telegram':
                 # Check Telegram config
                 if not 'config' in send_method or \
                     not 'bot_token' in send_method['config']:
-                    raise Exception(_('Telegram `config` is not configured in your settings.py file'))
+                    raise ImproperlyConfigured(_('Telegram `config` is not configured in your settings.py file'))
                 # Update webhooks
                 if 'webhooks' in send_method['config'] and \
                     isinstance(send_method['config']['webhooks'], list) and \

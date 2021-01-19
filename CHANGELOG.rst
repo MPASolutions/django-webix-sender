@@ -19,6 +19,8 @@ Added
 * Added Telegram support
 * New Skebby gateway APIs
 * New storage send method
+* Messages sent list
+* Messages sent chat
 
 Changed
 ~~~~~~~

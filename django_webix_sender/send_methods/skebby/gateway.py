@@ -22,7 +22,7 @@ class Skebby:
         The following are the two available methods to authenticate a user, given a username and a password
         (registration required):
         - Using a temporary session key, which expires after a certain amount of time has passed with no performed API
-          calls with that key.
+        calls with that key.
         - Using an authentication token, which does not expire, except when an account is deactivated or suspended.
         In both cases, the returned user_key, as well as the session key or the token, are required to be provided in
         the HTTP request headers in order to perform any API call after the login.

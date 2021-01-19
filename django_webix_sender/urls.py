@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
-from django.urls import path
+from django.urls import path, re_path
 
 from django_webix_sender.views import (
     SenderList, SenderGetList, SenderSend, DjangoWebixSenderWindow, InvoiceManagement,
-    TelegramWebhookView
+    TelegramWebhookView, DjangoWebixSenderMessagesList, DjangoWebixSenderMessagesChat
 )
 
 CONF = getattr(settings, "WEBIX_SENDER", None)
@@ -16,6 +16,9 @@ urlpatterns = [
     path('send', SenderSend.as_view(), name="django_webix_sender.send"),
     path('sender-window', DjangoWebixSenderWindow.as_view(), name='django_webix_sender.sender_window'),
     path('invoices', InvoiceManagement.as_view(), name='django_webix_sender.invoices'),
+    path('messages_list', DjangoWebixSenderMessagesList.as_view(), name='django_webix_sender.messages_list'),
+    re_path('^messages_chat/(?P<section>users|messages)$', DjangoWebixSenderMessagesChat.as_view(),
+            name='django_webix_sender.messages_chat'),
 ]
 
 # Telegram

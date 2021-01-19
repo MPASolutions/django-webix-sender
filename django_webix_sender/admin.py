@@ -37,7 +37,7 @@ if CONF is not None and \
 
 
 class MessageRecipientInline(admin.TabularInline):
-    _fields = ['recipient', 'recipient_address', 'sent_number', 'status', 'extra', 'creation_date',
+    _fields = ['recipient', 'recipient_address', 'sent_number', 'status', 'extra', 'read', 'creation_date',
                'modification_date']
 
     model = MessageRecipient
@@ -55,7 +55,7 @@ class MessageRecipientInline(admin.TabularInline):
 @admin.register(MessageSent)
 class MessageSentAdmin(admin.ModelAdmin):
     _fields = [
-        'send_method', 'subject', 'body', 'cost', 'invoiced', 'user', 'sender', 'extra', 'attachments',
+        'send_method', 'subject', 'body', 'status', 'cost', 'invoiced', 'user', 'sender', 'extra', 'attachments',
         'creation_date', 'modification_date'
     ]
     if CONF is not None and CONF['typology_model']['enabled']:
@@ -64,15 +64,15 @@ class MessageSentAdmin(admin.ModelAdmin):
     inlines = [MessageRecipientInline]
     list_display = (
         'id', '_method', '_function', 'subject', 'body', 'cost', 'recipients_count', 'recipients_success',
-        'recipients_failed', 'recipients_unknown', 'recipients_invalid', 'recipients_duplicate', 'invoiced', 'user',
-        'sender', 'creation_date', 'modification_date'
+        'recipients_failed', 'recipients_unknown', 'recipients_invalid', 'recipients_duplicate', 'recipients_unread',
+        'status', 'invoiced', 'user', 'sender', 'creation_date', 'modification_date'
     )
     fields = _fields
     readonly_fields = _fields
 
     search_fields = ('send_method', 'user', 'sender', 'subject', 'body')
     list_filter = (
-        'send_method', 'user', 'cost', 'invoiced', 'sender', 'creation_date', 'modification_date'
+        'send_method', 'user', 'cost', 'invoiced', 'sender', 'status', 'creation_date', 'modification_date'
     )
 
     def get_queryset(self, request):
@@ -93,6 +93,9 @@ class MessageSentAdmin(admin.ModelAdmin):
             )),
             recipients_duplicate=Sum(Case(
                 When(messagerecipient__status='duplicate', then=1), default=0, output_field=IntegerField()
+            )),
+            unread=Sum(Case(
+                When(messagerecipient__read=False, then=1), default=0, output_field=IntegerField()
             ))
         )
 
@@ -131,6 +134,12 @@ class MessageSentAdmin(admin.ModelAdmin):
 
     recipients_duplicate.short_description = _('Duplicate recipients')
     recipients_duplicate.admin_order_field = 'recipients_duplicate'
+
+    def recipients_unread(self, obj):
+        return obj.unread
+
+    recipients_unread.short_description = _('Unread')
+    recipients_unread.admin_order_field = 'recipients_unread'
 
     def _method(self, obj):
         method, function = obj.send_method.split(".", 1)

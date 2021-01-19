@@ -192,12 +192,19 @@ function DjangoWebixSender() {
                         cache: false,
                         timeout: 600000,
                         success: function (result) {
-                            var valids = "{{ _("Valid recipients: ")|escapejs }}" + result['valids'];
-                            var invalids = "{{ _("Invalids recipients: ")|escapejs }}" + result['invalids'];
-                            var duplicates = "{{ _("Duplicate recipients: ")|escapejs }}" + result['duplicates'];
+                            var text = "";
+                            result.forEach(function (element) {
+                                var send_method = element['send_method'].split(".", 1)[0];
+                                var valids = "{{ _("Valid recipients: ")|escapejs }}" + element['result']['valids'];
+                                var invalids = "{{ _("Invalids recipients: ")|escapejs }}" + element['result']['invalids'];
+                                var duplicates = "{{ _("Duplicate recipients: ")|escapejs }}" + element['result']['duplicates'];
+                                text += "<b>" + send_method + "</b>" + "<br />" + valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />";
+                            });
+                            text += "{{ _("Are you sure to send this message?")|escapejs }}";
+
                             webix.confirm({
                                 title: "{{ _('Confirmation')|escapejs }}",
-                                text: valids + "<br />" + invalids + "<br />" + duplicates + "<br /><br />" + "{{ _("Are you sure to send this message?")|escapejs }}",
+                                text: text,
                                 ok: "{{ _("Yes")|escapejs }}",
                                 cancel: "{{ _("No")|escapejs }}",
                                 callback: function (result) {

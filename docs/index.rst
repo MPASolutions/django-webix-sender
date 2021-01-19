@@ -11,7 +11,9 @@ Contents
 
    readme
    usage
+   customization
    authors
+   class-reference
    changelog
 
 Indices and tables

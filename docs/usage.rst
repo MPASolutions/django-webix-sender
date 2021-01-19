@@ -4,7 +4,7 @@ Quick Start
 Install
 -------
 
-``django-webix-sender`` is available on :samp:`https://pypi.python.org/pypi/django-webix/` install it simply with:
+``django-webix-sender`` is available on :samp:`https://pypi.python.org/pypi/django-webix-sender/` install it simply with:
 
 .. code-block:: bash
 
@@ -43,6 +43,10 @@ Add ``django-webix-sender`` URLconf to your project ``urls.py`` file
 
     This package requires a project with ``django-webix`` setted up.
 
+.. warning::
+
+    This package requires 'django.contrib.humanize' in ``INSTALLED_APPS``
+
 
 Usage
 -----
@@ -63,6 +67,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'skebby',
                 'verbose_name': _('Send sms'),
                 'function': 'django_webix_sender.send_methods.skebby.send',
+                'show_in_list': True,
+                'show_in_chat': False,
                 'config': {
                     'region': "IT",
                     'method': SkebbyMessageType.GP,
@@ -75,6 +81,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'email',
                 'verbose_name': _('Send email'),
                 'function': 'django_webix_sender.send_methods.email.send',
+                'show_in_list': True,
+                'show_in_chat': False,
                 'config': {
                     'from_email': 'noreply@email.com'
                 }
@@ -83,6 +91,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'telegram',
                 'verbose_name': _('Send telegram'),
                 'function': 'django_webix_sender.send_methods.telegram.send',
+                'show_in_list': False,
+                'show_in_chat': True,
                 'config': {
                     "bot_token": "**********:**********",
                     "webhooks": [
@@ -101,6 +111,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'storage',
                 'verbose_name': _('Store online'),
                 'function': 'django_webix_sender.send_methods.storage.send',
+                'show_in_list': True,
+                'show_in_chat': False,
             },
         ],
         'attachments': {
@@ -130,7 +142,7 @@ Create the models (e.g. <app_name>/models.py)
 
     Defines the allowed send methods.
 
-    There are three allowed methods type:
+    There are four allowed methods type:
 
     - ``skebby``
 
@@ -153,6 +165,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'email',
                 'verbose_name': _('Send email'),
                 'function': 'django_webix_sender.send_methods.email.send',
+                'show_in_list': True,
+                'show_in_chat': False,
                 'config': {
                     'from_email': 'noreply@email.com'
                 }
@@ -169,6 +183,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'skebby',
                 'verbose_name': _('Send sms with Skebby'),
                 'function': 'django_webix_sender.send_methods.skebby.send',
+                'show_in_list': True,
+                'show_in_chat': False,
                 'config': {
                     'region': "IT",
                     'method': SkebbyMessageType.GP,
@@ -188,6 +204,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'telegram',
                 'verbose_name': _('Send with Telegram'),
                 'function': 'django_webix_sender.send_methods.telegram.send',
+                'show_in_list': False,
+                'show_in_chat': True,
                 'config': {
                     "bot_token": "**********:**********",
                     "webhooks": [
@@ -213,6 +231,8 @@ Create the models (e.g. <app_name>/models.py)
                 'method': 'storage',
                 'verbose_name': _('Store online'),
                 'function': 'django_webix_sender.send_methods.storage.send',
+                'show_in_list': True,
+                'show_in_chat': False,
             }
 
 
@@ -253,6 +273,18 @@ Create the models (e.g. <app_name>/models.py)
         }
 
 
+.. warning::
+
+    You can add ``get_sender`` method to the user class to indicate string to be stored in the message record
+
+    .. code-block:: python
+
+        def _get_sender(self):
+            return self.get_full_name()
+
+        User.get_sender = _get_sender
+
+
 Base Template
 ~~~~~~~~~~~~~
 
@@ -286,71 +318,3 @@ Create a base html template (e.g. <app_name>/templates/base.html)
         });
     </script>
     </html>
-
-
-Customization
--------------
-
-Recipient class
-~~~~~~~~~~~~~~~
-
-Create a subclass of ``DjangoWebixSender`` and define ``get_sms``, ``get_telegram``, ``get_email``, ``get_sms_related``, ``get_telegram_related`` and ``get_email_related`` properties.
-
-.. code-block:: python
-
-    class Recipients(DjangoWebixSender):
-        name = models.CharField(max_length=255, verbose_name=_('Name'))
-        sms = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Sms'))
-        telegram = models.CharField(max_length=32, blank=True, null=True, verbose_name=_('Telegram'))
-        email = models.EmailField(max_length=255, blank=True, null=True, verbose_name=_('Email'))
-        parent = models.ForeignKey('self', blank=True, null=True, verbose_name=_('Parent'))
-
-        @property
-        def get_sms(self):
-            return self.sms
-
-        @property
-        def get_telegram(self):
-            return self.telegram
-
-        @property
-        def get_email(self):
-            return self.email
-
-        @property
-        def get_sms_related(self):
-            return self.parent_set.all()
-
-        @property
-        def get_telegram_related(self):
-            return self.parent_set.all()
-
-        @property
-        def get_email_related(self):
-            return self.parent_set.all()
-
-
-Send method
-~~~~~~~~~~~
-
-.. code-block:: python
-
-    def send_sms(recipients, body, message_sent):
-
-        # ...
-        # API gateway sms send
-        # ...
-
-        for recipient, recipient_address in recipients['valids']:
-            MessageRecipient.objects.create(
-                message_sent=message_sent,
-                recipient=recipient,
-                sent_number=1,
-                status='success',
-                recipient_address=recipient_address
-            )
-        for recipient, recipient_address in recipients['invalids']:
-            pass
-        for recipient, recipient_address in recipients['duplicates']:
-            pass
-        return message_sent

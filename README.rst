@@ -66,6 +66,14 @@ Add ``django-webix-sender`` URLconf to your project ``urls.py`` file
         # ...
     ]
 
+.. warning::
+
+    This package requires a project with ``django-webix`` setted up.
+
+.. warning::
+
+    This package requires 'django.contrib.humanize' in ``INSTALLED_APPS``
+
 
 Running Tests
 -------------
