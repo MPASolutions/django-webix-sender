@@ -21,16 +21,18 @@ class Migration(migrations.Migration):
             name='status',
             field=models.CharField(choices=[('sent', 'Sent'), ('received', 'Received')], default='sent', max_length=16),
         ),
-        migrations.AlterField(
-            model_name='customer',
-            name='extra',
-            field=JSONField(blank=True, null=True, verbose_name='Extra'),
-        ),
-        migrations.AlterField(
-            model_name='externalsubject',
-            name='extra',
-            field=JSONField(blank=True, null=True, verbose_name='Extra'),
-        ),
+        if any(_recipients['model'] == 'django_webix_sender.Customer' for _recipients in CONF['recipients']):
+            migrations.AlterField(
+                model_name='customer',
+                name='extra',
+                field=JSONField(blank=True, null=True, verbose_name='Extra'),
+            ),
+        if any(_recipients['model'] == 'django_webix_sender.ExternalSubject' for _recipients in CONF['recipients']):
+            migrations.AlterField(
+                model_name='externalsubject',
+                name='extra',
+                field=JSONField(blank=True, null=True, verbose_name='Extra'),
+            ),
         migrations.AlterField(
             model_name='telegrampersistence',
             name='data',
