@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from decimal import Decimal
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Union
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -52,17 +52,7 @@ class DjangoWebixSender(Model):
         abstract = True
 
     @property
-    def get_user(self):
-        """
-        Get user instance
-
-        :return: user instance
-        """
-
-        raise NotImplementedError(_("`get_user` not implemented!"))
-
-    @property
-    def get_sms(self) -> str:
+    def get_sms(self) -> Union[str, list]:
         """
         Get sms number
 
@@ -72,7 +62,7 @@ class DjangoWebixSender(Model):
         raise NotImplementedError(_("`get_sms` not implemented!"))
 
     @property
-    def get_email(self) -> str:
+    def get_email(self) -> Union[str, list]:
         """
         Get email address
 
@@ -82,23 +72,13 @@ class DjangoWebixSender(Model):
         raise NotImplementedError(_("`get_email` not implemented!"))
 
     @property
-    def get_telegram(self) -> str:
+    def get_telegram(self) -> Union[str, list]:
         """
         Get telegram id
 
         :return: telegram id
         """
         raise NotImplementedError(_("`get_telegram` not implemented!"))
-
-    @staticmethod
-    def get_user_fieldpath() -> str:
-        """
-        Get user field name (or complete path with fks)
-
-        :return: string with user fieldname
-        """
-
-        return NotImplementedError(_("`get_user_fieldpath` not implemented!"))
 
     @staticmethod
     def get_sms_fieldpath() -> str:
@@ -194,19 +174,6 @@ class DjangoWebixSender(Model):
         return NotImplementedError(_("`get_filters_viewers` not implemented!"))
 
     @classmethod
-    def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
-        """
-        Filters recipients who can see this user
-
-        :param user: user instance
-        :param args: Optional arguments
-        :param kwargs: optional keyword arguments
-        :return: Q object with filters
-        """
-
-        return NotImplementedError(_("`get_filters_view_list` not implemented!"))
-
-    @classmethod
     def get_representation(cls) -> F:
         """
         Get field to create a sql rapresentation
@@ -248,10 +215,6 @@ if CONF is not None and \
             return '{}'.format(self.name)
 
         @property
-        def get_user(self):
-            return self.user
-
-        @property
         def get_sms(self) -> str:
             return self.sms
 
@@ -262,10 +225,6 @@ if CONF is not None and \
         @property
         def get_telegram(self) -> str:
             return self.telegram
-
-        @staticmethod
-        def get_user_fieldpath() -> str:
-            return "user"
 
         @staticmethod
         def get_sms_fieldpath() -> str:
@@ -288,14 +247,6 @@ if CONF is not None and \
             if not user.is_superuser:
                 return Q(user=user)
             return Q()  # Non filters
-
-        @classmethod
-        def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
-            if user is None:
-                return Q(user__is_superuser=True)  # Not associated user can be views only by superuser
-            if user.is_anonymous:
-                return Q(pk__isnull=True)  # Fake filter, empty queryset
-            return Q(user=user) | Q(user__is_superuser=True)
 
         @classmethod
         def get_representation(cls) -> F:
@@ -353,10 +304,6 @@ if CONF is not None and \
                 return _('Not defined')
 
         @property
-        def get_user(self):
-            return self.user
-
-        @property
         def get_sms(self) -> str:
             return self.sms
 
@@ -367,10 +314,6 @@ if CONF is not None and \
         @property
         def get_telegram(self) -> str:
             return self.telegram
-
-        @staticmethod
-        def get_user_fieldpath() -> str:
-            return "user"
 
         @staticmethod
         def get_sms_fieldpath() -> str:
@@ -393,14 +336,6 @@ if CONF is not None and \
             if not user.is_superuser:
                 return Q(user=user)
             return Q()  # Non filters
-
-        @classmethod
-        def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
-            if user is None:
-                return Q(user__is_superuser=True)  # Not associated user can be views only by superuser
-            if user.is_anonymous:
-                return Q(pk__isnull=True)  # Fake filter, empty queryset
-            return Q(user=user) | Q(user__is_superuser=True)
 
         @classmethod
         def get_representation(cls) -> F:
@@ -540,8 +475,7 @@ class MessageRecipient(Model):
     ), default='unknown')
     extra = models.TextField(blank=True, null=True, verbose_name=_('Extra'))
 
-    # Message status
-    read = models.BooleanField(blank=True, default=False)
+    # # Message status
     is_sender = models.BooleanField(blank=True, default=False)
 
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
@@ -553,6 +487,27 @@ class MessageRecipient(Model):
 
     def __str__(self):
         return str(self.recipient)
+
+
+class MessageUserRead(Model):
+    """
+    Message readed by user model
+    """
+
+    message_sent = models.ForeignKey('django_webix_sender.MessageSent', on_delete=models.CASCADE,
+                                     verbose_name=_('Message sent'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('User'))
+
+    creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
+    modification_date = models.DateTimeField(auto_now=True, verbose_name=_('Modification data'))
+
+    class Meta:
+        verbose_name = _('Readed message')
+        verbose_name_plural = _('Readed messages')
+        unique_together = (('message_sent', 'user'),)
+
+    def __str__(self):
+        return "{} {}".format(self.message_sent, self.user)
 
 
 # Telegram

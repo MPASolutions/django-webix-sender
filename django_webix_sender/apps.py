@@ -3,7 +3,6 @@
 import telegram
 from django.apps import AppConfig, apps
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
@@ -14,8 +13,6 @@ class DjangoWebixSenderConfig(AppConfig):
 
     def ready(self):
         from django_webix_sender.utils import my_import
-
-        User = get_user_model()
 
         CONF = getattr(settings, "WEBIX_SENDER", None)
 
@@ -100,6 +97,10 @@ class DjangoWebixSenderConfig(AppConfig):
             apps.get_model(app_label=app_label, model_name=model)
         except Exception:
             raise NotImplementedError(_('Attachment model `{}` is not valid'.format(CONF['attachments']['model'])))
+
+        # Check extra
+        if 'extra' in CONF and not isinstance(CONF['extra'], dict):
+            raise NotADirectoryError('`extra` value must be a dict')
 
         # Try to import Attachments save function
         my_import(CONF['attachments']['save_function'])

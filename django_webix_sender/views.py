@@ -21,7 +21,7 @@ from telegram import Update
 from telegram.ext import Dispatcher
 
 from django_webix.views import WebixTemplateView, WebixListView
-from django_webix_sender.models import MessageSent, MessageRecipient
+from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead
 from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
 
@@ -35,7 +35,7 @@ User = get_user_model()
 
 
 @method_decorator(login_required, name='dispatch')
-class SenderList(WebixTemplateView):
+class SenderListView(WebixTemplateView):
     """
     Sender list page
     """
@@ -44,7 +44,7 @@ class SenderList(WebixTemplateView):
     http_method_names = ['get', 'head', 'options']
 
     def get_context_data(self, **kwargs):
-        context = super(SenderList, self).get_context_data(**kwargs)
+        context = super(SenderListView, self).get_context_data(**kwargs)
         use_dynamic_filters = apps.is_installed('filter')
 
         context['use_dynamic_filters'] = use_dynamic_filters
@@ -69,7 +69,7 @@ class SenderList(WebixTemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class SenderGetList(View):
+class SenderGetListView(View):
     http_method_names = ['get', 'head', 'options']
 
     def get(self, request, *args, **kwargs):
@@ -147,7 +147,7 @@ class SenderGetList(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-class SenderSend(View):
+class SenderSendView(View):
     http_method_names = ['post', 'head', 'options']
 
     def post(self, request, *args, **kwargs):
@@ -165,10 +165,16 @@ class SenderSend(View):
         recipients = json.loads(request.POST.get("recipients", "{}"))
         presend = request.POST.get("presend", None)
 
+        extra = None
+        if 'session' in CONF.get('extra', {}):
+            extra = {}
+            for key in CONF.get('extra', {})['session']:
+                extra[key] = request.session.get(key)
+
         results = []
         for send_method in send_methods.split(","):
             result, status = send_mixin(send_method, typology, subject, body, recipients, presend,
-                                        user=request.user, files=request.FILES)
+                                        user=request.user, files=request.FILES, extra=extra)
             results.append({
                 "send_method": send_method,
                 "result": result,
@@ -179,11 +185,11 @@ class SenderSend(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class DjangoWebixSenderWindow(WebixTemplateView):
+class SenderWindowView(WebixTemplateView):
     template_name = 'django_webix_sender/sender.js'
 
     def get_context_data(self, **kwargs):
-        context = super(DjangoWebixSenderWindow, self).get_context_data(**kwargs)
+        context = super(SenderWindowView, self).get_context_data(**kwargs)
 
         context['send_methods'] = CONF['send_methods']
         context['typology_model'] = CONF['typology_model']
@@ -194,7 +200,7 @@ class DjangoWebixSenderWindow(WebixTemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class DjangoWebixSenderMessagesList(WebixListView):
+class SenderMessagesListView(WebixListView):
     model = MessageRecipient
 
     fields = [
@@ -268,7 +274,7 @@ class DjangoWebixSenderMessagesList(WebixListView):
 
 
 @method_decorator(login_required, name='dispatch')
-class DjangoWebixSenderMessagesChat(WebixTemplateView):
+class SenderMessagesChatView(WebixTemplateView):
     template_name = "django_webix_sender/chat.js"
 
     def get_template_names(self):
@@ -355,16 +361,11 @@ class DjangoWebixSenderMessagesChat(WebixTemplateView):
                 ).order_by('creation_date')).order_by('creation_date')
 
                 # Set messages as read
-                recipients = model_class.objects.filter(**{model_class.get_user_fieldpath(): self.request.user})
-                for message in messages.filter(**{
-                    "messagerecipient__{}_message_recipients__in".format(model): recipients,
-                    "messagerecipient__read": False
-                }).distinct():
-                    messagerecipients = message.messagerecipient_set.filter(**{
-                        "{}_message_recipients__in".format(model): recipients,
-                        "read": False
-                    })
-                    messagerecipients.update(read=True)
+                for message in messages:
+                    MessageUserRead.objects.get_or_create(
+                        message_sent=message,
+                        user=self.request.user,
+                    )
 
                 context['typology_model'] = CONF['typology_model']
                 context['send_method'] = send_method
@@ -382,9 +383,10 @@ class DjangoWebixSenderMessagesChat(WebixTemplateView):
                     'status': message.status,
                     'creation_date': message.creation_date,
                     'user': message.user,
-                    'position': 'left' if message.user != self.request.user else 'right',
-                    'backgroundcolor': '#e3e3e5' if message.user != self.request.user else '#1982fb',
-                    'color': '#262626' if message.user != self.request.user else "#fbfdff"
+                    # message.user != self.request.user
+                    'position': 'left' if message.status != 'received' else 'right',  ############
+                    'backgroundcolor': '#e3e3e5' if message.status != 'received' else '#1982fb',  ############
+                    'color': '#262626' if message.status != 'received' else "#fbfdff"  ############
                 } for message in messages]
         else:
             raise Http404("Invalid request")
@@ -395,7 +397,7 @@ class DjangoWebixSenderMessagesChat(WebixTemplateView):
 @method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-class InvoiceManagement(WebixTemplateView):
+class SenderInvoiceManagementView(WebixTemplateView):
     template_name = 'django_webix_sender/invoices.js'
 
     groups = {
@@ -418,7 +420,7 @@ class InvoiceManagement(WebixTemplateView):
     }
 
     def get_context_data(self, **kwargs):
-        context = super(InvoiceManagement, self).get_context_data(**kwargs)
+        context = super(SenderInvoiceManagementView, self).get_context_data(**kwargs)
 
         _send_methods = {}
         for i in CONF['send_methods']:
@@ -586,7 +588,7 @@ class InvoiceManagement(WebixTemplateView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class TelegramWebhookView(View):
+class SenderTelegramWebhookView(View):
     def post(self, request, *args, **kwargs):
         TELEGRAM = next(
             (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "telegram"), {}
@@ -614,7 +616,6 @@ class TelegramWebhookView(View):
                     "body": response['message']['text'],
                     "status": 'received',
                     "extra": response,
-                    "user": recipient.get_user,
                     "sender": response['message']['from']['username'],
                 }
                 if CONF is not None and CONF['typology_model']['enabled']:
@@ -622,24 +623,14 @@ class TelegramWebhookView(View):
                     message_sent_data["typology"], _ = MessageTypology.objects.get_or_create(typology='Response')
                 message_sent = MessageSent.objects.create(**message_sent_data)
 
-                model_class = recipient._meta.model
-                recipient_queryset = model_class.objects.all()
-                recipient_queryset = recipient_queryset.select_related(*model_class.get_select_related())
-                recipient_queryset = recipient_queryset.prefetch_related(*model_class.get_prefetch_related())
-                recipient_queryset = recipient_queryset.filter(
-                    model_class.get_filters_view_list(recipient.get_user, request=self.request)
+                MessageRecipient.objects.create(
+                    message_sent=message_sent,
+                    recipient=recipient,
+                    recipient_address='webhook',
+                    sent_number=1,
+                    status='success',
+                    is_sender=True
                 )
-
-                for r in recipient_queryset:
-                    MessageRecipient.objects.create(
-                        message_sent=message_sent,
-                        recipient=r,
-                        recipient_address='webhook',
-                        sent_number=1,
-                        status='success',
-                        read=r == recipient,
-                        is_sender=r == recipient
-                    )
 
         # Create bot instance
         bot = telegram.Bot(token=CONFIG_TELEGRAM.get('bot_token'))

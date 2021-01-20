@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.db.models import Count, Sum, Case, When, IntegerField
 from django.utils.translation import gettext_lazy as _
 
-from django_webix_sender.models import MessageSent, MessageRecipient
+from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead
 
 CONF = getattr(settings, "WEBIX_SENDER", None)
 
@@ -37,10 +37,29 @@ if CONF is not None and \
 
 
 class MessageRecipientInline(admin.TabularInline):
-    _fields = ['recipient', 'recipient_address', 'sent_number', 'status', 'extra', 'read', 'creation_date',
-               'modification_date']
+    _fields = [
+        'recipient', 'recipient_address', 'sent_number', 'status', 'is_sender', 'extra',
+        'creation_date', 'modification_date',
+    ]
 
     model = MessageRecipient
+    extra = 0
+    fields = _fields
+    readonly_fields = _fields
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class MessageUserReadInline(admin.TabularInline):
+    _fields = [
+        'user'
+    ]
+
+    model = MessageUserRead
     extra = 0
     fields = _fields
     readonly_fields = _fields
@@ -61,10 +80,10 @@ class MessageSentAdmin(admin.ModelAdmin):
     if CONF is not None and CONF['typology_model']['enabled']:
         _fields.append('typology')
 
-    inlines = [MessageRecipientInline]
+    inlines = [MessageRecipientInline, MessageUserReadInline]
     list_display = (
         'id', '_method', '_function', 'subject', 'body', 'cost', 'recipients_count', 'recipients_success',
-        'recipients_failed', 'recipients_unknown', 'recipients_invalid', 'recipients_duplicate', 'recipients_unread',
+        'recipients_failed', 'recipients_unknown', 'recipients_invalid', 'recipients_duplicate',
         'status', 'invoiced', 'user', 'sender', 'creation_date', 'modification_date'
     )
     fields = _fields
@@ -94,9 +113,6 @@ class MessageSentAdmin(admin.ModelAdmin):
             recipients_duplicate=Sum(Case(
                 When(messagerecipient__status='duplicate', then=1), default=0, output_field=IntegerField()
             )),
-            unread=Sum(Case(
-                When(messagerecipient__read=False, then=1), default=0, output_field=IntegerField()
-            ))
         )
 
     def recipients_count(self, obj):
@@ -134,12 +150,6 @@ class MessageSentAdmin(admin.ModelAdmin):
 
     recipients_duplicate.short_description = _('Duplicate recipients')
     recipients_duplicate.admin_order_field = 'recipients_duplicate'
-
-    def recipients_unread(self, obj):
-        return obj.unread
-
-    recipients_unread.short_description = _('Unread')
-    recipients_unread.admin_order_field = 'recipients_unread'
 
     def _method(self, obj):
         method, function = obj.send_method.split(".", 1)
