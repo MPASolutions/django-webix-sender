@@ -23,7 +23,7 @@ $$("{{webix_container_id}}").addView({
                 {
                     gravity: 1,
                     rows: [
-                        {% if use_dynamic_filters %}
+                        {% if use_dynamic_filters and datatable.filters|length > 0 %}
                         {
                             cols: [
                                 {
@@ -293,7 +293,7 @@ var getDatatablesItems = function () {
     $$('{{ datatable.model }}').attachEvent("onAfterDelete", getDatatablesItems);
     $$('{{ datatable.model }}').attachEvent("onAfterSelect", getDatatablesItems);
     $$('{{ datatable.model }}').attachEvent("onAfterUnSelect", getDatatablesItems);
-    {% if not use_dynamic_filters %}
+    {% if not use_dynamic_filters or datatable.filters|length == 0 %}
         var dt = $$("{{ datatable.model }}");
         dt.load("{% url 'django_webix_sender.getlist' %}?contentype={{ datatable.model }}");
     {% endif %}
