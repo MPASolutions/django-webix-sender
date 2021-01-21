@@ -16,7 +16,7 @@ except ImportError:
     from django.contrib.postgres.fields import JSONField
 
 try:
-    from mpadjango.db.models import MpaModel as Model
+    from django_dal.models import DALModel as Model
 except ImportError:
     from django.db.models import Model
 
