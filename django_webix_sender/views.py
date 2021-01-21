@@ -86,7 +86,9 @@ class SenderGetListView(View):
         contentype = request.GET.get('contentype', None)
         pks = request.GET.getlist('filter_pk', None)
         use_dynamic_filters = apps.is_installed('filter')
-        filters_exists = Filter.objects.filter(model__iexact=contentype.lower()).exists()
+        filters_exists = False
+        if use_dynamic_filters is True:
+            filters_exists = Filter.objects.filter(model__iexact=contentype.lower()).exists()
 
         if contentype is None or (use_dynamic_filters and pks in [None, '', []] and filters_exists):
             return JsonResponse({'status': 'Invalid content type'}, status=400)
