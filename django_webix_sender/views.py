@@ -664,7 +664,7 @@ class SenderTelegramWebhookView(View):
                     "body": response['message']['text'],
                     "status": 'received',
                     "extra": response,
-                    "sender": response['message']['from']['username'],
+                    "sender": response['message']['from'].get('username'),
                 }
                 if CONF is not None and CONF['typology_model']['enabled']:
                     from django_webix_sender.models import MessageTypology
