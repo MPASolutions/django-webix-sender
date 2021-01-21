@@ -1,4 +1,6 @@
-{% load static i18n verbose_name humanize field_type %}
+{% load static i18n humanize send_methods_utils %}
+
+{% user_can_send as can_send %}
 
 {% block content %}
     webix.ui([], $$('messages'));
@@ -77,7 +79,7 @@
                     {% endfor %}
                 ]
             },
-            {% if recipient.get_user != None and request.user != recipient.get_user %}
+            {% if can_send %}
                 {
                     cols: [
                         {

@@ -8,9 +8,10 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import Group
 from django.db.models import Q, Sum, F, DecimalField, Case, When, IntegerField, Value, CharField, Subquery, OuterRef
 from django.db.models.functions import StrIndex, Substr
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -42,6 +43,12 @@ class SenderListView(WebixTemplateView):
 
     template_name = 'django_webix_sender/list.js'
     http_method_names = ['get', 'head', 'options']
+
+    def dispatch(self, request, *args, **kwargs):
+        if "groups_can_send" in CONF and \
+            not request.user.groups.intersection(Group.objects.filter(name__in=CONF['groups_can_send'])).exists():
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SenderListView, self).get_context_data(**kwargs)
@@ -75,6 +82,12 @@ class SenderListView(WebixTemplateView):
 @method_decorator(login_required, name='dispatch')
 class SenderGetListView(View):
     http_method_names = ['get', 'head', 'options']
+
+    def dispatch(self, request, *args, **kwargs):
+        if "groups_can_send" in CONF and \
+            not request.user.groups.intersection(Group.objects.filter(name__in=CONF['groups_can_send'])).exists():
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """
@@ -157,6 +170,12 @@ class SenderGetListView(View):
 class SenderSendView(View):
     http_method_names = ['post', 'head', 'options']
 
+    def dispatch(self, request, *args, **kwargs):
+        if "groups_can_send" in CONF and \
+            not request.user.groups.intersection(Group.objects.filter(name__in=CONF['groups_can_send'])).exists():
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         """
         Funzione per inviare la corrispondenza.
@@ -194,6 +213,12 @@ class SenderSendView(View):
 @method_decorator(login_required, name='dispatch')
 class SenderWindowView(WebixTemplateView):
     template_name = 'django_webix_sender/sender.js'
+
+    def dispatch(self, request, *args, **kwargs):
+        if "groups_can_send" in CONF and \
+            not request.user.groups.intersection(Group.objects.filter(name__in=CONF['groups_can_send'])).exists():
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SenderWindowView, self).get_context_data(**kwargs)
@@ -374,27 +399,42 @@ class SenderMessagesChatView(WebixTemplateView):
                         user=self.request.user,
                     )
 
+                inverted = False
+                if "groups_can_send" in CONF and \
+                    self.request.user.groups.intersection(
+                        Group.objects.filter(name__in=CONF['groups_can_send'])
+                    ).exists():
+                    inverted = True
+
                 context['typology_model'] = CONF['typology_model']
                 context['send_method'] = send_method
                 context['send_method_type'] = send_method.split(".", 1)[0]
-                context['send_method'] = send_method
                 context['recipient'] = recipient
                 if CONF is not None and CONF['typology_model']['enabled']:
                     from django_webix_sender.models import MessageTypology
                     context['typology'], _ = MessageTypology.objects.get_or_create(typology='Response')
                 context['contenttype'] = contenttype
-                context['messages'] = [{
-                    'id': message.pk,
-                    'sender': message.sender,
-                    'body': message.body,
-                    'status': message.status,
-                    'creation_date': message.creation_date,
-                    'user': message.user,
-                    # message.user != self.request.user
-                    'position': 'left' if message.status != 'received' else 'right',  ############
-                    'backgroundcolor': '#e3e3e5' if message.status != 'received' else '#1982fb',  ############
-                    'color': '#262626' if message.status != 'received' else "#fbfdff"  ############
-                } for message in messages]
+                _messages = []
+                for message in messages:
+                    _message = {
+                        'id': message.pk,
+                        'sender': message.sender,
+                        'body': message.body,
+                        'status': message.status,
+                        'creation_date': message.creation_date,
+                        'user': message.user,
+                    }
+                    if not inverted:
+                        _message['position'] = 'left' if message.status != 'received' else 'right'
+                        _message['backgroundcolor'] = '#e3e3e5' if message.status != 'received' else '#1982fb'
+                        _message['color'] = '#262626' if message.status != 'received' else "#fbfdff"
+                    else:
+                        _message['position'] = 'left' if message.status == 'received' else 'right'
+                        _message['backgroundcolor'] = '#e3e3e5' if message.status == 'received' else '#1982fb'
+                        _message['color'] = '#262626' if message.status == 'received' else "#fbfdff"
+                    _messages.append(_message)
+                context['messages'] = _messages
+
         else:
             raise Http404("Invalid request")
 

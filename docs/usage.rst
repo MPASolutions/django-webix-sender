@@ -146,6 +146,7 @@ Create the models (e.g. <app_name>/models.py)
                 'collapsed': True
             },
         ],
+        'groups_can_send': ["Admin"],
         'extra': {
             'session': ['year']
         },
@@ -253,7 +254,7 @@ Create the models (e.g. <app_name>/models.py)
 
 .. attribute:: WEBIX_SENDER['initial_send_methods']
 
-    Defines the default send methods in the form.
+    Optional: Defines the default send methods in the form.
 
     .. code-block:: python
 
@@ -307,9 +308,18 @@ Create the models (e.g. <app_name>/models.py)
         }
 
 
+.. attribute:: WEBIX_SENDER['groups_can_send']
+
+    Optional: Defines the group names that can send messages.
+
+    .. code-block:: python
+
+        ["Admin"]
+
+
 .. attribute:: WEBIX_SENDER['extra']
 
-    Defines the data to add to message extra json field.
+    Optional: Defines the data to add to message extra json field.
     You can define variable names in the session.
 
     .. code-block:: python
@@ -321,7 +331,7 @@ Create the models (e.g. <app_name>/models.py)
 
 .. attribute:: WEBIX_SENDER['invoices_period']
 
-    Defines the periods to divide the invoices.
+    Optional: Defines the periods to divide the invoices.
 
     The available periods are:
 

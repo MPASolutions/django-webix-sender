@@ -130,6 +130,16 @@ WEBIX_SENDER = {
             'show_in_chat': False,
         },
     ],
+    'initial_send_methods': [
+        {
+            'method': 'storage',
+            'function': 'django_webix_sender.send_methods.storage.send',
+        },
+        {
+            'method': 'telegram',
+            'function': 'django_webix_sender.send_methods.telegram.send',
+        },
+    ],
     'attachments': {
         'model': 'django_webix_sender.MessageAttachment',
         'upload_folder': 'sender/',
@@ -146,8 +156,13 @@ WEBIX_SENDER = {
         },
         {
             'model': 'django_webix_sender.ExternalSubject',
-            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
+            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram'],
+            'collapsed': True
         },
     ],
+    'groups_can_send': ["Admin"],
+    'extra': {
+        'session': []
+    },
     'invoices_period': 'bimestrial'
 }

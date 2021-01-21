@@ -21,7 +21,9 @@ Added
 * New storage send method
 * Messages sent list
 * Messages sent chat
-* Added collapsed list property
+* Added `collapsed` recipients list configuration property
+* Added `groups_can_send` configuration
+* Added `extra` configuration
 
 Changed
 ~~~~~~~

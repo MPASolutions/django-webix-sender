@@ -1,11 +1,13 @@
-{% load static i18n verbose_name field_type %}
+{% load static i18n send_methods_utils %}
+
+{% user_can_send as can_send %}
 
 {% block content %}
     webix.ui([], $$('{{ webix_container_id }}'));
 
     $$("{{ webix_container_id }}").addView({
         cols: [
-            {% if recipients|length > 1 %}
+            {% if recipients|length > 1 or can_send %}
                 {
                     rows: [
                         {
@@ -61,7 +63,7 @@
         ]
     });
 
-    {% if recipients|length == 1 %}
+    {% if recipients|length == 1 and not can_send %}
         load_js("{% url 'django_webix_sender.messages_chat' section='messages' %}?contenttype={{ recipients.0.contenttype }}&recipient={{ recipients.0.id }}&send_method={{ recipients.0.send_method }}");
     {% endif %}
 {% endblock %}
