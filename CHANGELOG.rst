@@ -21,6 +21,7 @@ Added
 * New storage send method
 * Messages sent list
 * Messages sent chat
+* Added collapsed list property
 
 Changed
 ~~~~~~~

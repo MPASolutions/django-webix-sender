@@ -137,11 +137,13 @@ Create the models (e.g. <app_name>/models.py)
         'recipients': [
             {
                 'model': 'django_webix_sender.Customer',
-                'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
+                'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram'],
+                'collapsed': False
             },
             {
                 'model': 'django_webix_sender.ExternalSubject',
-                'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
+                'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram'],
+                'collapsed': True
             },
         ],
         'extra': {
@@ -300,7 +302,8 @@ Create the models (e.g. <app_name>/models.py)
 
         {
             'model': 'django_webix_sender.Customer',
-            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
+            'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram'],
+            'collapsed': True
         }
 
 

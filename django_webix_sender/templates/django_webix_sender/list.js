@@ -17,174 +17,180 @@ function match(a, b) {
 $$("{{webix_container_id}}").addView({
     rows: [
         {
+            view:"accordion",
+    multi:true,
             padding: 10,
             cols: [
                 {% for datatable in datatables %}
                 {
-                    gravity: 1,
-                    rows: [
-                        {% if use_dynamic_filters and datatable.filters|length > 0 %}
-                        {
-                            cols: [
-                                {
-                                    id: 'filter_switch_{{ datatable.model }}',
-                                    view: "switch",
-                                    value: 0,
-                                    labelAlign: 'right',
-                                    labelWidth: 40,
-                                    label: "{{ _("AND")|escapejs }}",
-                                    labelRight: "{{ _("OR")|escapejs }}",
-                                    width: 120,
-                                    on: {
-                                        onChange: function (newv, oldv) {
-                                            var dt = $$("{{ datatable.model }}");
-                                            dt.clearAll();
+                    header: "{{ datatable.verbose_name }}",
+                    collapsed: {{ datatable.collapsed|yesno:"true,false" }},
+                    body: {
+                        gravity: 1,
+                        rows: [
+                            {% if use_dynamic_filters and datatable.filters|length > 0 %}
+                            {
+                                cols: [
+                                    {
+                                        id: 'filter_switch_{{ datatable.model }}',
+                                        view: "switch",
+                                        value: 0,
+                                        labelAlign: 'right',
+                                        labelWidth: 40,
+                                        label: "{{ _("AND")|escapejs }}",
+                                        labelRight: "{{ _("OR")|escapejs }}",
+                                        width: 120,
+                                        on: {
+                                            onChange: function (newv, oldv) {
+                                                var dt = $$("{{ datatable.model }}");
+                                                dt.clearAll();
 
-                                            // Values
-                                            var switchValue = newv === 0 ? 'and' : 'or';
-                                            var filterValue = $$('filter_{{ datatable.model }}').getValue();
+                                                // Values
+                                                var switchValue = newv === 0 ? 'and' : 'or';
+                                                var filterValue = $$('filter_{{ datatable.model }}').getValue();
 
-                                            // Filtering
-                                            if (filterValue !== '') {
-                                                var pks = filterValue.split(",");
-                                                for (var i = 0; i < pks.length; i++) {
-                                                    pks[i] = "filter_pk=" + pks[i];
+                                                // Filtering
+                                                if (filterValue !== '') {
+                                                    var pks = filterValue.split(",");
+                                                    for (var i = 0; i < pks.length; i++) {
+                                                        pks[i] = "filter_pk=" + pks[i];
+                                                    }
+                                                    pks = pks.join("&");
+
+                                                    var url = '{% url 'django_webix_sender.getlist' %}?';
+                                                    url += 'contentype={{ datatable.model }}&';
+                                                    url += pks + '&';
+                                                    url += 'and_or_filter=' + switchValue;
+
+                                                    dt.load(url);
                                                 }
-                                                pks = pks.join("&");
-
-                                                var url = '{% url 'django_webix_sender.getlist' %}?';
-                                                url += 'contentype={{ datatable.model }}&';
-                                                url += pks + '&';
-                                                url += 'and_or_filter=' + switchValue;
-
-                                                dt.load(url);
                                             }
                                         }
-                                    }
-                                },
-                                {
-                                    id: 'filter_{{ datatable.model }}',
-                                    view: "multicombo",
-                                    placeholder: "{{_("Filter the list by applying filters")|escapejs}}",
-                                    labelWidth: 0,
-                                    options: [
-                                        {% for filter in datatable.filters %}
-                                        {
-                                            'id': "{{ filter.id }}",
-                                            'value': "{{ filter.value|safe|escapejs }}"
-                                        },
-                                        {% endfor %}
-                                    ],
-                                    on: {
-                                        onChange: function (newv, oldv) {
-                                            var dt = $$("{{ datatable.model }}");
-                                            dt.clearAll();
-
-                                            // Values
-                                            var switchValue = $$('filter_switch_{{ datatable.model }}').getValue() === 0 ? 'and' : 'or';
-                                            var filterValue = newv.filter(function (el) {
-                                              return el != '';
-                                            });
-
-                                            // Filtering
-                                            if (filterValue.length > 0) {
-                                                var pks = [];
-                                                for (var i = 0; i < filterValue.length; i++) {
-                                                    pks[i] = "filter_pk=" + filterValue[i];
-                                                }
-                                                pks = pks.join("&");
-
-                                                var url = '{% url 'django_webix_sender.getlist' %}?';
-                                                url += 'contentype={{ datatable.model }}&';
-                                                url += pks + '&';
-                                                url += 'and_or_filter=' + switchValue;
-
-                                                dt.load(url);
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {view: "spacer", height: 10},
-                        {% endif %}
-                        {
-                            id: '{{ datatable.model }}',
-                            view: "datatable",
-                            multiselect: true,
-                            navigation: true,
-                            select: "row",
-                            scheme: {
-                                $init: function (obj) {
-                                    obj.index = this.count();
-                                }
-                            },
-                            columns: [
-                                {
-                                    id: "index",
-                                    header: "",
-                                    width: 40,
-                                    minWidth: 40
-                                },
-                                {
-                                    id: "checkbox_action",
-                                    header: {content: "masterCheckbox", css: "center"},
-                                    template: "{common.checkbox()}",
-                                    width: 40,
-                                    minWidth: 40,
-                                    maxWidth: 40
-                                },
-                                {% for field in datatable.fields %}
-                                {
-                                    id: "{{ field }}",
-                                    header: ["{% get_verbose_field_name datatable.model field %}",
-                                        {% field_type datatable.model field as field_t %}
-                                        {% if field_t == "BooleanField" %}
+                                    },
+                                    {
+                                        id: 'filter_{{ datatable.model }}',
+                                        view: "multicombo",
+                                        placeholder: "{{_("Filter the list by applying filters")|escapejs}}",
+                                        labelWidth: 0,
+                                        options: [
+                                            {% for filter in datatable.filters %}
                                             {
-                                                content: 'selectFilter',
-                                                options: [
-                                                    {id: '', value: '{{ _("All")|escapejs }}'},
-                                                    {id: 'true', value: '{{ _("Yes")|escapejs }}'},
-                                                    {id: 'false', value: '{{ _("No")|escapejs }}'}
-                                                ],
-                                                compare: match
+                                                'id': "{{ filter.id }}",
+                                                'value': "{{ filter.value|safe|escapejs }}"
                                             },
-                                        {% else %}
-                                            {content: "textFilter"}
-                                        {% endif %}
-                                    ],
-                                    {% if field_t == "BooleanField" %}
-                                        template: custom_bool,
-                                    {% endif %}
-                                    adjust: "all"
-                                },
-                                {% endfor %}
-                            ],
-                            data: [],
-                            on: {
-                                onBeforeLoad: function () {
-                                    $$('{{ webix_container_id }}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
-                                },
-                                onAfterLoad: function () {
-                                    $$('{{ webix_container_id }}').hideOverlay();
-                                },
-                                onCheck: function (rowId, colId, state) {
-                                    if (state) {
-                                        this.select(rowId, true);
-                                    } else {
-                                        this.unselect(rowId, true);
+                                            {% endfor %}
+                                        ],
+                                        on: {
+                                            onChange: function (newv, oldv) {
+                                                var dt = $$("{{ datatable.model }}");
+                                                dt.clearAll();
+
+                                                // Values
+                                                var switchValue = $$('filter_switch_{{ datatable.model }}').getValue() === 0 ? 'and' : 'or';
+                                                var filterValue = newv.filter(function (el) {
+                                                  return el != '';
+                                                });
+
+                                                // Filtering
+                                                if (filterValue.length > 0) {
+                                                    var pks = [];
+                                                    for (var i = 0; i < filterValue.length; i++) {
+                                                        pks[i] = "filter_pk=" + filterValue[i];
+                                                    }
+                                                    pks = pks.join("&");
+
+                                                    var url = '{% url 'django_webix_sender.getlist' %}?';
+                                                    url += 'contentype={{ datatable.model }}&';
+                                                    url += pks + '&';
+                                                    url += 'and_or_filter=' + switchValue;
+
+                                                    dt.load(url);
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {view: "spacer", height: 10},
+                            {% endif %}
+                            {
+                                id: '{{ datatable.model }}',
+                                view: "datatable",
+                                multiselect: true,
+                                navigation: true,
+                                select: "row",
+                                scheme: {
+                                    $init: function (obj) {
+                                        obj.index = this.count();
                                     }
                                 },
-                                "data->onStoreUpdated": function () {
-                                    this.data.each(function (obj, i) {
-                                        if (obj !== undefined) {
-                                            obj.index = i + 1;
+                                columns: [
+                                    {
+                                        id: "index",
+                                        header: "",
+                                        width: 40,
+                                        minWidth: 40
+                                    },
+                                    {
+                                        id: "checkbox_action",
+                                        header: {content: "masterCheckbox", css: "center"},
+                                        template: "{common.checkbox()}",
+                                        width: 40,
+                                        minWidth: 40,
+                                        maxWidth: 40
+                                    },
+                                    {% for field in datatable.fields %}
+                                    {
+                                        id: "{{ field }}",
+                                        header: ["{% get_verbose_field_name datatable.model field %}",
+                                            {% field_type datatable.model field as field_t %}
+                                            {% if field_t == "BooleanField" %}
+                                                {
+                                                    content: 'selectFilter',
+                                                    options: [
+                                                        {id: '', value: '{{ _("All")|escapejs }}'},
+                                                        {id: 'true', value: '{{ _("Yes")|escapejs }}'},
+                                                        {id: 'false', value: '{{ _("No")|escapejs }}'}
+                                                    ],
+                                                    compare: match
+                                                },
+                                            {% else %}
+                                                {content: "textFilter"}
+                                            {% endif %}
+                                        ],
+                                        {% if field_t == "BooleanField" %}
+                                            template: custom_bool,
+                                        {% endif %}
+                                        adjust: "all"
+                                    },
+                                    {% endfor %}
+                                ],
+                                data: [],
+                                on: {
+                                    onBeforeLoad: function () {
+                                        $$('{{ webix_container_id }}').showOverlay("<img src='{% static 'django_webix/loading.gif' %}'>");
+                                    },
+                                    onAfterLoad: function () {
+                                        $$('{{ webix_container_id }}').hideOverlay();
+                                    },
+                                    onCheck: function (rowId, colId, state) {
+                                        if (state) {
+                                            this.select(rowId, true);
+                                        } else {
+                                            this.unselect(rowId, true);
                                         }
-                                    })
+                                    },
+                                    "data->onStoreUpdated": function () {
+                                        this.data.each(function (obj, i) {
+                                            if (obj !== undefined) {
+                                                obj.index = i + 1;
+                                            }
+                                        })
+                                    }
                                 }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 },
                 {view: "spacer", width: 10},
                 {% endfor %}

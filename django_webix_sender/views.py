@@ -54,9 +54,13 @@ class SenderListView(WebixTemplateView):
 
         context['datatables'] = []
         for recipient in CONF['recipients']:
+            app_label, model = recipient['model'].lower().split(".")
+            model_class = apps.get_model(app_label=app_label, model_name=model)
             _dict = {
                 'model': recipient['model'].lower(),
-                'fields': [i for i in recipient['datatable_fields']]
+                'verbose_name': model_class._meta.verbose_name,
+                'fields': [i for i in recipient['datatable_fields']],
+                'collapsed': recipient.get('collapsed', False)
             }
             if use_dynamic_filters:
                 _dict['filters'] = [{
