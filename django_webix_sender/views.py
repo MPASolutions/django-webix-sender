@@ -609,9 +609,10 @@ class SenderTelegramWebhookView(View):
         for recipient in CONF['recipients']:
             app_label, model = recipient['model'].lower().split(".")
             model_class = apps.get_model(app_label=app_label, model_name=model)
-            recipients += list(model_class.objects.filter(
-                **{model_class.get_telegram_fieldpath(): response['message']['from']['id']}
-            ))
+            if model_class.get_telegram_fieldpath():
+                recipients += list(model_class.objects.filter(
+                    **{model_class.get_telegram_fieldpath(): response['message']['from']['id']}
+                ))
 
         # Save only text messages (exclude commands)
         if "message" in response and "text" in response["message"] and not response["message"]["text"].startswith("/"):

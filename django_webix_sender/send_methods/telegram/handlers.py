@@ -34,11 +34,12 @@ def check_user(update: Update, context: CallbackContext) -> None:
     for recipient in CONF['recipients']:
         app_label, model = recipient['model'].lower().split(".")
         model_class = apps.get_model(app_label=app_label, model_name=model)
-        _exists = model_class.objects.filter(
-            **{model_class.get_telegram_fieldpath(): update.message.from_user.id}
-        ).exists()
-        if _exists:
-            break
+        if model_class.get_telegram_fieldpath():
+            _exists = model_class.objects.filter(
+                **{model_class.get_telegram_fieldpath(): update.message.from_user.id}
+            ).exists()
+            if _exists:
+                break
 
     if not _exists:
         update.message.reply_text(_("Your user is not authorized to use this Bot"))
@@ -71,18 +72,19 @@ def check_phone_number(update: Update, context: CallbackContext) -> int:
     for recipient in CONF['recipients']:
         app_label, model = recipient['model'].lower().split(".")
         model_class = apps.get_model(app_label=app_label, model_name=model)
-        _recipients = model_class.objects.filter(**{
-            "{}__endswith".format(model_class.get_sms_fieldpath()): number.national_number
-        })
-        _exists = _recipients.exists()
-        if not _found:
-            _found = _exists
-        if _exists:
-            _recipients.update(**{model_class.get_telegram_fieldpath(): update.message.from_user.id})
-            update.message.reply_text(
-                _('Welcome {}! Now you can use this bot').format(_recipients.first()),
-                reply_markup=ReplyKeyboardRemove()
-            )
+        if model_class.get_telegram_fieldpath():
+            _recipients = model_class.objects.filter(**{
+                "{}__endswith".format(model_class.get_sms_fieldpath()): number.national_number
+            })
+            _exists = _recipients.exists()
+            if not _found:
+                _found = _exists
+            if _exists:
+                _recipients.update(**{model_class.get_telegram_fieldpath(): update.message.from_user.id})
+                update.message.reply_text(
+                    _('Welcome {}! Now you can use this bot').format(_recipients.first()),
+                    reply_markup=ReplyKeyboardRemove()
+                )
     if not _found:
         update.message.reply_text(
             _('Your number is not in our database, contact us to add'),

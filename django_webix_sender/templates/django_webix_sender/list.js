@@ -17,9 +17,8 @@ function match(a, b) {
 $$("{{webix_container_id}}").addView({
     rows: [
         {
-            view:"accordion",
-    multi:true,
-            padding: 10,
+            view: "accordion",
+            multi: true,
             cols: [
                 {% for datatable in datatables %}
                 {
