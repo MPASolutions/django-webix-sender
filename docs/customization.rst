@@ -7,7 +7,7 @@ Recipient class
 | Create a subclass of ``DjangoWebixSender`` and define ``get_sms``, ``get_telegram``, ``get_email``, ``get_sms_related``, ``get_telegram_related`` and ``get_email_related`` properties, if you use that send method.
 | It's important to define also ``get_email_related``, ``get_sms_fieldpath``, ``get_email_fieldpath`` and ``get_telegram_fieldpath`` classmethods.
 | Optionally you can define also ``get_select_related`` and ``get_prefetch_related`` to optimize queries.
-| There are also ``get_filters_viewers`` and ``get_filters_view_list`` functions to define which qset to apply to the recipients models to indicates their visibility.
+| There is also ``get_filters_viewers`` function to define which qset to apply to the recipients models to indicates their visibility.
 
 .. code-block:: python
 
@@ -43,10 +43,6 @@ Recipient class
             return self.parent_set.all()
 
         @staticmethod
-        def get_user_fieldpath() -> str:
-            return "user"
-
-        @staticmethod
         def get_sms_fieldpath() -> str:
             return "sms"
 
@@ -67,14 +63,6 @@ Recipient class
             if not user.is_superuser:
                 return Q(user=user)
             return Q()  # Non filters
-
-        @classmethod
-        def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
-            if user is None:
-                return Q(user__is_superuser=True)  # Not associated user can be views only by superuser
-            if user.is_anonymous:
-                return Q(pk__isnull=True)  # Fake filter, empty queryset
-            return Q(user=user) | Q(user__is_superuser=True)
 
         @classmethod
         def get_representation(cls) -> F:
@@ -98,23 +86,6 @@ Recipient class
             if not user.is_superuser:
                 return Q(user=user)
             return Q()  # Non filters
-
-
-.. warning::
-
-    You need to define ``get_filters_view_list`` staticmethod to the recipient models to filter recipients who can see
-    passed user.
-    This method must returns QSet object.
-
-    .. code-block:: python
-
-        @classmethod
-        def get_filters_view_list(cls, user, *args, **kwargs) -> Q:
-            if user is None:
-                return Q(user__is_superuser=True)  # Not associated user can be views only by superuser
-            if user.is_anonymous:
-                return Q(pk__isnull=True)  # Fake filter, empty queryset
-            return Q(user=user) | Q(user__is_superuser=True)
 
 
 Send method

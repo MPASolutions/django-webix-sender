@@ -9,6 +9,8 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def field_type(context, model, field_name):
+    """ Returns model field type """
+
     app_label, model = model.split(".")
     model_class = apps.get_model(app_label=app_label, model_name=model)
     field = None

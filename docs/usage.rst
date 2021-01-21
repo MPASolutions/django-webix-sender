@@ -115,6 +115,16 @@ Create the models (e.g. <app_name>/models.py)
                 'show_in_chat': False,
             },
         ],
+        'initial_send_methods': [
+            {
+                'method': 'storage',
+                'function': 'django_webix_sender.send_methods.storage.send',
+            },
+            {
+                'method': 'telegram',
+                'function': 'django_webix_sender.send_methods.telegram.send',
+            },
+        ],
         'attachments': {
             'model': 'django_webix_sender.MessageAttachment',
             'upload_folder': 'sender/',
@@ -134,6 +144,9 @@ Create the models (e.g. <app_name>/models.py)
                 'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
             },
         ],
+        'extra': {
+            'session': ['year']
+        },
         'invoices_period': 'bimestrial'
     }
 
@@ -236,6 +249,24 @@ Create the models (e.g. <app_name>/models.py)
             }
 
 
+.. attribute:: WEBIX_SENDER['initial_send_methods']
+
+    Defines the default send methods in the form.
+
+    .. code-block:: python
+
+        [
+            {
+                'method': 'storage',
+                'function': 'django_webix_sender.send_methods.storage.send',
+            },
+            {
+                'method': 'telegram',
+                'function': 'django_webix_sender.send_methods.telegram.send',
+            },
+        ]
+
+
 .. attribute:: WEBIX_SENDER['attachments']
 
     Defines the attachments model and the method to store files.
@@ -271,6 +302,35 @@ Create the models (e.g. <app_name>/models.py)
             'model': 'django_webix_sender.Customer',
             'datatable_fields': ['user', 'name', 'sms', 'email', 'telegram']
         }
+
+
+.. attribute:: WEBIX_SENDER['extra']
+
+    Defines the data to add to message extra json field.
+    You can define variable names in the session.
+
+    .. code-block:: python
+
+        {
+            'session': ['year']
+        }
+
+
+.. attribute:: WEBIX_SENDER['invoices_period']
+
+    Defines the periods to divide the invoices.
+
+    The available periods are:
+
+    - ``monthly``
+
+    - ``bimestrial``
+
+    - ``quarter``
+
+    - ``half-yearly``
+
+    - ``yearly``
 
 
 .. warning::

@@ -22,31 +22,37 @@ Models
     :members:
 .. autoclass:: django_webix_sender.models.MessageRecipient
     :members:
+.. autoclass:: django_webix_sender.models.MessageUserRead
+    :members:
 .. autoclass:: django_webix_sender.models.TelegramPersistence
     :members:
 
 Template Tags
 -------------
-.. automodule:: django_webix_sender.templatetags.verbose_name
-   :members:
 .. automodule:: django_webix_sender.templatetags.field_type
+   :members:
+.. automodule:: django_webix_sender.templatetags.send_methods_utils
+   :members:
+.. automodule:: django_webix_sender.templatetags.verbose_name
    :members:
 
 Views
 -----
-.. autoclass:: django_webix_sender.views.SenderList
+.. autoclass:: django_webix_sender.views.SenderListView
     :members:
-.. autoclass:: django_webix_sender.views.SenderGetList
+.. autoclass:: django_webix_sender.views.SenderGetListView
     :members:
-.. autoclass:: django_webix_sender.views.SenderSend
+.. autoclass:: django_webix_sender.views.SenderSendView
     :members:
-.. autoclass:: django_webix_sender.views.DjangoWebixSenderWindow
+.. autoclass:: django_webix_sender.views.SenderWindowView
     :members:
-.. autoclass:: django_webix_sender.views.DjangoWebixSenderMessagesList
+.. autoclass:: django_webix_sender.views.SenderMessagesListView
     :members:
-.. autoclass:: django_webix_sender.views.InvoiceManagement
+.. autoclass:: django_webix_sender.views.SenderMessagesChatView
     :members:
-.. autoclass:: django_webix_sender.views.TelegramWebhookView
+.. autoclass:: django_webix_sender.views.SenderInvoiceManagementView
+    :members:
+.. autoclass:: django_webix_sender.views.SenderTelegramWebhookView
     :members:
 
 Utils
