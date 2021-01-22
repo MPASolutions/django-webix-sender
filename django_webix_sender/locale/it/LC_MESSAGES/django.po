@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-09 12:27+0100\n"
-"PO-Revision-Date: 2018-11-16 09:14+0100\n"
+"POT-Creation-Date: 2021-01-22 11:44+0100\n"
+"PO-Revision-Date: 2021-01-22 11:50+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -16,566 +16,712 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.4.2\n"
 
-#: django_webix_sender/admin.py:98
-#, fuzzy
-#| msgid "Valid recipients: "
+#: admin.py:121
 msgid "Total recipients"
-msgstr "Destinatari validi: "
+msgstr "Totale destinatari"
 
-#: django_webix_sender/admin.py:104
-#, fuzzy
-#| msgid "Duplicate recipients: "
+#: admin.py:127
 msgid "Success recipients"
-msgstr "Destinatari duplicati: "
+msgstr "Destinatari con successo"
 
-#: django_webix_sender/admin.py:110
-#, fuzzy
-#| msgid "Valid recipients: "
+#: admin.py:133
 msgid "Failed recipients"
-msgstr "Destinatari validi: "
+msgstr "Destinatari falliti"
 
-#: django_webix_sender/admin.py:116
-#, fuzzy
-#| msgid "Recipients"
+#: admin.py:139
 msgid "Unknown recipients"
-msgstr "Destinatari"
+msgstr "Destinatari sconosciuti"
 
-#: django_webix_sender/admin.py:122
-#, fuzzy
-#| msgid "Invalids recipients: "
+#: admin.py:145
 msgid "Invalid recipients"
-msgstr "Destinatari non validi: "
+msgstr "Destinatari non validi"
 
-#: django_webix_sender/admin.py:128
-#, fuzzy
-#| msgid "Duplicate recipients: "
+#: admin.py:151
 msgid "Duplicate recipients"
-msgstr "Destinatari duplicati: "
+msgstr "Destinatari duplicati"
 
-#: django_webix_sender/admin.py:135
+#: admin.py:158
 msgid "Method"
 msgstr "Metodo"
 
-#: django_webix_sender/admin.py:141
+#: admin.py:164
 msgid "Function"
 msgstr "Funzione"
 
-#: django_webix_sender/apps.py:18
+#: apps.py:20
 msgid "`WEBIX_SENDER` is not configured in your settings.py file"
 msgstr "`WEBIX_SENDER` non è configurato nel tuo file settings.py"
 
-#: django_webix_sender/apps.py:28
-msgid "Attachment model is not valid"
-msgstr "Il modello degli allegati non è valido"
+#: apps.py:26
+msgid "`method` is not configured in send method"
+msgstr "`method` non è configurato nel metodo di invio"
 
-#: django_webix_sender/apps.py:38
-msgid "Recipient model is not valid"
-msgstr "Il modello dei destinatari non è valido"
+#: apps.py:28
+msgid "`verbose_name` is not configured in send method"
+msgstr "`verbose_name` non è configurato nel metodo di invio"
 
-#: django_webix_sender/models.py:34
+#: apps.py:30
+msgid "`function` is not configured in send method"
+msgstr "`function` non è configurato nel metodo di invio"
+
+#: apps.py:32
+msgid "`show_in_list` is not configured in send method"
+msgstr "`show_in_list` non è configurato nel metodo di invio"
+
+#: apps.py:34
+msgid "`show_in_chat` is not configured in send method"
+msgstr "`show_in_chat` non è configurato nel metodo di invio"
+
+#: apps.py:43
+msgid "`{}` method is used {} times instead of 1"
+msgstr "`{}` è utilizzato {} volte invece di 1"
+
+#: apps.py:51
+msgid "Email `config` is not configured in your settings.py file"
+msgstr "Email `config` non è configurato nel tuo file settings.py"
+
+#: apps.py:62
+msgid "Skebby `config` is not configured in your settings.py file"
+msgstr "Skebby `config` non è configurato nel tuo file settings.py"
+
+#: apps.py:69
+msgid "Telegram `config` is not configured in your settings.py file"
+msgstr "Telegram `config` non è configurato nel tuo file settings.py"
+
+#: apps.py:99
+msgid "Attachment model `{}` is not valid"
+msgstr "Il modello degli allegati `{}` non è valido"
+
+#: apps.py:114
+msgid "Recipient model `{}` is not valid"
+msgstr "Il modello dei destinatari `{}` non è valido"
+
+#: management/commands/telegram_manage.py:37
+msgid "Telegram Webhooks successfully deleted"
+msgstr "Webhooks Telegram eliminati con successo"
+
+#: management/commands/telegram_manage.py:39
+msgid "Telegram Webhooks cannot be deleted"
+msgstr "Webhooks Telegram non possono essere eliminati"
+
+#: management/commands/telegram_manage.py:44
+msgid "Telegram Webhook successfully added"
+msgstr "Webhooks Telegram aggiunti con successo"
+
+#: management/commands/telegram_manage.py:46
+msgid "Telegram Webhook cannot be added"
+msgstr "Webhooks Telegram non possono essere aggiunti"
+
+#: management/commands/telegram_manage.py:50
+msgid "{} persistence elements have been deleted"
+msgstr "{} elementi di persistenza sono stati eliminati"
+
+#: models.py:62
 msgid "`get_sms` not implemented!"
 msgstr "`get_sms` non implementato!"
 
-#: django_webix_sender/models.py:38
+#: models.py:72
 msgid "`get_email` not implemented!"
 msgstr "`get_email` non implementato!"
 
-#: django_webix_sender/models.py:65 django_webix_sender/models.py:113
-#: django_webix_sender/models.py:226
+#: models.py:81
+msgid "`get_telegram` not implemented!"
+msgstr "`get_telegram` non implementato!"
+
+#: models.py:91
+msgid "`get_sms_fieldpath` not implemented!"
+msgstr "`get_sms_fieldpath` non implementato!"
+
+#: models.py:101
+msgid "`get_email_fieldpath` not implemented!"
+msgstr "`get_email_fieldpath` non implementato!"
+
+#: models.py:111
+msgid "`get_telegram_fieldpath` not implemented!"
+msgstr "`get_telegram_fieldpath` non implementato!"
+
+#: models.py:174
+msgid "`get_filters_viewers` not implemented!"
+msgstr "`get_filters_viewers` non implementato!"
+
+#: models.py:184
+msgid "`get_representation` not implemented!"
+msgstr "`get_representation` non implementato!"
+
+#: models.py:195 models.py:281 models.py:446 models.py:504
 msgid "User"
 msgstr "Utente"
 
-#: django_webix_sender/models.py:66 django_webix_sender/models.py:114
+#: models.py:196 models.py:282
 msgid "Name"
 msgstr "Nome"
 
-#: django_webix_sender/models.py:67 django_webix_sender/models.py:115
+#: models.py:197 models.py:283
 msgid "Vat number"
 msgstr "Partita IVA"
 
-#: django_webix_sender/models.py:68 django_webix_sender/models.py:116
+#: models.py:198 models.py:284
 msgid "Fiscal code"
 msgstr "Codice fiscale"
 
-#: django_webix_sender/models.py:69 django_webix_sender/models.py:117
+#: models.py:199 models.py:285
 msgid "Sms"
 msgstr "Sms"
 
-#: django_webix_sender/models.py:70 django_webix_sender/models.py:118
+#: models.py:200 models.py:286
 msgid "Email"
 msgstr "Email"
 
-#: django_webix_sender/models.py:71 django_webix_sender/models.py:119
+#: models.py:201 models.py:287
+msgid "Telegram"
+msgstr "Telegram"
+
+#: models.py:202 models.py:288
 msgid "Note"
 msgstr "Note"
 
-#: django_webix_sender/models.py:72 django_webix_sender/models.py:120
-#: django_webix_sender/models.py:212 django_webix_sender/models.py:258
+#: models.py:203 models.py:289 models.py:432 models.py:481
 msgid "Extra"
 msgstr "Extra"
 
-#: django_webix_sender/models.py:74 django_webix_sender/models.py:97
-#: django_webix_sender/models.py:122 django_webix_sender/models.py:148
-#: django_webix_sender/models.py:182 django_webix_sender/models.py:207
-#: django_webix_sender/templates/django_webix_sender/sender.js:47
+#: models.py:205 models.py:261 models.py:291 models.py:350 models.py:395
+#: models.py:423 templates/django_webix_sender/sender.js:93
 msgid "Typology"
 msgstr "Tipologia"
 
-#: django_webix_sender/models.py:76 django_webix_sender/models.py:99
-#: django_webix_sender/models.py:124 django_webix_sender/models.py:150
-#: django_webix_sender/models.py:166 django_webix_sender/models.py:184
-#: django_webix_sender/models.py:229 django_webix_sender/models.py:260
+#: models.py:207 models.py:263 models.py:293 models.py:352 models.py:371
+#: models.py:397 models.py:449 models.py:486 models.py:506
 msgid "Creation date"
 msgstr "Data di creazione"
 
-#: django_webix_sender/models.py:77 django_webix_sender/models.py:100
-#: django_webix_sender/models.py:125 django_webix_sender/models.py:151
-#: django_webix_sender/models.py:167 django_webix_sender/models.py:185
-#: django_webix_sender/models.py:230 django_webix_sender/models.py:261
+#: models.py:208 models.py:264 models.py:294 models.py:353 models.py:372
+#: models.py:398 models.py:450 models.py:487 models.py:507
 msgid "Modification data"
 msgstr "Dati di modifica"
 
-#: django_webix_sender/models.py:80
+#: models.py:211
 msgid "Customer"
 msgstr "Cliente"
 
-#: django_webix_sender/models.py:81
+#: models.py:212
 msgid "Customers"
 msgstr "Clienti"
 
-#: django_webix_sender/models.py:103
+#: models.py:267
 msgid "Customer typology"
 msgstr "Tipologia cliente"
 
-#: django_webix_sender/models.py:104
+#: models.py:268
 msgid "Customer typologies"
 msgstr "Tipologia clienti"
 
-#: django_webix_sender/models.py:128
+#: models.py:297
 msgid "External subject"
 msgstr "Soggetto esterno"
 
-#: django_webix_sender/models.py:129
+#: models.py:298
 msgid "External subjects"
 msgstr "Soggetti esterni"
 
-#: django_webix_sender/models.py:135
-#, fuzzy
-#| msgid "Not specified"
+#: models.py:304
 msgid "Not defined"
 msgstr "Non specificato"
 
-#: django_webix_sender/models.py:154
+#: models.py:356
 msgid "External subject typology"
 msgstr "Tipologia soggetto esterno"
 
-#: django_webix_sender/models.py:155
+#: models.py:357
 msgid "External subject typologies"
 msgstr "Tipologie soggetti esterni"
 
-#: django_webix_sender/models.py:163
+#: models.py:368
 msgid "Document"
 msgstr "Documento"
 
-#: django_webix_sender/models.py:164
+#: models.py:369
 msgid "Insert date"
 msgstr "Data inserimento"
 
-#: django_webix_sender/models.py:170
+#: models.py:375
 msgid "Attachment"
 msgstr "Allegato"
 
-#: django_webix_sender/models.py:171 django_webix_sender/models.py:217
+#: models.py:376 models.py:437
 msgid "Attachments"
 msgstr "Allegati"
 
-#: django_webix_sender/models.py:188
+#: models.py:401
 msgid "Message typology"
 msgstr "Tipologia messaggio"
 
-#: django_webix_sender/models.py:189
+#: models.py:402
 msgid "Message typologies"
 msgstr "Tipologie messaggi"
 
-#: django_webix_sender/models.py:209
-#: django_webix_sender/templates/django_webix_sender/invoices.js:15
+#: models.py:425 templates/django_webix_sender/invoices.js:15
 msgid "Send method"
 msgstr "Metodo di invio"
 
-#: django_webix_sender/models.py:210
-#: django_webix_sender/templates/django_webix_sender/sender.js:63
+#: models.py:426 templates/django_webix_sender/sender.js:111
 msgid "Subject"
 msgstr "Oggetto"
 
-#: django_webix_sender/models.py:211
-#: django_webix_sender/templates/django_webix_sender/sender.js:68
+#: models.py:427
 msgid "Body"
 msgstr "Corpo"
 
-#: django_webix_sender/models.py:221
+#: models.py:429
+msgid "Sent"
+msgstr "Inviati"
+
+#: models.py:430
+msgid "Received"
+msgstr "Ricevuti"
+
+#: models.py:441
 msgid "Cost"
 msgstr "Costo"
 
-#: django_webix_sender/models.py:222
-#: django_webix_sender/templates/django_webix_sender/invoices.js:81
-#: django_webix_sender/views.py:374
+#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:652
 msgid "Invoiced"
 msgstr "Fatturato"
 
-#: django_webix_sender/models.py:227
+#: models.py:447
 msgid "Sender"
 msgstr "Mittente"
 
-#: django_webix_sender/models.py:233
+#: models.py:453
 msgid "Sent message"
 msgstr "Messaggio inviato"
 
-#: django_webix_sender/models.py:234
+#: models.py:454
 msgid "Sent messages"
 msgstr "Messaggi inviati"
 
-#: django_webix_sender/models.py:245
+#: models.py:468 models.py:503
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
-#: django_webix_sender/models.py:249
+#: models.py:472
 msgid "Recipient address"
 msgstr "Indirizzo del destinatario"
 
-#: django_webix_sender/models.py:250
+#: models.py:473
 msgid "Sent number"
 msgstr "Numero inviati"
 
-#: django_webix_sender/models.py:252
+#: models.py:475 templates/django_webix_sender/invoices.js:68
 msgid "Success"
 msgstr "Successo"
 
-#: django_webix_sender/models.py:253
+#: models.py:476
 msgid "Failed"
 msgstr "Fallito"
 
-#: django_webix_sender/models.py:254
+#: models.py:477
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#: django_webix_sender/models.py:255
+#: models.py:478
 msgid "Invalid"
 msgstr "Non valido"
 
-#: django_webix_sender/models.py:256
+#: models.py:479
 msgid "Duplicate"
 msgstr "Duplicato"
 
-#: django_webix_sender/models.py:264
+#: models.py:490
 msgid "Recipient"
 msgstr "Destinatario"
 
-#: django_webix_sender/models.py:265
+#: models.py:491
 msgid "Recipients"
 msgstr "Destinatari"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:39
+#: models.py:510
+msgid "Readed message"
+msgstr "Messaggio letto"
+
+#: models.py:511
+msgid "Readed messages"
+msgstr "Messaggi letti"
+
+#: models.py:530
+msgid "Telegram Persistence"
+msgstr "Persistenza Telegram"
+
+#: models.py:531
+msgid "Telegram Persistences"
+msgstr "Persistenze Telegram"
+
+#: send_methods/telegram/handlers.py:14
+msgid "Hi!"
+msgstr "Ciao!"
+
+#: send_methods/telegram/handlers.py:19
+msgid "Help!"
+msgstr "Aiuto!"
+
+#: send_methods/telegram/handlers.py:45
+msgid "Your user is not authorized to use this Bot"
+msgstr "Il tuo utente non è autorizzato ad utilizzare questo Bot"
+
+#: send_methods/telegram/handlers.py:53
 msgid ""
-"Warning! if there are messages with an unknown status, the data is not "
-"updated"
+"Hi! Send me your phone number to connect your web account!\n"
+"Type /cancel to exit"
 msgstr ""
-"Attenzione! Se ci sono messaggi con uno stato sconosciuto, i dati non sono "
-"aggiornati"
+"Ciao! Inviami il tuo numero di telefono per connettere il tuo account!\n"
+"Scrivi /cancel per uscire"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:66
-msgid "Period"
-msgstr "Periodo"
+#: send_methods/telegram/handlers.py:55
+msgid "Send my phone number"
+msgstr "Invia il mio numero"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:71
-msgid "Unknowm status"
-msgstr "Stato sconosciuto"
+#: send_methods/telegram/handlers.py:85
+msgid "Welcome {}! Now you can use this bot"
+msgstr "Benvenuto {}! Da ora puoi utilizzare questo bot"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:76
-msgid "Not send"
-msgstr "Non inviato"
+#: send_methods/telegram/handlers.py:90
+msgid "Your number is not in our database, contact us to add"
+msgstr ""
+"Il tuo numero di telefono non è nel nostro database, contattaci per "
+"aggiungerlo"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:86
-msgid "To be invoiced"
-msgstr "Da fatturare"
+#: send_methods/telegram/handlers.py:101
+msgid "Okay, if you want to connect your account type /start"
+msgstr "Ok, se vuoi connettere il tuo account scrivi /start"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:91
-msgid "Price invoiced"
-msgstr "Importo fattura"
+#: templates/django_webix_sender/chat.js:15
+#: templates/django_webix_sender/chat_messages.js:24
+msgid "Search.."
+msgstr "Cerca.."
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:96
-msgid "Price to be invoiced"
-msgstr "Importo da fatturare"
+#: templates/django_webix_sender/chat_messages.js:88
+msgid "Type your message"
+msgstr "Scrivi il tuo messaggio"
 
-#: django_webix_sender/templates/django_webix_sender/invoices.js:103
-msgid "marks as billed"
-msgstr "segna come fatturato"
-
-#: django_webix_sender/templates/django_webix_sender/invoices.js:146
-#: django_webix_sender/templates/django_webix_sender/sender.js:154
-msgid "Confirmation"
-msgstr "Conferma"
-
-#: django_webix_sender/templates/django_webix_sender/invoices.js:147
-msgid "Are you sure you want to mark these communications as billed?"
-msgstr "Sei sicuro di volere segnare questi messaggi come fatturati?"
-
-#: django_webix_sender/templates/django_webix_sender/invoices.js:148
-#: django_webix_sender/templates/django_webix_sender/list.js:145
-#: django_webix_sender/templates/django_webix_sender/sender.js:156
-msgid "Yes"
-msgstr "Sì"
-
-#: django_webix_sender/templates/django_webix_sender/invoices.js:149
-#: django_webix_sender/templates/django_webix_sender/list.js:146
-#: django_webix_sender/templates/django_webix_sender/sender.js:157
-msgid "No"
-msgstr "No"
-
-#: django_webix_sender/templates/django_webix_sender/invoices.js:183
-#: django_webix_sender/templates/django_webix_sender/sender.js:300
-msgid "Caution!"
-msgstr "Attenzione!"
-
-#: django_webix_sender/templates/django_webix_sender/invoices.js:184
-msgid "There are unknown status for this communication"
-msgstr "Ci sono status sconosciuto per questa comunicazione"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:35
-msgid "AND"
-msgstr "E"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:36
-msgid "OR"
-msgstr "O"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:68
-msgid "Filter the list by applying filters"
-msgstr "Filtra la lista applicando dei filtri"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:144
-msgid "All"
-msgstr "Tutti"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:200
-msgid "Action"
-msgstr "Azione"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:211
-msgid "Go"
-msgstr "Vai"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:246
-#: django_webix_sender/templates/django_webix_sender/list.js:279
-msgid "selected of"
-msgstr "selezionati di"
-
-#: django_webix_sender/templates/django_webix_sender/list.js:319
-msgid "Unable to load sender class"
-msgstr "Impossibile caricare la classe sender"
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:81
-#: django_webix_sender/templates/django_webix_sender/sender.js:91
-msgid "characters"
-msgstr "caratteri"
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:99
-msgid "Attach file"
-msgstr "Allega file"
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:112
+#: templates/django_webix_sender/chat_messages.js:92
+#: templates/django_webix_sender/list.js:211
+#: templates/django_webix_sender/sender.js:157
+#: templates/django_webix_sender/sender.js:320
 msgid "Send"
 msgstr "Invia"
 
-#: django_webix_sender/templates/django_webix_sender/sender.js:119
-msgid "You have to fill in all the required fields"
-msgstr "Devi compilare tutti i campi richiesti"
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:150
-msgid "Valid recipients: "
-msgstr "Destinatari validi: "
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:151
-msgid "Invalids recipients: "
-msgstr "Destinatari non validi: "
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:152
-msgid "Duplicate recipients: "
-msgstr "Destinatari duplicati: "
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:155
-msgid "Are you sure to send this message?"
-msgstr "Sei sicuro di voler inviare questo messaggio?"
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:176
-msgid "The messages have been sent"
-msgstr "I messaggi sono stati inviati"
-
-#: django_webix_sender/templates/django_webix_sender/sender.js:185
-#: django_webix_sender/templates/django_webix_sender/sender.js:198
+#: templates/django_webix_sender/chat_messages.js:129
+#: templates/django_webix_sender/sender.js:243
+#: templates/django_webix_sender/sender.js:256
 msgid "Unable to send messages"
 msgstr "Impossibile inviare i messaggi"
 
-#: django_webix_sender/templates/django_webix_sender/sender.js:243
-msgid "Send email"
-msgstr "Invia email"
+#: templates/django_webix_sender/invoices.js:62
+msgid "Period"
+msgstr "Periodo"
 
-#: django_webix_sender/templates/django_webix_sender/sender.js:246
-msgid "Send SMS"
-msgstr "Invia SMS"
+#: templates/django_webix_sender/invoices.js:63
+msgid "TOTAL"
+msgstr "TOTALE"
 
-#: django_webix_sender/templates/django_webix_sender/sender.js:266
+#: templates/django_webix_sender/invoices.js:74
+msgid "Unknowm status"
+msgstr "Stato sconosciuto"
+
+#: templates/django_webix_sender/invoices.js:80
+msgid "Not send"
+msgstr "Non inviato"
+
+#: templates/django_webix_sender/invoices.js:92
+msgid "To be invoiced"
+msgstr "Da fatturare"
+
+#: templates/django_webix_sender/invoices.js:98
+msgid "Price invoiced"
+msgstr "Importo fattura"
+
+#: templates/django_webix_sender/invoices.js:104
+msgid "Price to be invoiced"
+msgstr "Importo da fatturare"
+
+#: templates/django_webix_sender/invoices.js:112
+msgid "marks as billed"
+msgstr "segna come fatturato"
+
+#: templates/django_webix_sender/invoices.js:160
+#: templates/django_webix_sender/sender.js:206
+msgid "Confirmation"
+msgstr "Conferma"
+
+#: templates/django_webix_sender/invoices.js:161
+msgid "Are you sure you want to mark these communications as billed?"
+msgstr "Sei sicuro di volere segnare questi messaggi come fatturati?"
+
+#: templates/django_webix_sender/invoices.js:162
+#: templates/django_webix_sender/list.js:151
+#: templates/django_webix_sender/sender.js:208
+msgid "Yes"
+msgstr "Sì"
+
+#: templates/django_webix_sender/invoices.js:163
+#: templates/django_webix_sender/list.js:152
+#: templates/django_webix_sender/sender.js:209
+msgid "No"
+msgstr "No"
+
+#: templates/django_webix_sender/invoices.js:197
+#: templates/django_webix_sender/sender.js:360
+msgid "Caution!"
+msgstr "Attenzione!"
+
+#: templates/django_webix_sender/invoices.js:198
+msgid "There are unknown status for this communication"
+msgstr "Ci sono status sconosciuto per questa comunicazione"
+
+#: templates/django_webix_sender/list.js:39
+msgid "AND"
+msgstr "E"
+
+#: templates/django_webix_sender/list.js:40
+msgid "OR"
+msgstr "O"
+
+#: templates/django_webix_sender/list.js:72
+msgid "Filter the list by applying filters"
+msgstr "Filtra la lista applicando dei filtri"
+
+#: templates/django_webix_sender/list.js:150
+msgid "All"
+msgstr "Tutti"
+
+#: templates/django_webix_sender/list.js:207
+msgid "Action"
+msgstr "Azione"
+
+#: templates/django_webix_sender/list.js:218
+msgid "Go"
+msgstr "Vai"
+
+#: templates/django_webix_sender/list.js:246
+#: templates/django_webix_sender/list.js:279
+msgid "selected of"
+msgstr "selezionati di"
+
+#: templates/django_webix_sender/list.js:319
+msgid "Unable to load sender class"
+msgstr "Impossibile caricare la classe sender"
+
+#: templates/django_webix_sender/sender.js:50
+msgid "Send methods"
+msgstr "Metodi di invio"
+
+#: templates/django_webix_sender/sender.js:127
+#: templates/django_webix_sender/sender.js:135
+msgid "characters"
+msgstr "caratteri"
+
+#: templates/django_webix_sender/sender.js:142
+msgid "Attach file"
+msgstr "Allega file"
+
+#: templates/django_webix_sender/sender.js:164
+msgid "You have to fill in all the required fields"
+msgstr "Devi compilare tutti i campi richiesti"
+
+#: templates/django_webix_sender/sender.js:198
+msgid "Valid recipients: "
+msgstr "Destinatari validi: "
+
+#: templates/django_webix_sender/sender.js:199
+msgid "Invalids recipients: "
+msgstr "Destinatari non validi: "
+
+#: templates/django_webix_sender/sender.js:200
+msgid "Duplicate recipients: "
+msgstr "Destinatari duplicati: "
+
+#: templates/django_webix_sender/sender.js:203
+msgid "Are you sure to send this message?"
+msgstr "Sei sicuro di voler inviare questo messaggio?"
+
+#: templates/django_webix_sender/sender.js:233
+msgid "Results"
+msgstr "Risultati"
+
+#: templates/django_webix_sender/sender.js:324
 msgid "Close"
 msgstr "Chiudi"
 
-#: django_webix_sender/templates/django_webix_sender/sender.js:301
+#: templates/django_webix_sender/sender.js:361
 msgid "There are no recipients for this communication"
 msgstr "Non ci sono destinatari per questa comunicazione"
 
-#: django_webix_sender/utils.py:24
-msgid "`send_email` method not implemented!"
-msgstr "`send_email` motodo non implementato!"
-
-#: django_webix_sender/utils.py:28
-msgid "`send_sms` method not implemented!"
-msgstr "`send_sms` motodo non implementato!"
-
-#: django_webix_sender/utils.py:64
+#: utils.py:64 utils.py:69 utils.py:74
 msgid "Related is not subclass of `DjangoWebixSender`"
 msgstr "Oggetto collegato non è una sottoclasse di `DjangoWebixSender`"
 
-#: django_webix_sender/utils.py:139
+#: utils.py:201
 msgid "Invalid characters"
 msgstr "Caratteri invalidi"
 
-#: django_webix_sender/utils.py:191
-msgid "Sms sent"
-msgstr "Sms inviati"
+#: utils.py:259
+msgid "Skebby sent"
+msgstr "Inviati con Skebby"
 
-#: django_webix_sender/utils.py:195
+#: utils.py:262
 msgid "Emails sent"
 msgstr "Email inviate"
 
-#: django_webix_sender/utils.py:197 django_webix_sender/views.py:349
+#: utils.py:265
+msgid "Telegram sent"
+msgstr "Inviati con Telegram"
+
+#: utils.py:268
+msgid "Storage sent"
+msgstr "Messaggio archiviato"
+
+#: utils.py:270 views.py:626
 msgid "Invalid send method"
 msgstr "Metodo di invio non valido"
 
-#: django_webix_sender/views.py:91
+#: views.py:125
 msgid "Content type doesn't match"
 msgstr "Nessun content type identificato"
 
-#: django_webix_sender/views.py:96
+#: views.py:130
 msgid "Not valid and/or filter"
 msgstr "Filtro e/o non valido"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Jan"
 msgstr "Gen"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Feb"
 msgstr "Feb"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Mar"
 msgstr "Mar"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Apr"
 msgstr "Apr"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "May"
 msgstr "Mag"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Jun"
 msgstr "Giu"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Jul"
 msgstr "Lug"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Aug"
 msgstr "Ago"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Sep"
 msgstr "Set"
 
-#: django_webix_sender/views.py:183
+#: views.py:470
 msgid "Oct"
 msgstr "Ott"
 
-#: django_webix_sender/views.py:184
+#: views.py:471
 msgid "Nov"
 msgstr "Nov"
 
-#: django_webix_sender/views.py:184
+#: views.py:471
 msgid "Dec"
 msgstr "Dic"
 
-#: django_webix_sender/views.py:187
+#: views.py:474
 msgid "Jan - Feb"
 msgstr "Gen - Feb"
 
-#: django_webix_sender/views.py:187
+#: views.py:474
 msgid "Mar - Apr"
 msgstr "Mar - Apr"
 
-#: django_webix_sender/views.py:187
+#: views.py:474
 msgid "May - Jun"
 msgstr "Mag - Giu"
 
-#: django_webix_sender/views.py:187
+#: views.py:474
 msgid "Jul - Aug"
 msgstr "Lug - Ago"
 
-#: django_webix_sender/views.py:187
+#: views.py:474
 msgid "Sep - Oct"
 msgstr "Set - Ott"
 
-#: django_webix_sender/views.py:187
+#: views.py:474
 msgid "Nov - Dec"
 msgstr "Nov - Dic"
 
-#: django_webix_sender/views.py:190
+#: views.py:477
 msgid "First quarter"
 msgstr "Primo quarto"
 
-#: django_webix_sender/views.py:190
+#: views.py:477
 msgid "Second quarter"
 msgstr "Secondo quarto"
 
-#: django_webix_sender/views.py:190
+#: views.py:477
 msgid "Third quarter"
 msgstr "Terzo quarto"
 
-#: django_webix_sender/views.py:190
+#: views.py:477
 msgid "Fourth quarter"
 msgstr "Quarto quarto"
 
-#: django_webix_sender/views.py:193
+#: views.py:480
 msgid "First semester"
 msgstr "Primo semestre"
 
-#: django_webix_sender/views.py:193
+#: views.py:480
 msgid "Second semester"
 msgstr "Secondo semestre"
 
-#: django_webix_sender/views.py:196
+#: views.py:483
 msgid "Year"
 msgstr "Anno"
 
-#: django_webix_sender/views.py:256 django_webix_sender/views.py:350
-msgid "Not specified"
-msgstr "Non specificato"
+#: views.py:533 views.py:627
+msgid "Sender not specified"
+msgstr "Destinatario non specificato"
 
-#: django_webix_sender/views.py:347
+#: views.py:624
 msgid "Invalid period"
 msgstr "Periodo non valido"
+
+#~ msgid ""
+#~ "Warning! if there are messages with an unknown status, the data is not "
+#~ "updated"
+#~ msgstr ""
+#~ "Attenzione! Se ci sono messaggi con uno stato sconosciuto, i dati non "
+#~ "sono aggiornati"
+
+#~ msgid "The messages have been sent"
+#~ msgstr "I messaggi sono stati inviati"
+
+#~ msgid "Send email"
+#~ msgstr "Invia email"
+
+#~ msgid "Send SMS"
+#~ msgstr "Invia SMS"
+
+#~ msgid "`send_email` method not implemented!"
+#~ msgstr "`send_email` motodo non implementato!"
+
+#~ msgid "`send_sms` method not implemented!"
+#~ msgstr "`send_sms` motodo non implementato!"
 
 #~ msgid "Attachments `save_function` must be a callable method"
 #~ msgstr "`save_function` di Allegati deve essere un metodo"
