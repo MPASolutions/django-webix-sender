@@ -22,7 +22,7 @@ $$("{{webix_container_id}}").addView({
             cols: [
                 {% for datatable in datatables %}
                 {
-                    header: "{{ datatable.verbose_name }}",
+                    header: "{{ datatable.verbose_name_plural }}",
                     collapsed: {{ datatable.collapsed|yesno:"true,false" }},
                     body: {
                         gravity: 1,

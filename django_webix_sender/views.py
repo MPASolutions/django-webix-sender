@@ -68,6 +68,7 @@ class SenderListView(WebixTemplateView):
             _dict = {
                 'model': recipient['model'].lower(),
                 'verbose_name': model_class._meta.verbose_name,
+                'verbose_name_plural': model_class._meta.verbose_name_plural,
                 'fields': [i for i in recipient['datatable_fields']],
                 'collapsed': recipient.get('collapsed', False)
             }
@@ -237,6 +238,7 @@ class SenderWindowView(WebixTemplateView):
 class SenderMessagesListView(WebixListView):
     model = MessageRecipient
     template_name = "django_webix_sender/list_messages.js"
+    title = _("Messages")
 
     fields = [
         {
