@@ -381,6 +381,11 @@ if CONF is not None and CONF['attachments']['model'] == 'django_webix_sender.Mes
         def get_url(self):
             return '{}'.format(self.file.url)
 
+        @staticmethod
+        def get_file_fieldpath() -> str:
+            return "file"
+
+
 if CONF is not None and CONF['typology_model']['enabled']:
     class MessageTypology(Model):
         """

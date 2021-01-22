@@ -9,11 +9,13 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
+from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Q, Sum, F, DecimalField, Case, When, IntegerField, Value, CharField, Subquery, OuterRef
-from django.db.models.functions import StrIndex, Substr
+from django.db.models.functions import StrIndex, Substr, Concat
 from django.http import JsonResponse, Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
@@ -234,19 +236,24 @@ class SenderWindowView(WebixTemplateView):
 @method_decorator(login_required, name='dispatch')
 class SenderMessagesListView(WebixListView):
     model = MessageRecipient
+    template_name = "django_webix_sender/list_messages.js"
 
     fields = [
         {
             'field_name': 'send_method_type',
-            'datalist_column': '''{id: "send_method_type", header: ["Send method", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+            'datalist_column': '''{id: "send_method_type", serverFilterType: "exact", header: ["{{ _("Send method")|escapejs }}", {content: "serverSelectFilter", options: send_method_type_options}], adjust: "all", fillspace: true}'''
         },
         {
             'field_name': 'message_sent__subject',
-            'datalist_column': '''{id: "message_sent__subject", header: ["Subject", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+            'datalist_column': '''{id: "message_sent__subject", serverFilterType: "icontains", header: ["{{ _("Subject")|escapejs }}", {content: "textFilter"}], adjust: "all", fillspace: true}'''
         },
         {
             'field_name': 'message_sent__body',
-            'datalist_column': '''{id: "message_sent__body", header: ["Body", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+            'datalist_column': '''{id: "message_sent__body", serverFilterType: "icontains", header: ["{{ _("Body")|escapejs }}", {content: "textFilter"}], adjust: "all", fillspace: true}'''
+        },
+        {
+            'field_name': 'attachments',
+            'datalist_column': '''{id: "attachments", header: ["{{ _("Attachments")|escapejs }}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsTemplate}'''
         },
     ]
 
@@ -259,8 +266,8 @@ class SenderMessagesListView(WebixListView):
     enable_row_click = False
     enable_json_loading = True
 
-    def get_queryset(self, initial_queryset=None):
-        qs = super().get_queryset(initial_queryset=initial_queryset)
+    def get_initial_queryset(self):
+        qs = super().get_initial_queryset()
 
         # Only sent messages
         qs = qs.filter(message_sent__status='sent')
@@ -296,6 +303,17 @@ class SenderMessagesListView(WebixListView):
                 length=StrIndex(F('message_sent__send_method'), Value('.')) - 1,
                 output_field=CharField()
             )
+        )
+
+        # Annotate attachments
+        app_label, model = CONF['attachments']['model'].lower().split(".")
+        model_class = apps.get_model(app_label=app_label, model_name=model)
+        qs = qs.annotate(
+            attachments=StringAgg(
+                'message_sent__attachments__{}'.format(model_class.get_file_fieldpath()),
+                delimiter='|',
+                distinct=True
+            ),
         )
 
         # Filter by send_method
@@ -643,6 +661,9 @@ class SenderTelegramWebhookView(View):
         CONFIG_TELEGRAM = TELEGRAM.get("config")
 
         response = json.loads(request.body)
+
+        # Change language
+        translation.activate(response['message']['from'].get('language_code'))
 
         # Check user
         recipients = []
