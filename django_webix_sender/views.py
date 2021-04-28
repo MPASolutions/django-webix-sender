@@ -430,9 +430,6 @@ class SenderMessagesChatView(WebixTemplateView):
                 context['send_method'] = send_method
                 context['send_method_type'] = send_method.split(".", 1)[0]
                 context['recipient'] = recipient
-                if CONF is not None and CONF['typology_model']['enabled']:
-                    from django_webix_sender.models import MessageTypology
-                    context['typology'], _ = MessageTypology.objects.get_or_create(typology='Response')
                 context['contenttype'] = contenttype
                 _messages = []
                 for message in messages:
@@ -689,9 +686,6 @@ class SenderTelegramWebhookView(View):
                     "extra": response,
                     "sender": response['message']['from'].get('username'),
                 }
-                if CONF is not None and CONF['typology_model']['enabled']:
-                    from django_webix_sender.models import MessageTypology
-                    message_sent_data["typology"], _ = MessageTypology.objects.get_or_create(typology='Response')
                 message_sent = MessageSent.objects.create(**message_sent_data)
 
                 MessageRecipient.objects.create(
