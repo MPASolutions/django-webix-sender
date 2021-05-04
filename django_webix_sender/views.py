@@ -314,7 +314,8 @@ class SenderMessagesListView(WebixListView):
             attachments=StringAgg(
                 'message_sent__attachments__{}'.format(model_class.get_file_fieldpath()),
                 delimiter='|',
-                distinct=True
+                distinct=True,
+                output_field=CharField()
             ),
         )
 
