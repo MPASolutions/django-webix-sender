@@ -5,7 +5,7 @@ from django.urls import path, re_path
 
 from django_webix_sender.views import (
     SenderListView, SenderGetListView, SenderSendView, SenderWindowView, SenderInvoiceManagementView,
-    SenderTelegramWebhookView, SenderMessagesListView, SenderMessagesChatView
+    SenderTelegramWebhookView, SenderMessagesListView, SenderMessagesChatView, CheckAttachmentView
 )
 
 CONF = getattr(settings, "WEBIX_SENDER", None)
@@ -17,6 +17,7 @@ urlpatterns = [
     path('sender-window', SenderWindowView.as_view(), name='django_webix_sender.sender_window'),
     path('invoices', SenderInvoiceManagementView.as_view(), name='django_webix_sender.invoices'),
     path('messages_list', SenderMessagesListView.as_view(), name='django_webix_sender.messages_list'),
+    path('attachment_check', CheckAttachmentView.as_view(), name='django_webix_sender.attachment_check'),
     re_path('^messages_chat/(?P<section>users|messages)$', SenderMessagesChatView.as_view(),
             name='django_webix_sender.messages_chat'),
 ]

@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Q, Sum, F, DecimalField, Case, When, IntegerField, Value, CharField, Subquery, OuterRef
-from django.db.models.functions import StrIndex, Substr, Concat
+from django.db.models.functions import StrIndex, Substr, Concat, Cast
 from django.http import JsonResponse, Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -278,6 +278,7 @@ class SenderMessagesListView(WebixListView):
         if self.request.user.is_anonymous:
             qs = qs.none()
         qset = Q()
+
         for recipient_config in CONF['recipients']:
             app_label, model = recipient_config['model'].lower().split(".")
             model_class = apps.get_model(app_label=app_label, model_name=model)
@@ -312,7 +313,8 @@ class SenderMessagesListView(WebixListView):
         model_class = apps.get_model(app_label=app_label, model_name=model)
         qs = qs.annotate(
             attachments=StringAgg(
-                'message_sent__attachments__{}'.format(model_class.get_file_fieldpath()),
+                # 'message_sent__attachments__{}'.format(model_class.get_file_fieldpath()),
+                Cast('message_sent__attachments__pk', CharField()),  # provo a passare solo la PK che il resto lo fa la prossima view
                 delimiter='|',
                 distinct=True,
                 output_field=CharField()
@@ -324,6 +326,24 @@ class SenderMessagesListView(WebixListView):
             qs = qs.filter(send_method_type=self.request.GET.get('send_method'))
 
         return qs.distinct()
+
+
+@method_decorator(login_required, name='dispatch')
+class CheckAttachmentView(View):
+    def get(self, request, *args, **kwargs):
+        app_label, model = CONF['attachments']['model'].lower().split(".")
+        model_class = apps.get_model(app_label=app_label, model_name=model)
+
+        pk_attachment = request.GET.get('pk_attachment', None)
+        if pk_attachment is not None:
+            attachment = model_class.objects.filter(pk=pk_attachment).first()
+            if attachment is not None and hasattr(attachment, model_class.get_file_fieldpath()):
+                file_field = getattr(attachment, model_class.get_file_fieldpath())
+                if file_field.storage.exists(file_field.name):
+                    return JsonResponse({'exist': True, 'path': file_field.name}, safe=False)
+                    # raise Exception(file_field, file_field.path, file_field.name)
+
+        return JsonResponse({'exist': False}, safe=False)
 
 
 @method_decorator(login_required, name='dispatch')
