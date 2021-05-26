@@ -28,9 +28,8 @@ from django_webix_sender.models import MessageSent, MessageRecipient, MessageUse
 from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
 
-if apps.is_installed('filter'):
-    from filter.models import Filter
-    from filter.utils import get_aggregates_q_by_id
+if apps.is_installed('django_webix_filter'):
+    from django_webix_filter.models import WebixFilter
 
 CONF = getattr(settings, "WEBIX_SENDER", None)
 
@@ -54,7 +53,7 @@ class SenderListView(WebixTemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(SenderListView, self).get_context_data(**kwargs)
-        use_dynamic_filters = apps.is_installed('filter')
+        use_dynamic_filters = apps.is_installed('django_webix_filter')
 
         context['use_dynamic_filters'] = use_dynamic_filters
 
@@ -75,8 +74,8 @@ class SenderListView(WebixTemplateView):
             if use_dynamic_filters:
                 _dict['filters'] = [{
                     'id': i.pk,
-                    'value': i.label
-                } for i in Filter.objects.filter(model__iexact=recipient['model'].lower())]
+                    'value': i.title
+                } for i in WebixFilter.objects.filter(model__iexact=recipient['model'].lower())]
             context['datatables'].append(_dict)
 
         return context
@@ -105,10 +104,10 @@ class SenderGetListView(View):
 
         contentype = request.GET.get('contentype', None)
         pks = request.GET.getlist('filter_pk', None)
-        use_dynamic_filters = apps.is_installed('filter')
+        use_dynamic_filters = apps.is_installed('django_webix_filter')
         filters_exists = False
         if use_dynamic_filters is True:
-            filters_exists = Filter.objects.filter(model__iexact=contentype.lower()).exists()
+            filters_exists = WebixFilter.objects.filter(model__iexact=contentype.lower()).exists()
 
         if contentype is None or (use_dynamic_filters and pks in [None, '', []] and filters_exists):
             return JsonResponse({'status': 'Invalid content type'}, status=400)
@@ -121,7 +120,7 @@ class SenderGetListView(View):
         if use_dynamic_filters and filters_exists:
             filters = []
             for pk in pks:
-                filter = get_object_or_404(Filter, pk=pk)
+                filter = get_object_or_404(WebixFilter, pk=pk)
                 if contentype.lower() != filter.model.lower():
                     return JsonResponse({'status': _('Content type doesn\'t match')}, status=400)
                 filters.append(filter)
@@ -131,13 +130,13 @@ class SenderGetListView(View):
                 return JsonResponse({'message': _('Not valid and/or filter')})
 
             for filter in filters:
-                aggregates, q = get_aggregates_q_by_id(model, filter.pk)
+                q = filter.get_query()
+                if q is None:
+                    pass
                 if and_or_filter == 'and':
                     qset &= q
                 elif and_or_filter == 'or':
                     qset |= q
-                if aggregates:
-                    queryset = queryset.annotate(*aggregates)
 
         queryset = queryset.filter(qset).distinct()
         queryset = queryset.select_related(*model_class.get_select_related())
@@ -341,7 +340,6 @@ class CheckAttachmentView(View):
                 file_field = getattr(attachment, model_class.get_file_fieldpath())
                 if file_field.storage.exists(file_field.name):
                     return JsonResponse({'exist': True, 'path': file_field.name}, safe=False)
-                    # raise Exception(file_field, file_field.path, file_field.name)
 
         return JsonResponse({'exist': False}, safe=False)
 
@@ -683,7 +681,10 @@ class SenderTelegramWebhookView(View):
         response = json.loads(request.body)
 
         # Change language
-        translation.activate(response['message']['from'].get('language_code'))
+        if "message" in response and \
+            "from" in response["message"] and \
+            "language_code" in response["message"]["from"]:
+            translation.activate(response['message']['from'].get('language_code'))
 
         # Check user
         recipients = []
@@ -696,7 +697,10 @@ class SenderTelegramWebhookView(View):
                 ))
 
         # Save only text messages (exclude commands)
-        if "message" in response and "text" in response["message"] and not response["message"]["text"].startswith("/"):
+        if "message" in response and \
+            "from" in response['message'] and \
+            "text" in response["message"] and \
+            not response["message"]["text"].startswith("/"):
             # Create db record
             for recipient in recipients:
                 message_sent_data = {
