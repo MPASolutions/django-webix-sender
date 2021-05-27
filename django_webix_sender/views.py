@@ -208,8 +208,12 @@ class SenderSendView(View):
                 "result": result,
                 "status": status
             })
+        status_codes = [result['status'] for result in results]
+        if len(status_codes) == 0:
+            status_codes.append(400)
+        status_codes.sort(reverse=True)
 
-        return JsonResponse(results, safe=False)
+        return JsonResponse(results, safe=False, status=status_codes[0])
 
 
 @method_decorator(login_required, name='dispatch')

@@ -93,3 +93,36 @@ def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent
         message_recipient.save()
 
     return message_sent
+
+
+def recipients_clean(recipients_instance, recipients):
+    for recipient in recipients_instance:
+        # Prelevo l'indirizzo email e lo metto in una lista se non è già una lista
+        _get_email = recipient.get_email
+        if not isinstance(_get_email, list):
+            _get_email = [_get_email]
+
+        # Per ogni email verifico il suo stato e lo aggiungo alla chiave corretta
+        for _email in _get_email:
+            # Contatto non ancora presente nella lista
+            if _email and not _email in recipients['valids']['address']:
+                recipients['valids']['address'].append(_email)
+                recipients['valids']['recipients'].append(recipient)
+            # Contatto già presente nella lista (duplicato)
+            elif _email:
+                recipients['duplicates']['address'].append(_email)
+                recipients['duplicates']['recipients'].append(recipient)
+            # Indirizzo non presente
+            else:
+                recipients['invalids']['address'].append(_email)
+                recipients['invalids']['recipients'].append(recipient)
+
+
+def presend_check(subject, body):
+    pass
+
+
+def attachments_format(attachments, body):
+    body += "</br></br>"
+    for attachment in attachments:
+        body += "<a href='{attachment}'>{attachment}</a></br>".format(attachment=attachment.get_url())

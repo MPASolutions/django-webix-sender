@@ -66,3 +66,27 @@ def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent
         )
 
     return message_sent
+
+
+def recipients_clean(recipients_instance, recipients):
+    for recipient in recipients_instance:
+        # Prelevo l'ID user e lo metto in una lista se non è già una lista
+        if not recipient.pk in recipients['valids']['address']:
+            recipients['valids']['address'].append(recipient.pk)
+            recipients['valids']['recipients'].append(recipient)
+        # Contatto già presente nella lista (duplicato)
+        elif recipient.pk in recipients['valids']['address']:
+            recipients['duplicates']['address'].append(recipient.pk)
+            recipients['duplicates']['recipients'].append(recipient)
+        # Indirizzo non presente
+        else:
+            recipients['invalids']['address'].append(recipient.pk)
+            recipients['invalids']['recipients'].append(recipient)
+
+
+def presend_check(subject, body):
+    pass
+
+
+def attachments_format(attachments, body):
+    pass  # ignore this step, file already in db
