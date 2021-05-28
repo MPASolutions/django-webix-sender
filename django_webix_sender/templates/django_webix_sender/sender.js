@@ -62,8 +62,8 @@ function DjangoWebixSender() {
             on: {
                 onChange(newVal, oldVal) {
                     set_rules(newVal);
-                    {% if 'email' in send_method_types or 'storage' in send_method_types %}
-                        if (newVal.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length > 0) {
+                    {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types %}
+                        if (newVal.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.')}).length > 0) {
                             $$('django-webix-sender-form-subject').show();
                             $$("django-webix-sender-form-attachments").show();
                             $$("django-webix-sender-form-attachments_list").show();
@@ -135,21 +135,21 @@ function DjangoWebixSender() {
             label: "0 {{ _("characters")|escapejs }}",
             align: "right"
         });
-        {% if 'email' in send_method_types or 'storage' in send_method_types %}
+        {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types %}
             elements.push({
                 view: "uploader",
                 id: "django-webix-sender-form-attachments",
                 value: "{{ _("Attach file")|escapejs }}",
                 link: "django-webix-sender-form-attachments_list",
                 autosend: false,
-                hidden: initialSendMethods.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length === 0
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.')}).length === 0
             });
             elements.push({
                 view: "list",
                 id: "django-webix-sender-form-attachments_list",
                 type: "uploader",
                 autoheight: true,
-                hidden: initialSendMethods.filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length === 0
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.')}).length === 0
             });
         {% endif %}
         elements.push({
@@ -175,7 +175,7 @@ function DjangoWebixSender() {
                         data.append('subject', $$('django-webix-sender-form-subject').getValue());
                     {% endif %}
                     data.append('body', $$('django-webix-sender-form-body').getValue());
-                    {% if 'email' in send_method_types or 'storage' in send_method_types %}
+                    {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types %}
                         $$("django-webix-sender-form-attachments").files.data.each(function (obj) {
                             data.append('file_' + obj.id, obj.file);
                         });
