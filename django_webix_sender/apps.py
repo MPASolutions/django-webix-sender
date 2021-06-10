@@ -134,12 +134,15 @@ class DjangoWebixSenderConfig(AppConfig):
                     webhooks = send_method['config']['webhooks']
                     if not isinstance(webhooks, list):
                         webhooks = [webhooks]
-                    bot = telegram.Bot(token=send_method['config']['bot_token'])
-                    # Remove old webhooks
-                    bot.deleteWebhook()
-                    # Add new webhooks
-                    for webhook in webhooks:
-                        bot.setWebhook(webhook)
+                    try:
+                        bot = telegram.Bot(token=send_method['config']['bot_token'])
+                        # Remove old webhooks
+                        bot.deleteWebhook()
+                        # Add new webhooks
+                        for webhook in webhooks:
+                            bot.setWebhook(webhook)
+                    except:
+                        pass
                 # Update commands
                 if 'commands' in send_method['config'] and \
                     isinstance(send_method['config']['commands'], list) and \
