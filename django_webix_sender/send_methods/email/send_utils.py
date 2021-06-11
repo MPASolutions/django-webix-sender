@@ -126,3 +126,4 @@ def attachments_format(attachments, body):
     body += "</br></br>"
     for attachment in attachments:
         body += "<a href='{attachment}'>{attachment}</a></br>".format(attachment=attachment.get_url())
+    return body
