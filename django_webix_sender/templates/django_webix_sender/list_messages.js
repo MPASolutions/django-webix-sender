@@ -25,7 +25,6 @@
           }
         },
         error: function (text, data, XmlHttpRequest) {
-          // console.log("error");
           webix.alert({
             title: "{{ _("File mancante")|escapejs }}",
             ok: "{{ _("Ok")|escapejs }}",
