@@ -5,9 +5,9 @@ webix.ui([], $$('{{ webix_container_id }}'));
 
 var custom_bool = function (obj, common, value) {
   if (value === true)
-    return "<img style='width:12px;' src='/static/admin/img/icon-yes.svg'>";
+    return "<img style='width:12px;' src='{% static 'admin/img/icon-yes.svg' %}'>";
   else
-    return "<img style='width:12px;' src='/static/admin/img/icon-no.svg'>";
+    return "<img style='width:12px;' src='{% static 'admin/img/icon-no.svg' %}>";
 };
 
 function match(a, b) {
