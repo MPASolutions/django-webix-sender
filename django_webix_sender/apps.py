@@ -147,8 +147,11 @@ class DjangoWebixSenderConfig(AppConfig):
                 if 'commands' in send_method['config'] and \
                     isinstance(send_method['config']['commands'], list) and \
                     len(send_method['config']['commands']) > 0:
-                    bot = telegram.Bot(token=send_method['config']['bot_token'])
-                    bot.set_my_commands(send_method['config']['commands'])
+                    try:
+                        bot = telegram.Bot(token=send_method['config']['bot_token'])
+                        bot.set_my_commands(send_method['config']['commands'])
+                    except:
+                        pass
 
             # Init storage
             elif send_method['method'] == 'storage':
