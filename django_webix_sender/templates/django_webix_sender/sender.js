@@ -61,18 +61,26 @@ function DjangoWebixSender() {
             ],
             on: {
                 onChange(newVal, oldVal) {
+                    //console.log(newVal)
                     set_rules(newVal);
-                    {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types %}
-                        if (newVal.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.')}).length > 0) {
-                            $$('django-webix-sender-form-subject').show();
+                    {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types or 'telegram' in send_method_types %}
+                        if ($$("django-webix-sender-form-send_methods").getValue().split(',').filter(
+                                function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.') || e.startsWith('telegram.')}
+                                ).length > 0){
                             $$("django-webix-sender-form-attachments").show();
                             $$("django-webix-sender-form-attachments_list").show();
                         } else {
-                            $$('django-webix-sender-form-subject').hide();
                             $$("django-webix-sender-form-attachments").hide();
                             $$("django-webix-sender-form-attachments_list").hide();
-                            $$('django-webix-sender-form-subject').setValue();
                             $$("django-webix-sender-form-attachments").setValue();
+                        }
+                    {% endif %}
+                    {% if 'email' in send_method_types or 'storage' in send_method_types %}
+                        if ($$("django-webix-sender-form-send_methods").getValue().split(',').filter(function(e) {return e.startsWith('email.') || e.startsWith('storage.')}).length > 0) {
+                            $$('django-webix-sender-form-subject').show();
+                        } else {
+                            $$('django-webix-sender-form-subject').hide();
+                            $$('django-webix-sender-form-subject').setValue();
                         }
                     {% endif %}
                 }
@@ -135,21 +143,21 @@ function DjangoWebixSender() {
             label: "0 {{ _("characters")|escapejs }}",
             align: "right"
         });
-        {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types %}
+        {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types or 'telegram' in send_method_types %}
             elements.push({
                 view: "uploader",
                 id: "django-webix-sender-form-attachments",
                 value: "{{ _("Attach file")|escapejs }}",
                 link: "django-webix-sender-form-attachments_list",
                 autosend: false,
-                hidden: initialSendMethods.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.')}).length === 0
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.') || e.startsWith('telegram.')}).length === 0
             });
             elements.push({
                 view: "list",
                 id: "django-webix-sender-form-attachments_list",
                 type: "uploader",
                 autoheight: true,
-                hidden: initialSendMethods.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.')}).length === 0
+                hidden: initialSendMethods.filter(function(e) {return e.startsWith('skebby.') || e.startsWith('email.') || e.startsWith('storage.') || e.startsWith('telegram.')}).length === 0
             });
         {% endif %}
         elements.push({
@@ -175,7 +183,7 @@ function DjangoWebixSender() {
                         data.append('subject', $$('django-webix-sender-form-subject').getValue());
                     {% endif %}
                     data.append('body', $$('django-webix-sender-form-body').getValue());
-                    {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types %}
+                    {% if 'skebby' in send_method_types or 'email' in send_method_types or 'storage' in send_method_types or 'telegram' in send_method_types %}
                         $$("django-webix-sender-form-attachments").files.data.each(function (obj) {
                             data.append('file_' + obj.id, obj.file);
                         });

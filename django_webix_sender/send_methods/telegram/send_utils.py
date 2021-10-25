@@ -5,7 +5,7 @@ from typing import Dict, List
 import six
 import telegram
 from django.conf import settings
-
+from django.apps import apps
 
 def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent):
     """
@@ -37,12 +37,22 @@ def send(recipients: Dict[str, List[int]], subject: str, body: str, message_sent
         (item for item in settings.WEBIX_SENDER['send_methods'] if item["method"] == "telegram"), {}
     ).get("config")
 
+    CONF = getattr(settings, "WEBIX_SENDER", None)
+
     bot = telegram.Bot(token=CONFIG_TELEGRAM.get('bot_token'))
+
+    attachments = message_sent.attachments.all()
 
     # Per ogni istanza di destinatario ciclo
     for recipient, recipient_address in recipients['valids']:
         try:
             bot.send_message(chat_id=recipient_address, text=body)
+            for attachment in attachments:
+                file = getattr(attachment, apps.get_model(CONF['attachments']['model']).get_file_fieldpath())
+                if file.name.split('.')[-1] in ['jpg', 'jpeg', 'png']:
+                    bot.send_photo(recipient_address, open(file.path, "rb"))
+                else:
+                    bot.send_document(recipient_address, open(file.path, "rb"))
 
             _extra = {'status': "Telegram {} ({}) inviato con successo".format(recipient_address, recipient)}
             _status = 'success'
@@ -114,4 +124,4 @@ def presend_check(subject, body):
 
 
 def attachments_format(attachments, body):
-    pass  # TODO: create attachments function
+    pass  # invio fatto in send
