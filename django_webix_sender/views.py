@@ -259,6 +259,10 @@ class SenderMessagesListView(WebixListView):
         },
         {
             'field_name': 'attachments',
+            'datalist_column': '''{id: "attachments", header: ["{{ _("Visualize")|escapejs }}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsPdfView}'''
+        },
+        {
+            'field_name': 'attachments',
             'datalist_column': '''{id: "attachments", header: ["{{ _("Attachments")|escapejs }}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsTemplate}'''
         },
     ]
@@ -274,7 +278,7 @@ class SenderMessagesListView(WebixListView):
 
     def get_url_list(self):
         if self.kwargs.get("pk") is not None:
-            return reverse("django_webix_sender.messages_list.typology", kwargs={"pk": self.kwargs.get("pk")})
+            return reverse("django_webix_sender.messages_list.typology", kwargs={"title": self.kwargs.get("title"), "pk": self.kwargs.get("pk")})
         else:
             return reverse("django_webix_sender.messages_list")
 
@@ -320,11 +324,10 @@ class SenderMessagesListView(WebixListView):
 
         # Filter message typology
         if self.kwargs.get("pk") is not None:
-            qs = qs.filter(message_sent__typology_id=self.kwargs.get("pk"))
-            try:
-                self.title = MessageTypology.objects.get(pk=self.kwargs.get("pk")).typology
-            except MessageTypology.DoesNotExist:
-                pass
+            types = self.kwargs.get("pk").split('-')
+            qs = qs.filter(message_sent__typology_id__in=types)
+            if self.kwargs.get("title") is not None:
+                self.title = self.kwargs.get("title")
 
         # Annotate attachments
         app_label, model = CONF['attachments']['model'].lower().split(".")

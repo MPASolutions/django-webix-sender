@@ -24,7 +24,7 @@ urlpatterns = [
 
 if CONF is not None and CONF['typology_model']['enabled']:
     urlpatterns.append(
-        path('messages_list/typology/<int:pk>', SenderMessagesListView.as_view(), name='django_webix_sender.messages_list.typology'),
+        path('messages_list/typology/<str:title>/<str:pk>', SenderMessagesListView.as_view(), name='django_webix_sender.messages_list.typology'),
     )
 
 # Telegram

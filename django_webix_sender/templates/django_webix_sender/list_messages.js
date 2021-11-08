@@ -4,14 +4,13 @@
 {% block webix_content %}
     {% get_media_prefix as media_prefix %}
 
-    function download_attachment(pk) {
+    function download_attachment(pk, pdf_view) {
       webix.ajax().get("{% url 'django_webix_sender.attachment_check' %}" + '?pk_attachment=' + pk, {
         success: function (text, data, XmlHttpRequest) {
           var result = data.json();
           if ('exist' in result && result.exist) {
             var file_path = '{{ media_prefix }}' + result.path;
-            console.log(file_path)
-            if ('is_pdf' in result && result.is_pdf){
+            if (pdf_view &&'is_pdf' in result && result.is_pdf){
                 webix.ui({
                   view:"window",
                   id:"pdfviewer_window",
@@ -73,7 +72,17 @@
         var values = String(value).split('|').filter(Boolean);
         var result = "";
         for (var index = 0; index < values.length; ++index) {
-            result += "<span style='text-decoration: none; color: black; padding-right: 5px;' > <i onclick='download_attachment(\"" + values[index] + "\")' class='far fa-file-alt'></i> </span>";
+            result += "<span style='text-decoration: none; color: black; padding-right: 5px;' > <i onclick='download_attachment(\"" + values[index] + "\", false)' class='far fa-arrow-to-bottom'></i> </span>";
+            // result += "<a style='text-decoration: none; color: black; padding-right: 5px;' target='_blank' href='{{ media_prefix }}" + values[index] + "'><i class='far fa-file-alt'></i></a>";
+        }
+        return result;
+    };
+
+    var attachmentsPdfView = function (obj, common, value, config) {
+        var values = String(value).split('|').filter(Boolean);
+        var result = "";
+        for (var index = 0; index < values.length; ++index) {
+            result += "<span style='text-decoration: none; color: black; padding-right: 5px;' > <i onclick='download_attachment(\"" + values[index] + "\", true)' class='far fa-file-alt'></i> </span>";
             // result += "<a style='text-decoration: none; color: black; padding-right: 5px;' target='_blank' href='{{ media_prefix }}" + values[index] + "'><i class='far fa-file-alt'></i></a>";
         }
         return result;
