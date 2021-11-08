@@ -10,12 +10,47 @@
           var result = data.json();
           if ('exist' in result && result.exist) {
             var file_path = '{{ media_prefix }}' + result.path;
-            var a = document.createElement('A');
-            a.href = file_path;
-            a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            console.log(file_path)
+            if ('is_pdf' in result && result.is_pdf){
+                webix.ui({
+                  view:"window",
+                  id:"pdfviewer_window",
+                  modal:true,
+                  move:true,
+                  resize: true,
+                  position:function(state){
+                    state.top = 0;
+                    state.left = 50;
+                    state.width = state.maxWidth - 100;
+                    state.height = state.maxHeight - 50;
+                  },
+                  head:{
+                    view:"toolbar", cols:[
+                      {},
+                      { view:"button", label: 'Chiudi', width: 100, align: 'left', click:function(){ $$('pdfviewer_window').close(); }}
+                    ]
+                  },
+                  body:{
+                    rows:[
+                    { view:"pdfbar", id:"pdfviewer_toolbar" },
+                    {
+                      view:"pdfviewer",
+                      id:"pdfviewer_view",
+                      toolbar:"pdfviewer_toolbar",
+                      url:"binary->" + file_path,
+                      downloadName: result.name
+                    }
+                  ]
+                  }
+                }).show();
+            } else {
+                var a = document.createElement('A');
+                a.href = file_path;
+                a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
           }else {
             webix.alert({
               title: "{{ _("File mancante")|escapejs }}",

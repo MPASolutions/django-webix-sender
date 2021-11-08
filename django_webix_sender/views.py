@@ -22,9 +22,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from telegram import Update
 from telegram.ext import Dispatcher
+from django.urls import reverse
 
 from django_webix.views import WebixTemplateView, WebixListView
-from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead
+from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead, MessageTypology
 from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
 
@@ -271,6 +272,12 @@ class SenderMessagesListView(WebixListView):
     enable_row_click = False
     enable_json_loading = True
 
+    def get_url_list(self):
+        if self.kwargs.get("pk") is not None:
+            return reverse("django_webix_sender.messages_list.typology", kwargs={"pk": self.kwargs.get("pk")})
+        else:
+            return reverse("django_webix_sender.messages_list")
+
     def get_initial_queryset(self):
         qs = super().get_initial_queryset()
 
@@ -311,6 +318,14 @@ class SenderMessagesListView(WebixListView):
             )
         )
 
+        # Filter message typology
+        if self.kwargs.get("pk") is not None:
+            qs = qs.filter(message_sent__typology_id=self.kwargs.get("pk"))
+            try:
+                self.title = MessageTypology.objects.get(pk=self.kwargs.get("pk")).typology
+            except MessageTypology.DoesNotExist:
+                pass
+
         # Annotate attachments
         app_label, model = CONF['attachments']['model'].lower().split(".")
         model_class = apps.get_model(app_label=app_label, model_name=model)
@@ -343,7 +358,11 @@ class CheckAttachmentView(View):
             if attachment is not None and hasattr(attachment, model_class.get_file_fieldpath()):
                 file_field = getattr(attachment, model_class.get_file_fieldpath())
                 if file_field.storage.exists(file_field.name):
-                    return JsonResponse({'exist': True, 'path': file_field.name}, safe=False)
+                    is_pdf = False
+                    if file_field.name.split('.')[-1] == 'pdf' and getattr(settings, "WEBIX_LICENSE", None) == 'PRO' and \
+                        (not 'pdf_preview' in CONF['attachments'] or CONF['attachments']['pdf_preview']):
+                        is_pdf = True
+                    return JsonResponse({'exist': True, 'path': file_field.name, 'is_pdf': is_pdf, 'name':file_field.name.split('/')[-1].split('.')[0] }, safe=False)
 
         return JsonResponse({'exist': False}, safe=False)
 
