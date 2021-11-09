@@ -259,10 +259,6 @@ class SenderMessagesListView(WebixListView):
         },
         {
             'field_name': 'attachments',
-            'datalist_column': '''{id: "attachments", header: ["{{ _("Visualize")|escapejs }}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsPdfView}'''
-        },
-        {
-            'field_name': 'attachments',
             'datalist_column': '''{id: "attachments", header: ["{{ _("Attachments")|escapejs }}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsTemplate}'''
         },
     ]

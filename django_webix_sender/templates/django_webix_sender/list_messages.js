@@ -72,18 +72,8 @@
         var values = String(value).split('|').filter(Boolean);
         var result = "";
         for (var index = 0; index < values.length; ++index) {
-            result += "<span style='text-decoration: none; color: black; padding-right: 5px;' > <i onclick='download_attachment(\"" + values[index] + "\", false)' class='far fa-arrow-to-bottom'></i> </span>";
-            // result += "<a style='text-decoration: none; color: black; padding-right: 5px;' target='_blank' href='{{ media_prefix }}" + values[index] + "'><i class='far fa-file-alt'></i></a>";
-        }
-        return result;
-    };
-
-    var attachmentsPdfView = function (obj, common, value, config) {
-        var values = String(value).split('|').filter(Boolean);
-        var result = "";
-        for (var index = 0; index < values.length; ++index) {
             result += "<span style='text-decoration: none; color: black; padding-right: 5px;' > <i onclick='download_attachment(\"" + values[index] + "\", true)' class='far fa-file-alt'></i> </span>";
-            // result += "<a style='text-decoration: none; color: black; padding-right: 5px;' target='_blank' href='{{ media_prefix }}" + values[index] + "'><i class='far fa-file-alt'></i></a>";
+            result += "<span style='text-decoration: none; color: black; padding-right: 5px;' > <i onclick='download_attachment(\"" + values[index] + "\", false)' class='far fa-arrow-to-bottom'></i> </span><br>";
         }
         return result;
     };
