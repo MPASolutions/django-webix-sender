@@ -121,17 +121,17 @@ class SenderGetListView(View):
         if use_dynamic_filters and filters_exists:
             filters = []
             for pk in pks:
-                filter = get_object_or_404(WebixFilter, pk=pk)
-                if contentype.lower() != filter.model.lower():
+                _filter = get_object_or_404(WebixFilter, pk=pk)
+                if contentype.lower() != _filter.model.lower():
                     return JsonResponse({'status': _('Content type doesn\'t match')}, status=400)
-                filters.append(filter)
+                filters.append(_filter)
 
             and_or_filter = request.GET.get('and_or_filter', 'and')
             if and_or_filter not in ['and', 'or']:
                 return JsonResponse({'message': _('Not valid and/or filter')})
 
-            for filter in filters:
-                q = filter.get_query()
+            for _filter in filters:
+                q = _filter.get_query()
                 if q is None:
                     pass
                 if and_or_filter == 'and':
