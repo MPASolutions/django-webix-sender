@@ -136,7 +136,7 @@ def send_mixin(send_method: str, typology: Optional[int], subject: str, body: st
         attachments_format = my_import(send_method_conf['attachments_format'])
         result = attachments_format(attachments, body)
         if result is not None:
-            body += result
+            body = result
 
     # 7. Creo il log e collego gli allegati
     # Costo del messaggio
