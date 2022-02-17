@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-22 15:31+0100\n"
+"POT-Creation-Date: 2022-02-17 08:51+0100\n"
 "PO-Revision-Date: 2021-01-22 15:32+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -50,51 +50,89 @@ msgstr "Metodo"
 msgid "Function"
 msgstr "Funzione"
 
-#: apps.py:20
+#: apps.py:21
 msgid "`WEBIX_SENDER` is not configured in your settings.py file"
 msgstr "`WEBIX_SENDER` non è configurato nel tuo file settings.py"
 
-#: apps.py:26
+#: apps.py:35
 msgid "`method` is not configured in send method"
 msgstr "`method` non è configurato nel metodo di invio"
 
-#: apps.py:28
+#: apps.py:37
 msgid "`verbose_name` is not configured in send method"
 msgstr "`verbose_name` non è configurato nel metodo di invio"
 
-#: apps.py:30
-msgid "`function` is not configured in send method"
-msgstr "`function` non è configurato nel metodo di invio"
-
-#: apps.py:32
+#: apps.py:39
 msgid "`show_in_list` is not configured in send method"
 msgstr "`show_in_list` non è configurato nel metodo di invio"
 
-#: apps.py:34
+#: apps.py:41
 msgid "`show_in_chat` is not configured in send method"
 msgstr "`show_in_chat` non è configurato nel metodo di invio"
 
-#: apps.py:43
+#: apps.py:55 apps.py:180
+msgid "`function` is not configured in send method"
+msgstr "`function` non è configurato nel metodo di invio"
+
+#: apps.py:67
+#, fuzzy
+#| msgid "`show_in_chat` is not configured in send method"
+msgid "`recipients_clean` is not configured in send method"
+msgstr "`show_in_chat` non è configurato nel metodo di invio"
+
+#: apps.py:79
+#, fuzzy
+#| msgid "`verbose_name` is not configured in send method"
+msgid "`presend_check` is not configured in send method"
+msgstr "`verbose_name` non è configurato nel metodo di invio"
+
+#: apps.py:91
+#, fuzzy
+#| msgid "`method` is not configured in send method"
+msgid "`attachments_format` is not configured in send method"
+msgstr "`method` non è configurato nel metodo di invio"
+
+#: apps.py:103
 msgid "`{}` method is used {} times instead of 1"
 msgstr "`{}` è utilizzato {} volte invece di 1"
 
-#: apps.py:51
+#: apps.py:111
 msgid "Email `config` is not configured in your settings.py file"
 msgstr "Email `config` non è configurato nel tuo file settings.py"
 
-#: apps.py:62
+#: apps.py:122
 msgid "Skebby `config` is not configured in your settings.py file"
 msgstr "Skebby `config` non è configurato nel tuo file settings.py"
 
-#: apps.py:69
+#: apps.py:129
 msgid "Telegram `config` is not configured in your settings.py file"
 msgstr "Telegram `config` non è configurato nel tuo file settings.py"
 
-#: apps.py:99
-msgid "Attachment model `{}` is not valid"
-msgstr "Il modello degli allegati `{}` non è valido"
+#: apps.py:167
+#, fuzzy
+#| msgid "`method` is not configured in send method"
+msgid "`method` is not configured in initial send method"
+msgstr "`method` non è configurato nel metodo di invio"
 
-#: apps.py:114
+#: apps.py:187
+#, fuzzy
+#| msgid "Email `config` is not configured in your settings.py file"
+msgid "`recipients` is not configured in your settings"
+msgstr "Email `config` non è configurato nel tuo file settings.py"
+
+#: apps.py:189
+msgid "`recipients` must be a list"
+msgstr ""
+
+#: apps.py:193
+msgid "You have to define a `model` as string in your recipients list"
+msgstr ""
+
+#: apps.py:195
+msgid "You have to define a `datatable_fields` as list in your recipients list"
+msgstr ""
+
+#: apps.py:201
 msgid "Recipient model `{}` is not valid"
 msgstr "Il modello dei destinatari `{}` non è valido"
 
@@ -187,7 +225,7 @@ msgid "Extra"
 msgstr "Extra"
 
 #: models.py:205 models.py:261 models.py:291 models.py:350 models.py:395
-#: models.py:423 templates/django_webix_sender/sender.js:93
+#: models.py:423 templates/django_webix_sender/sender.js:101
 msgid "Typology"
 msgstr "Tipologia"
 
@@ -265,7 +303,7 @@ msgstr "Tipologie messaggi"
 msgid "Send method"
 msgstr "Metodo di invio"
 
-#: models.py:426 templates/django_webix_sender/sender.js:111
+#: models.py:426 templates/django_webix_sender/sender.js:119
 msgid "Subject"
 msgstr "Oggetto"
 
@@ -285,7 +323,7 @@ msgstr "Ricevuti"
 msgid "Cost"
 msgstr "Costo"
 
-#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:654
+#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:692
 msgid "Invoiced"
 msgstr "Fatturato"
 
@@ -357,6 +395,10 @@ msgstr "Persistenza Telegram"
 msgid "Telegram Persistences"
 msgstr "Persistenze Telegram"
 
+#: send_methods/skebby/send_utils.py:167
+msgid "Invalid characters"
+msgstr "Caratteri invalidi"
+
 #: send_methods/telegram/handlers.py:14
 msgid "Hi!"
 msgstr "Ciao!"
@@ -406,14 +448,14 @@ msgstr "Scrivi il tuo messaggio"
 
 #: templates/django_webix_sender/chat_messages.js:92
 #: templates/django_webix_sender/list.js:211
-#: templates/django_webix_sender/sender.js:157
-#: templates/django_webix_sender/sender.js:320
+#: templates/django_webix_sender/sender.js:165
+#: templates/django_webix_sender/sender.js:328
 msgid "Send"
 msgstr "Invia"
 
 #: templates/django_webix_sender/chat_messages.js:129
-#: templates/django_webix_sender/sender.js:243
-#: templates/django_webix_sender/sender.js:256
+#: templates/django_webix_sender/sender.js:251
+#: templates/django_webix_sender/sender.js:264
 msgid "Unable to send messages"
 msgstr "Impossibile inviare i messaggi"
 
@@ -450,7 +492,7 @@ msgid "marks as billed"
 msgstr "segna come fatturato"
 
 #: templates/django_webix_sender/invoices.js:160
-#: templates/django_webix_sender/sender.js:206
+#: templates/django_webix_sender/sender.js:214
 msgid "Confirmation"
 msgstr "Conferma"
 
@@ -460,18 +502,18 @@ msgstr "Sei sicuro di volere segnare questi messaggi come fatturati?"
 
 #: templates/django_webix_sender/invoices.js:162
 #: templates/django_webix_sender/list.js:151
-#: templates/django_webix_sender/sender.js:208
+#: templates/django_webix_sender/sender.js:216
 msgid "Yes"
 msgstr "Sì"
 
 #: templates/django_webix_sender/invoices.js:163
 #: templates/django_webix_sender/list.js:152
-#: templates/django_webix_sender/sender.js:209
+#: templates/django_webix_sender/sender.js:217
 msgid "No"
 msgstr "No"
 
 #: templates/django_webix_sender/invoices.js:197
-#: templates/django_webix_sender/sender.js:360
+#: templates/django_webix_sender/sender.js:368
 msgid "Caution!"
 msgstr "Attenzione!"
 
@@ -512,76 +554,71 @@ msgstr "selezionati di"
 msgid "Unable to load sender class"
 msgstr "Impossibile caricare la classe sender"
 
+#: templates/django_webix_sender/list_messages.js:55
+#: templates/django_webix_sender/list_messages.js:63
+msgid "File mancante"
+msgstr ""
+
+#: templates/django_webix_sender/list_messages.js:56
+#: templates/django_webix_sender/list_messages.js:64
+msgid "Ok"
+msgstr ""
+
+#: templates/django_webix_sender/list_messages.js:57
+#: templates/django_webix_sender/list_messages.js:65
+msgid "File ancora non presente."
+msgstr ""
+
 #: templates/django_webix_sender/sender.js:50
 msgid "Send methods"
 msgstr "Metodi di invio"
 
-#: templates/django_webix_sender/sender.js:127
 #: templates/django_webix_sender/sender.js:135
+#: templates/django_webix_sender/sender.js:143
 msgid "characters"
 msgstr "caratteri"
 
-#: templates/django_webix_sender/sender.js:142
+#: templates/django_webix_sender/sender.js:150
 msgid "Attach file"
 msgstr "Allega file"
 
-#: templates/django_webix_sender/sender.js:164
+#: templates/django_webix_sender/sender.js:172
 msgid "You have to fill in all the required fields"
 msgstr "Devi compilare tutti i campi richiesti"
 
-#: templates/django_webix_sender/sender.js:198
+#: templates/django_webix_sender/sender.js:206
 msgid "Valid recipients: "
 msgstr "Destinatari validi: "
 
-#: templates/django_webix_sender/sender.js:199
+#: templates/django_webix_sender/sender.js:207
 msgid "Invalids recipients: "
 msgstr "Destinatari non validi: "
 
-#: templates/django_webix_sender/sender.js:200
+#: templates/django_webix_sender/sender.js:208
 msgid "Duplicate recipients: "
 msgstr "Destinatari duplicati: "
 
-#: templates/django_webix_sender/sender.js:203
+#: templates/django_webix_sender/sender.js:211
 msgid "Are you sure to send this message?"
 msgstr "Sei sicuro di voler inviare questo messaggio?"
 
-#: templates/django_webix_sender/sender.js:233
+#: templates/django_webix_sender/sender.js:241
 msgid "Results"
 msgstr "Risultati"
 
-#: templates/django_webix_sender/sender.js:324
+#: templates/django_webix_sender/sender.js:332
 msgid "Close"
 msgstr "Chiudi"
 
-#: templates/django_webix_sender/sender.js:361
+#: templates/django_webix_sender/sender.js:369
 msgid "There are no recipients for this communication"
 msgstr "Non ci sono destinatari per questa comunicazione"
 
-#: utils.py:64 utils.py:69 utils.py:74
+#: utils.py:62 utils.py:67 utils.py:72
 msgid "Related is not subclass of `DjangoWebixSender`"
 msgstr "Oggetto collegato non è una sottoclasse di `DjangoWebixSender`"
 
-#: utils.py:201
-msgid "Invalid characters"
-msgstr "Caratteri invalidi"
-
-#: utils.py:259
-msgid "Skebby sent"
-msgstr "Inviati con Skebby"
-
-#: utils.py:262
-msgid "Emails sent"
-msgstr "Email inviate"
-
-#: utils.py:265
-msgid "Telegram sent"
-msgstr "Inviati con Telegram"
-
-#: utils.py:268
-msgid "Storage sent"
-msgstr "Messaggio archiviato"
-
-#: utils.py:270 views.py:628
+#: utils.py:85 views.py:666
 msgid "Invalid send method"
 msgstr "Metodo di invio non valido"
 
@@ -593,117 +630,132 @@ msgstr "Nessun content type identificato"
 msgid "Not valid and/or filter"
 msgstr "Filtro e/o non valido"
 
-#: views.py:241
+#: views.py:245
 msgid "Messages"
 msgstr "Messaggi"
 
-#: views.py:472
+#: views.py:510
 msgid "Jan"
 msgstr "Gen"
 
-#: views.py:472
+#: views.py:510
 msgid "Feb"
 msgstr "Feb"
 
-#: views.py:472
+#: views.py:510
 msgid "Mar"
 msgstr "Mar"
 
-#: views.py:472
+#: views.py:510
 msgid "Apr"
 msgstr "Apr"
 
-#: views.py:472
+#: views.py:510
 msgid "May"
 msgstr "Mag"
 
-#: views.py:472
+#: views.py:510
 msgid "Jun"
 msgstr "Giu"
 
-#: views.py:472
+#: views.py:510
 msgid "Jul"
 msgstr "Lug"
 
-#: views.py:472
+#: views.py:510
 msgid "Aug"
 msgstr "Ago"
 
-#: views.py:472
+#: views.py:510
 msgid "Sep"
 msgstr "Set"
 
-#: views.py:472
+#: views.py:510
 msgid "Oct"
 msgstr "Ott"
 
-#: views.py:473
+#: views.py:511
 msgid "Nov"
 msgstr "Nov"
 
-#: views.py:473
+#: views.py:511
 msgid "Dec"
 msgstr "Dic"
 
-#: views.py:476
+#: views.py:514
 msgid "Jan - Feb"
 msgstr "Gen - Feb"
 
-#: views.py:476
+#: views.py:514
 msgid "Mar - Apr"
 msgstr "Mar - Apr"
 
-#: views.py:476
+#: views.py:514
 msgid "May - Jun"
 msgstr "Mag - Giu"
 
-#: views.py:476
+#: views.py:514
 msgid "Jul - Aug"
 msgstr "Lug - Ago"
 
-#: views.py:476
+#: views.py:514
 msgid "Sep - Oct"
 msgstr "Set - Ott"
 
-#: views.py:476
+#: views.py:514
 msgid "Nov - Dec"
 msgstr "Nov - Dic"
 
-#: views.py:479
+#: views.py:517
 msgid "First quarter"
 msgstr "Primo quarto"
 
-#: views.py:479
+#: views.py:517
 msgid "Second quarter"
 msgstr "Secondo quarto"
 
-#: views.py:479
+#: views.py:517
 msgid "Third quarter"
 msgstr "Terzo quarto"
 
-#: views.py:479
+#: views.py:517
 msgid "Fourth quarter"
 msgstr "Quarto quarto"
 
-#: views.py:482
+#: views.py:520
 msgid "First semester"
 msgstr "Primo semestre"
 
-#: views.py:482
+#: views.py:520
 msgid "Second semester"
 msgstr "Secondo semestre"
 
-#: views.py:485
+#: views.py:523
 msgid "Year"
 msgstr "Anno"
 
-#: views.py:535 views.py:629
+#: views.py:573 views.py:667
 msgid "Sender not specified"
 msgstr "Destinatario non specificato"
 
-#: views.py:626
+#: views.py:664
 msgid "Invalid period"
 msgstr "Periodo non valido"
+
+#~ msgid "Attachment model `{}` is not valid"
+#~ msgstr "Il modello degli allegati `{}` non è valido"
+
+#~ msgid "Skebby sent"
+#~ msgstr "Inviati con Skebby"
+
+#~ msgid "Emails sent"
+#~ msgstr "Email inviate"
+
+#~ msgid "Telegram sent"
+#~ msgstr "Inviati con Telegram"
+
+#~ msgid "Storage sent"
+#~ msgstr "Messaggio archiviato"
 
 #~ msgid ""
 #~ "Warning! if there are messages with an unknown status, the data is not "
