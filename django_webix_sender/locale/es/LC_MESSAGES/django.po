@@ -9,54 +9,55 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-17 15:01+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2022-03-09 15:03+0050\n"
+"Last-Translator: Sambado Paolo CBC Spagna <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.9.8\n"
 
 #: admin.py:121
 msgid "Total recipients"
-msgstr ""
+msgstr "Total destinatarios"
 
 #: admin.py:127
 msgid "Success recipients"
-msgstr ""
+msgstr "Destinatarios con éxito"
 
 #: admin.py:133
 msgid "Failed recipients"
-msgstr ""
+msgstr "Destinatarios fallidos"
 
 #: admin.py:139
 msgid "Unknown recipients"
-msgstr ""
+msgstr "Destinatarios desconocidos"
 
 #: admin.py:145
 msgid "Invalid recipients"
-msgstr ""
+msgstr "Destinatarios inválidos"
 
 #: admin.py:151
 msgid "Duplicate recipients"
-msgstr ""
+msgstr "Destinatarios duplicados"
 
 #: admin.py:158
 msgid "Method"
-msgstr ""
+msgstr "Método"
 
 #: admin.py:164
 msgid "Function"
-msgstr ""
+msgstr "Función"
 
 #: apps.py:21
 msgid "`WEBIX_SENDER` is not configured in your settings.py file"
-msgstr ""
+msgstr "\"WEBIX_SENDER\" no está configurado en settings.py"
 
 #: apps.py:35
 msgid "`method` is not configured in send method"
-msgstr ""
+msgstr "\"method\" no está configurado"
 
 #: apps.py:37
 msgid "`verbose_name` is not configured in send method"
@@ -119,7 +120,8 @@ msgid "You have to define a `model` as string in your recipients list"
 msgstr ""
 
 #: apps.py:195
-msgid "You have to define a `datatable_fields` as list in your recipients list"
+msgid ""
+"You have to define a `datatable_fields` as list in your recipients list"
 msgstr ""
 
 #: apps.py:201
@@ -682,48 +684,48 @@ msgstr ""
 
 #: views.py:514
 msgid "Jul - Aug"
-msgstr ""
+msgstr "Jul-Ago"
 
 #: views.py:514
 msgid "Sep - Oct"
-msgstr ""
+msgstr "Sep-Oct"
 
 #: views.py:514
 msgid "Nov - Dec"
-msgstr ""
+msgstr "Nov-Dic"
 
 #: views.py:517
 msgid "First quarter"
-msgstr ""
+msgstr "Primer trimestre"
 
 #: views.py:517
 msgid "Second quarter"
-msgstr ""
+msgstr "Segundo trimestre"
 
 #: views.py:517
 msgid "Third quarter"
-msgstr ""
+msgstr "Tercer trimestre"
 
 #: views.py:517
 msgid "Fourth quarter"
-msgstr ""
+msgstr "Cuarto trimestre"
 
 #: views.py:520
 msgid "First semester"
-msgstr ""
+msgstr "Primer semestre"
 
 #: views.py:520
 msgid "Second semester"
-msgstr ""
+msgstr "Segundo semestre"
 
 #: views.py:523
 msgid "Year"
-msgstr ""
+msgstr "Año"
 
 #: views.py:573 views.py:667
 msgid "Sender not specified"
-msgstr ""
+msgstr "Remitente no especificado"
 
 #: views.py:664
 msgid "Invalid period"
-msgstr ""
+msgstr "Periodo incorrecto"
