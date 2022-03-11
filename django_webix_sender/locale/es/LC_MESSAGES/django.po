@@ -9,8 +9,13 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-17 15:01+0100\n"
+<<<<<<< Updated upstream
 "PO-Revision-Date: 2022-03-09 15:03+0050\n"
 "Last-Translator: Sambado Paolo CBC Spagna <>\n"
+=======
+"PO-Revision-Date: 2022-03-02 13:43+0050\n"
+"Last-Translator:   <>\n"
+>>>>>>> Stashed changes
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -21,11 +26,19 @@ msgstr ""
 
 #: admin.py:121
 msgid "Total recipients"
+<<<<<<< Updated upstream
 msgstr "Total destinatarios"
 
 #: admin.py:127
 msgid "Success recipients"
 msgstr "Destinatarios con éxito"
+=======
+msgstr "Destinatarios totales"
+
+#: admin.py:127
+msgid "Success recipients"
+msgstr "Destinatarios exitosos"
+>>>>>>> Stashed changes
 
 #: admin.py:133
 msgid "Failed recipients"
@@ -53,39 +66,47 @@ msgstr "Función"
 
 #: apps.py:21
 msgid "`WEBIX_SENDER` is not configured in your settings.py file"
+<<<<<<< Updated upstream
 msgstr "\"WEBIX_SENDER\" no está configurado en settings.py"
 
 #: apps.py:35
 msgid "`method` is not configured in send method"
 msgstr "\"method\" no está configurado"
+=======
+msgstr "\"WEBIX_SENDER\" no configurado en settings.py"
+
+#: apps.py:35
+msgid "`method` is not configured in send method"
+msgstr "'method' no configurado en send method"
+>>>>>>> Stashed changes
 
 #: apps.py:37
 msgid "`verbose_name` is not configured in send method"
-msgstr ""
+msgstr "`verbose_name` no configurado en send method"
 
 #: apps.py:39
 msgid "`show_in_list` is not configured in send method"
-msgstr ""
+msgstr "`show_in_list` no configurado en send method"
 
 #: apps.py:41
 msgid "`show_in_chat` is not configured in send method"
-msgstr ""
+msgstr "`show_in_chat no configurado en send method"
 
 #: apps.py:55 apps.py:180
 msgid "`function` is not configured in send method"
-msgstr ""
+msgstr "`function` no configurado en send method"
 
 #: apps.py:67
 msgid "`recipients_clean` is not configured in send method"
-msgstr ""
+msgstr "`recipients_clean` no configurado en send method"
 
 #: apps.py:79
 msgid "`presend_check` is not configured in send method"
-msgstr ""
+msgstr "`presend_check` no configurado en send method"
 
 #: apps.py:91
 msgid "`attachments_format` is not configured in send method"
-msgstr ""
+msgstr "`attachments_format` no configurado en send method"
 
 #: apps.py:103
 msgid "`{}` method is used {} times instead of 1"
@@ -182,35 +203,35 @@ msgstr ""
 
 #: models.py:195 models.py:281 models.py:446 models.py:504
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: models.py:196 models.py:282
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: models.py:197 models.py:283
 msgid "Vat number"
-msgstr ""
+msgstr "Código Impuestos"
 
 #: models.py:198 models.py:284
 msgid "Fiscal code"
-msgstr ""
+msgstr "Código Fiscal"
 
 #: models.py:199 models.py:285
 msgid "Sms"
-msgstr ""
+msgstr "Mensaje móvil"
 
 #: models.py:200 models.py:286
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: models.py:201 models.py:287
 msgid "Telegram"
-msgstr ""
+msgstr "Telegram"
 
 #: models.py:202 models.py:288
 msgid "Note"
-msgstr ""
+msgstr "Nota"
 
 #: models.py:203 models.py:289 models.py:432 models.py:481
 msgid "Extra"
@@ -219,165 +240,165 @@ msgstr ""
 #: models.py:205 models.py:261 models.py:291 models.py:350 models.py:395
 #: models.py:423 templates/django_webix_sender/sender.js:101
 msgid "Typology"
-msgstr ""
+msgstr "Tipología"
 
 #: models.py:207 models.py:263 models.py:293 models.py:352 models.py:371
 #: models.py:397 models.py:449 models.py:486 models.py:506
 msgid "Creation date"
-msgstr ""
+msgstr "Fecha de creación"
 
 #: models.py:208 models.py:264 models.py:294 models.py:353 models.py:372
 #: models.py:398 models.py:450 models.py:487 models.py:507
 msgid "Modification data"
-msgstr ""
+msgstr "Modificación de datos"
 
 #: models.py:211
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #: models.py:212
 msgid "Customers"
-msgstr ""
+msgstr "Clientes"
 
 #: models.py:267
 msgid "Customer typology"
-msgstr ""
+msgstr "Tipo de cliente"
 
 #: models.py:268
 msgid "Customer typologies"
-msgstr ""
+msgstr "Tipos de cliente"
 
 #: models.py:297
 msgid "External subject"
-msgstr ""
+msgstr "Asunto externo"
 
 #: models.py:298
 msgid "External subjects"
-msgstr ""
+msgstr "Asuntos externos"
 
 #: models.py:304
 msgid "Not defined"
-msgstr ""
+msgstr "No definido"
 
 #: models.py:356
 msgid "External subject typology"
-msgstr ""
+msgstr "Tipo de asunto externo"
 
 #: models.py:357
 msgid "External subject typologies"
-msgstr ""
+msgstr "Tipos de asunto externo"
 
 #: models.py:368
 msgid "Document"
-msgstr ""
+msgstr "Documento"
 
 #: models.py:369
 msgid "Insert date"
-msgstr ""
+msgstr "Fecha de inserción"
 
 #: models.py:375
 msgid "Attachment"
-msgstr ""
+msgstr "Adjunto"
 
 #: models.py:376 models.py:437
 msgid "Attachments"
-msgstr ""
+msgstr "Adjuntos"
 
 #: models.py:401
 msgid "Message typology"
-msgstr ""
+msgstr "Tipo de mensaje"
 
 #: models.py:402
 msgid "Message typologies"
-msgstr ""
+msgstr "Tipos de mensaje"
 
 #: models.py:425 templates/django_webix_sender/invoices.js:15
 msgid "Send method"
-msgstr ""
+msgstr "Método de envio"
 
 #: models.py:426 templates/django_webix_sender/sender.js:119
 msgid "Subject"
-msgstr ""
+msgstr "Asunto"
 
 #: models.py:427
 msgid "Body"
-msgstr ""
+msgstr "Cuerpo"
 
 #: models.py:429
 msgid "Sent"
-msgstr ""
+msgstr "Enviar"
 
 #: models.py:430
 msgid "Received"
-msgstr ""
+msgstr "Recibir"
 
 #: models.py:441
 msgid "Cost"
-msgstr ""
+msgstr "Coste"
 
 #: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:692
 msgid "Invoiced"
-msgstr ""
+msgstr "Facturado"
 
 #: models.py:447
 msgid "Sender"
-msgstr ""
+msgstr "Remitente"
 
 #: models.py:453
 msgid "Sent message"
-msgstr ""
+msgstr "Enviar mensaje"
 
 #: models.py:454
 msgid "Sent messages"
-msgstr ""
+msgstr "Enviar mensajes"
 
 #: models.py:468 models.py:503
 msgid "Message sent"
-msgstr ""
+msgstr "Mensaje enviado"
 
 #: models.py:472
 msgid "Recipient address"
-msgstr ""
+msgstr "Dirección recipiente"
 
 #: models.py:473
 msgid "Sent number"
-msgstr ""
+msgstr "Número de envío"
 
 #: models.py:475 templates/django_webix_sender/invoices.js:68
 msgid "Success"
-msgstr ""
+msgstr "Correcto"
 
 #: models.py:476
 msgid "Failed"
-msgstr ""
+msgstr "Fallido"
 
 #: models.py:477
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: models.py:478
 msgid "Invalid"
-msgstr ""
+msgstr "Inválido"
 
 #: models.py:479
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicado"
 
 #: models.py:490
 msgid "Recipient"
-msgstr ""
+msgstr "Recipiente"
 
 #: models.py:491
 msgid "Recipients"
-msgstr ""
+msgstr "Recipientes"
 
 #: models.py:510
 msgid "Readed message"
-msgstr ""
+msgstr "Mensaje leído"
 
 #: models.py:511
 msgid "Readed messages"
-msgstr ""
+msgstr "Mensajes leídos"
 
 #: models.py:530
 msgid "Telegram Persistence"
@@ -389,15 +410,15 @@ msgstr ""
 
 #: send_methods/skebby/send_utils.py:167
 msgid "Invalid characters"
-msgstr ""
+msgstr "Carácteres inválidos"
 
 #: send_methods/telegram/handlers.py:14
 msgid "Hi!"
-msgstr ""
+msgstr "¡Hola!"
 
 #: send_methods/telegram/handlers.py:19
 msgid "Help!"
-msgstr ""
+msgstr "¡Ayuda!"
 
 #: send_methods/telegram/handlers.py:45
 msgid "Your user is not authorized to use this Bot"
