@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-17 15:01+0100\n"
-"PO-Revision-Date: 2022-03-09 15:03+0050\n"
-"Last-Translator: Sambado Paolo CBC Spagna <>\n"
+"PO-Revision-Date: 2022-03-17 15:10+0050\n"
+"Last-Translator: Traduzioni CBC <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -89,96 +89,98 @@ msgstr "`attachments_format` no configurado en send method"
 
 #: apps.py:103
 msgid "`{}` method is used {} times instead of 1"
-msgstr ""
+msgstr "El método `{}` se ha usado {} veces en lugar de 1 sola"
 
 #: apps.py:111
 msgid "Email `config` is not configured in your settings.py file"
-msgstr ""
+msgstr "La `config` del e-mail está pendiente en el fichero de settings.py"
 
 #: apps.py:122
 msgid "Skebby `config` is not configured in your settings.py file"
-msgstr ""
+msgstr "La `config` de Skebby está pendiente en el fichero de settings.py"
 
 #: apps.py:129
 msgid "Telegram `config` is not configured in your settings.py file"
-msgstr ""
+msgstr "La `config` de Telegram está pendiente en el fichero de settings.py"
 
 #: apps.py:167
 msgid "`method` is not configured in initial send method"
-msgstr ""
+msgstr "`method` no está configurado en el método inicial de envío"
 
 #: apps.py:187
 msgid "`recipients` is not configured in your settings"
-msgstr ""
+msgstr "`recipients` no configurados"
 
 #: apps.py:189
 msgid "`recipients` must be a list"
-msgstr ""
+msgstr "`recipients` deben estar en una lista"
 
 #: apps.py:193
 msgid "You have to define a `model` as string in your recipients list"
 msgstr ""
+"Debes definir un `model` como cadena de caracteres en tu lista de "
+"destinatarios"
 
 #: apps.py:195
 msgid ""
 "You have to define a `datatable_fields` as list in your recipients list"
-msgstr ""
+msgstr "Debes definir `datatable_fields` como una lista de destinatarios"
 
 #: apps.py:201
 msgid "Recipient model `{}` is not valid"
-msgstr ""
+msgstr "El modelo de destinatarios `{}`no es válido"
 
 #: management/commands/telegram_manage.py:37
 msgid "Telegram Webhooks successfully deleted"
-msgstr ""
+msgstr "Conexión web con Telegram eliminada"
 
 #: management/commands/telegram_manage.py:39
 msgid "Telegram Webhooks cannot be deleted"
-msgstr ""
+msgstr "Conexión web con Telegram no pude ser eliminada"
 
 #: management/commands/telegram_manage.py:44
 msgid "Telegram Webhook successfully added"
-msgstr ""
+msgstr "Conexión web con Telegram añadida"
 
 #: management/commands/telegram_manage.py:46
 msgid "Telegram Webhook cannot be added"
-msgstr ""
+msgstr "Conexión web con Telegram no puede ser añadida"
 
 #: management/commands/telegram_manage.py:50
 msgid "{} persistence elements have been deleted"
-msgstr ""
+msgstr "{} elementos persistentes eliminados"
 
 #: models.py:62
 msgid "`get_sms` not implemented!"
-msgstr ""
+msgstr "`get_sms`no implementado"
 
 #: models.py:72
 msgid "`get_email` not implemented!"
-msgstr ""
+msgstr "`get_email`no implementado"
 
 #: models.py:81
 msgid "`get_telegram` not implemented!"
-msgstr ""
+msgstr "`get_telegram`no implementado"
 
 #: models.py:91
 msgid "`get_sms_fieldpath` not implemented!"
-msgstr ""
+msgstr "`get_sms_fieldpath`no implementado"
 
 #: models.py:101
 msgid "`get_email_fieldpath` not implemented!"
-msgstr ""
+msgstr "`get_email_fieldpath` no implementado"
 
 #: models.py:111
 msgid "`get_telegram_fieldpath` not implemented!"
-msgstr ""
+msgstr "`get_telegram_fieldpath` no implementado"
 
 #: models.py:174
 msgid "`get_filters_viewers` not implemented!"
-msgstr ""
+msgstr "`get_filters_viewers` no implementado"
 
 #: models.py:184
 msgid "`get_representation` not implemented!"
-msgstr ""
+msgstr "`get_representation` no implementado"
 
 #: models.py:195 models.py:281 models.py:446 models.py:504
 msgid "User"
@@ -214,7 +216,7 @@ msgstr "Nota"
 
 #: models.py:203 models.py:289 models.py:432 models.py:481
 msgid "Extra"
-msgstr ""
+msgstr "Extra"
 
 #: models.py:205 models.py:261 models.py:291 models.py:350 models.py:395
 #: models.py:423 templates/django_webix_sender/sender.js:101
@@ -381,11 +383,11 @@ msgstr "Mensajes leídos"
 
 #: models.py:530
 msgid "Telegram Persistence"
-msgstr ""
+msgstr "Persistencia en Telegram"
 
 #: models.py:531
 msgid "Telegram Persistences"
-msgstr ""
+msgstr "Persistencias en Telegram"
 
 #: send_methods/skebby/send_utils.py:167
 msgid "Invalid characters"
@@ -401,286 +403,288 @@ msgstr "¡Ayuda!"
 
 #: send_methods/telegram/handlers.py:45
 msgid "Your user is not authorized to use this Bot"
-msgstr ""
+msgstr "No estás autorizado para usar este bot"
 
 #: send_methods/telegram/handlers.py:53
 msgid ""
 "Hi! Send me your phone number to connect your web account!\n"
 "Type /cancel to exit"
 msgstr ""
+"¡Hola! Envíame tu número de teléfono para conectarte con tu cuenta web.\n"
+"Escribe /cancel para salir"
 
 #: send_methods/telegram/handlers.py:55
 msgid "Send my phone number"
-msgstr ""
+msgstr "Enviar mi número de teléfono"
 
 #: send_methods/telegram/handlers.py:85
 msgid "Welcome {}! Now you can use this bot"
-msgstr ""
+msgstr "¡Bienvenido {}! Ahora puedes usar el bot"
 
 #: send_methods/telegram/handlers.py:90
 msgid "Your number is not in our database, contact us to add"
-msgstr ""
+msgstr "Tu número no está almacenado, contáctanos para añadirlo"
 
 #: send_methods/telegram/handlers.py:101
 msgid "Okay, if you want to connect your account type /start"
-msgstr ""
+msgstr "Vale, para conectar tu cuenta escribe /start"
 
 #: templates/django_webix_sender/chat.js:15
 #: templates/django_webix_sender/chat_messages.js:24
 msgid "Search.."
-msgstr ""
+msgstr "Buscar"
 
 #: templates/django_webix_sender/chat_messages.js:88
 msgid "Type your message"
-msgstr ""
+msgstr "Escribir mensaje"
 
 #: templates/django_webix_sender/chat_messages.js:92
 #: templates/django_webix_sender/list.js:211
 #: templates/django_webix_sender/sender.js:165
 #: templates/django_webix_sender/sender.js:328
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 #: templates/django_webix_sender/chat_messages.js:129
 #: templates/django_webix_sender/sender.js:251
 #: templates/django_webix_sender/sender.js:264
 msgid "Unable to send messages"
-msgstr ""
+msgstr "Imposible enviar mensajes"
 
 #: templates/django_webix_sender/invoices.js:62
 msgid "Period"
-msgstr ""
+msgstr "Período"
 
 #: templates/django_webix_sender/invoices.js:63
 msgid "TOTAL"
-msgstr ""
+msgstr "TOTAL"
 
 #: templates/django_webix_sender/invoices.js:74
 msgid "Unknowm status"
-msgstr ""
+msgstr "Estatus desconocido"
 
 #: templates/django_webix_sender/invoices.js:80
 msgid "Not send"
-msgstr ""
+msgstr "No enviado"
 
 #: templates/django_webix_sender/invoices.js:92
 msgid "To be invoiced"
-msgstr ""
+msgstr "Para ser facturado"
 
 #: templates/django_webix_sender/invoices.js:98
 msgid "Price invoiced"
-msgstr ""
+msgstr "Precio facturado"
 
 #: templates/django_webix_sender/invoices.js:104
 msgid "Price to be invoiced"
-msgstr ""
+msgstr "Precio para ser facturado"
 
 #: templates/django_webix_sender/invoices.js:112
 msgid "marks as billed"
-msgstr ""
+msgstr "Marcar como facturado"
 
 #: templates/django_webix_sender/invoices.js:160
 #: templates/django_webix_sender/sender.js:214
 msgid "Confirmation"
-msgstr ""
+msgstr "Confirmación"
 
 #: templates/django_webix_sender/invoices.js:161
 msgid "Are you sure you want to mark these communications as billed?"
-msgstr ""
+msgstr "¿Estás seguro de querer marcar estas comunicaciones como facturadas?"
 
 #: templates/django_webix_sender/invoices.js:162
 #: templates/django_webix_sender/list.js:151
 #: templates/django_webix_sender/sender.js:216
 msgid "Yes"
-msgstr ""
+msgstr "Sí"
 
 #: templates/django_webix_sender/invoices.js:163
 #: templates/django_webix_sender/list.js:152
 #: templates/django_webix_sender/sender.js:217
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: templates/django_webix_sender/invoices.js:197
 #: templates/django_webix_sender/sender.js:368
 msgid "Caution!"
-msgstr ""
+msgstr "¡Atención!"
 
 #: templates/django_webix_sender/invoices.js:198
 msgid "There are unknown status for this communication"
-msgstr ""
+msgstr "Estados desconocidos en la comunicación"
 
 #: templates/django_webix_sender/list.js:39
 msgid "AND"
-msgstr ""
+msgstr "Y"
 
 #: templates/django_webix_sender/list.js:40
 msgid "OR"
-msgstr ""
+msgstr "O"
 
 #: templates/django_webix_sender/list.js:72
 msgid "Filter the list by applying filters"
-msgstr ""
+msgstr "Filtrar aplicando las condiciones"
 
 #: templates/django_webix_sender/list.js:150
 msgid "All"
-msgstr ""
+msgstr "Todo"
 
 #: templates/django_webix_sender/list.js:207
 msgid "Action"
-msgstr ""
+msgstr "Acción"
 
 #: templates/django_webix_sender/list.js:218
 msgid "Go"
-msgstr ""
+msgstr "Ir"
 
 #: templates/django_webix_sender/list.js:246
 #: templates/django_webix_sender/list.js:279
 msgid "selected of"
-msgstr ""
+msgstr "seleccionados"
 
 #: templates/django_webix_sender/list.js:319
 msgid "Unable to load sender class"
-msgstr ""
+msgstr "Imposible cargar la clase de envío"
 
 #: templates/django_webix_sender/list_messages.js:55
 #: templates/django_webix_sender/list_messages.js:63
 msgid "File mancante"
-msgstr ""
+msgstr "Fichero no encontrado"
 
 #: templates/django_webix_sender/list_messages.js:56
 #: templates/django_webix_sender/list_messages.js:64
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: templates/django_webix_sender/list_messages.js:57
 #: templates/django_webix_sender/list_messages.js:65
 msgid "File ancora non presente."
-msgstr ""
+msgstr "Fichero aún no presente"
 
 #: templates/django_webix_sender/sender.js:50
 msgid "Send methods"
-msgstr ""
+msgstr "Enviar métodos"
 
 #: templates/django_webix_sender/sender.js:135
 #: templates/django_webix_sender/sender.js:143
 msgid "characters"
-msgstr ""
+msgstr "caracteres"
 
 #: templates/django_webix_sender/sender.js:150
 msgid "Attach file"
-msgstr ""
+msgstr "Adjuntar fichero"
 
 #: templates/django_webix_sender/sender.js:172
 msgid "You have to fill in all the required fields"
-msgstr ""
+msgstr "Es necesario rellenar todos los campos obligatorios"
 
 #: templates/django_webix_sender/sender.js:206
 msgid "Valid recipients: "
-msgstr ""
+msgstr "Destinatarios válidos:"
 
 #: templates/django_webix_sender/sender.js:207
 msgid "Invalids recipients: "
-msgstr ""
+msgstr "Destinatarios inválidos:"
 
 #: templates/django_webix_sender/sender.js:208
 msgid "Duplicate recipients: "
-msgstr ""
+msgstr "Destinatarios duplicados:"
 
 #: templates/django_webix_sender/sender.js:211
 msgid "Are you sure to send this message?"
-msgstr ""
+msgstr "¿Estás seguro de querer enviar el mensaje?"
 
 #: templates/django_webix_sender/sender.js:241
 msgid "Results"
-msgstr ""
+msgstr "Resultados"
 
 #: templates/django_webix_sender/sender.js:332
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: templates/django_webix_sender/sender.js:369
 msgid "There are no recipients for this communication"
-msgstr ""
+msgstr "No hay destinatarios en esta comunicación"
 
 #: utils.py:62 utils.py:67 utils.py:72
 msgid "Related is not subclass of `DjangoWebixSender`"
-msgstr ""
+msgstr "No es una subclase de `DjangoWebixSender"
 
 #: utils.py:85 views.py:666
 msgid "Invalid send method"
-msgstr ""
+msgstr "Método de envío inválido"
 
 #: views.py:126
 msgid "Content type doesn't match"
-msgstr ""
+msgstr "El contenido no coincide"
 
 #: views.py:131
 msgid "Not valid and/or filter"
-msgstr ""
+msgstr "No válido y/o filtro"
 
 #: views.py:245
 msgid "Messages"
-msgstr ""
+msgstr "Mensajes"
 
 #: views.py:510
 msgid "Jan"
-msgstr ""
+msgstr "Ene"
 
 #: views.py:510
 msgid "Feb"
-msgstr ""
+msgstr "Feb"
 
 #: views.py:510
 msgid "Mar"
-msgstr ""
+msgstr "Mar"
 
 #: views.py:510
 msgid "Apr"
-msgstr ""
+msgstr "Abr"
 
 #: views.py:510
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #: views.py:510
 msgid "Jun"
-msgstr ""
+msgstr "Jun"
 
 #: views.py:510
 msgid "Jul"
-msgstr ""
+msgstr "Jul"
 
 #: views.py:510
 msgid "Aug"
-msgstr ""
+msgstr "Ago"
 
 #: views.py:510
 msgid "Sep"
-msgstr ""
+msgstr "Sep"
 
 #: views.py:510
 msgid "Oct"
-msgstr ""
+msgstr "Oct"
 
 #: views.py:511
 msgid "Nov"
-msgstr ""
+msgstr "Nov"
 
 #: views.py:511
 msgid "Dec"
-msgstr ""
+msgstr "Dic"
 
 #: views.py:514
 msgid "Jan - Feb"
-msgstr ""
+msgstr "Ene-Feb"
 
 #: views.py:514
 msgid "Mar - Apr"
-msgstr ""
+msgstr "Mar-Abr"
 
 #: views.py:514
 msgid "May - Jun"
-msgstr ""
+msgstr "May-Jun"
 
 #: views.py:514
 msgid "Jul - Aug"
