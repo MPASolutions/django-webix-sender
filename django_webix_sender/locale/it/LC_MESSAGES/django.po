@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-17 15:01+0100\n"
-"PO-Revision-Date: 2021-01-22 15:32+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2022-04-07 15:43+0200\n"
+"PO-Revision-Date: 2022-03-22 16:37+0050\n"
+"Last-Translator: Traduzioni CBC <>\n"
 "Language-Team: \n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.2\n"
+"X-Translated-Using: django-rosetta 0.9.8\n"
 
 #: admin.py:121
 msgid "Total recipients"
@@ -75,20 +76,14 @@ msgid "`function` is not configured in send method"
 msgstr "`function` non è configurato nel metodo di invio"
 
 #: apps.py:67
-#, fuzzy
-#| msgid "`show_in_chat` is not configured in send method"
 msgid "`recipients_clean` is not configured in send method"
 msgstr "`show_in_chat` non è configurato nel metodo di invio"
 
 #: apps.py:79
-#, fuzzy
-#| msgid "`verbose_name` is not configured in send method"
 msgid "`presend_check` is not configured in send method"
 msgstr "`verbose_name` non è configurato nel metodo di invio"
 
 #: apps.py:91
-#, fuzzy
-#| msgid "`method` is not configured in send method"
 msgid "`attachments_format` is not configured in send method"
 msgstr "`method` non è configurato nel metodo di invio"
 
@@ -109,28 +104,25 @@ msgid "Telegram `config` is not configured in your settings.py file"
 msgstr "Telegram `config` non è configurato nel tuo file settings.py"
 
 #: apps.py:167
-#, fuzzy
-#| msgid "`method` is not configured in send method"
 msgid "`method` is not configured in initial send method"
 msgstr "`method` non è configurato nel metodo di invio"
 
 #: apps.py:187
-#, fuzzy
-#| msgid "Email `config` is not configured in your settings.py file"
 msgid "`recipients` is not configured in your settings"
 msgstr "Email `config` non è configurato nel tuo file settings.py"
 
 #: apps.py:189
 msgid "`recipients` must be a list"
-msgstr ""
+msgstr "Il recipiente deve essere una lista"
 
 #: apps.py:193
 msgid "You have to define a `model` as string in your recipients list"
-msgstr ""
+msgstr "Devi definire un modello come stringa nel tuo recipiente"
 
 #: apps.py:195
 msgid "You have to define a `datatable_fields` as list in your recipients list"
 msgstr ""
+"Devi definire un \"datartable_fields' come lista nella lista dei recipienti"
 
 #: apps.py:201
 msgid "Recipient model `{}` is not valid"
@@ -557,17 +549,17 @@ msgstr "Impossibile caricare la classe sender"
 #: templates/django_webix_sender/list_messages.js:55
 #: templates/django_webix_sender/list_messages.js:63
 msgid "File mancante"
-msgstr ""
+msgstr "File mancante"
 
 #: templates/django_webix_sender/list_messages.js:56
 #: templates/django_webix_sender/list_messages.js:64
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: templates/django_webix_sender/list_messages.js:57
 #: templates/django_webix_sender/list_messages.js:65
 msgid "File ancora non presente."
-msgstr ""
+msgstr "File ancora presente."
 
 #: templates/django_webix_sender/sender.js:50
 msgid "Send methods"
@@ -656,55 +648,55 @@ msgstr "Mag"
 
 #: views.py:510
 msgid "Jun"
-msgstr "Giu"
+msgstr "giu"
 
 #: views.py:510
 msgid "Jul"
-msgstr "Lug"
+msgstr "lug"
 
 #: views.py:510
 msgid "Aug"
-msgstr "Ago"
+msgstr "ago"
 
 #: views.py:510
 msgid "Sep"
-msgstr "Set"
+msgstr "set"
 
 #: views.py:510
 msgid "Oct"
-msgstr "Ott"
+msgstr "ott"
 
 #: views.py:511
 msgid "Nov"
-msgstr "Nov"
+msgstr "nov"
 
 #: views.py:511
 msgid "Dec"
-msgstr "Dic"
+msgstr "dic"
 
 #: views.py:514
 msgid "Jan - Feb"
-msgstr "Gen - Feb"
+msgstr "gen - feb"
 
 #: views.py:514
 msgid "Mar - Apr"
-msgstr "Mar - Apr"
+msgstr "mar - apr"
 
 #: views.py:514
 msgid "May - Jun"
-msgstr "Mag - Giu"
+msgstr "mag - giu"
 
 #: views.py:514
 msgid "Jul - Aug"
-msgstr "Lug - Ago"
+msgstr "lug - ago"
 
 #: views.py:514
 msgid "Sep - Oct"
-msgstr "Set - Ott"
+msgstr "set - ott"
 
 #: views.py:514
 msgid "Nov - Dec"
-msgstr "Nov - Dic"
+msgstr "nov - dic"
 
 #: views.py:517
 msgid "First quarter"
