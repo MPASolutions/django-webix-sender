@@ -25,7 +25,7 @@ from telegram.ext import Dispatcher
 from django.urls import reverse
 
 from django_webix.views import WebixTemplateView, WebixListView
-from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead, MessageTypology
+from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead
 from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
 
@@ -58,8 +58,10 @@ class SenderListView(WebixTemplateView):
 
         context['use_dynamic_filters'] = use_dynamic_filters
 
-        context['send_methods'] = CONF['send_methods']
-        context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
+        send_methods = list(filter(lambda i: i.get("show_in_sendmethods", True) is True, CONF['send_methods']))
+
+        context['send_methods'] = send_methods
+        context['send_method_types'] = [i['method'] for i in send_methods]
 
         context['datatables'] = []
         for recipient in CONF['recipients']:
@@ -230,9 +232,11 @@ class SenderWindowView(WebixTemplateView):
     def get_context_data(self, **kwargs):
         context = super(SenderWindowView, self).get_context_data(**kwargs)
 
-        context['send_methods'] = CONF['send_methods']
+        send_methods = list(filter(lambda i: i.get("show_in_sendmethods", True) is True, CONF['send_methods']))
+
+        context['send_methods'] = send_methods
         context['typology_model'] = CONF['typology_model']
-        context['send_method_types'] = [i['method'] for i in CONF['send_methods']]
+        context['send_method_types'] = [i['method'] for i in send_methods]
         context['initial_send_methods'] = CONF.get('initial_send_methods', [])
 
         return context
