@@ -479,8 +479,9 @@ class MessageRecipient(Model):
         ('duplicate', _('Duplicate'))
     ), default='unknown')
     extra = models.TextField(blank=True, null=True, verbose_name=_('Extra'))
+    extra_json = JSONField(blank=True, null=True, verbose_name=_('Extra JSON'))
 
-    # # Message status
+    # Message status
     is_sender = models.BooleanField(blank=True, default=False)
 
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name=_('Creation date'))
