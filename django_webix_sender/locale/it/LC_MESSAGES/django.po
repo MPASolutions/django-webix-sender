@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-07 15:43+0200\n"
+"POT-Creation-Date: 2022-04-28 15:54+0200\n"
 "PO-Revision-Date: 2022-03-22 16:37+0050\n"
 "Last-Translator: Traduzioni CBC <>\n"
 "Language-Team: \n"
@@ -180,7 +180,7 @@ msgstr "`get_filters_viewers` non implementato!"
 msgid "`get_representation` not implemented!"
 msgstr "`get_representation` non implementato!"
 
-#: models.py:195 models.py:281 models.py:446 models.py:504
+#: models.py:195 models.py:281 models.py:446 models.py:505
 msgid "User"
 msgstr "Utente"
 
@@ -222,12 +222,12 @@ msgid "Typology"
 msgstr "Tipologia"
 
 #: models.py:207 models.py:263 models.py:293 models.py:352 models.py:371
-#: models.py:397 models.py:449 models.py:486 models.py:506
+#: models.py:397 models.py:449 models.py:487 models.py:507
 msgid "Creation date"
 msgstr "Data di creazione"
 
 #: models.py:208 models.py:264 models.py:294 models.py:353 models.py:372
-#: models.py:398 models.py:450 models.py:487 models.py:507
+#: models.py:398 models.py:450 models.py:488 models.py:508
 msgid "Modification data"
 msgstr "Dati di modifica"
 
@@ -315,7 +315,7 @@ msgstr "Ricevuti"
 msgid "Cost"
 msgstr "Costo"
 
-#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:692
+#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:696
 msgid "Invoiced"
 msgstr "Fatturato"
 
@@ -331,7 +331,7 @@ msgstr "Messaggio inviato"
 msgid "Sent messages"
 msgstr "Messaggi inviati"
 
-#: models.py:468 models.py:503
+#: models.py:468 models.py:504
 msgid "Message sent"
 msgstr "Messaggio inviato"
 
@@ -363,27 +363,33 @@ msgstr "Non valido"
 msgid "Duplicate"
 msgstr "Duplicato"
 
-#: models.py:490
+#: models.py:482
+#, fuzzy
+#| msgid "Extra"
+msgid "Extra JSON"
+msgstr "Extra"
+
+#: models.py:491
 msgid "Recipient"
 msgstr "Destinatario"
 
-#: models.py:491
+#: models.py:492
 msgid "Recipients"
 msgstr "Destinatari"
 
-#: models.py:510
+#: models.py:511
 msgid "Readed message"
 msgstr "Messaggio letto"
 
-#: models.py:511
+#: models.py:512
 msgid "Readed messages"
 msgstr "Messaggi letti"
 
-#: models.py:530
+#: models.py:531
 msgid "Telegram Persistence"
 msgstr "Persistenza Telegram"
 
-#: models.py:531
+#: models.py:532
 msgid "Telegram Persistences"
 msgstr "Persistenze Telegram"
 
@@ -610,127 +616,127 @@ msgstr "Non ci sono destinatari per questa comunicazione"
 msgid "Related is not subclass of `DjangoWebixSender`"
 msgstr "Oggetto collegato non è una sottoclasse di `DjangoWebixSender`"
 
-#: utils.py:85 views.py:666
+#: utils.py:85 views.py:670
 msgid "Invalid send method"
 msgstr "Metodo di invio non valido"
 
-#: views.py:126
+#: views.py:128
 msgid "Content type doesn't match"
 msgstr "Nessun content type identificato"
 
-#: views.py:131
+#: views.py:133
 msgid "Not valid and/or filter"
 msgstr "Filtro e/o non valido"
 
-#: views.py:245
+#: views.py:249
 msgid "Messages"
 msgstr "Messaggi"
 
-#: views.py:510
+#: views.py:514
 msgid "Jan"
 msgstr "Gen"
 
-#: views.py:510
+#: views.py:514
 msgid "Feb"
 msgstr "Feb"
 
-#: views.py:510
+#: views.py:514
 msgid "Mar"
 msgstr "Mar"
 
-#: views.py:510
+#: views.py:514
 msgid "Apr"
 msgstr "Apr"
 
-#: views.py:510
+#: views.py:514
 msgid "May"
 msgstr "Mag"
 
-#: views.py:510
+#: views.py:514
 msgid "Jun"
 msgstr "giu"
 
-#: views.py:510
+#: views.py:514
 msgid "Jul"
 msgstr "lug"
 
-#: views.py:510
+#: views.py:514
 msgid "Aug"
 msgstr "ago"
 
-#: views.py:510
+#: views.py:514
 msgid "Sep"
 msgstr "set"
 
-#: views.py:510
+#: views.py:514
 msgid "Oct"
 msgstr "ott"
 
-#: views.py:511
+#: views.py:515
 msgid "Nov"
 msgstr "nov"
 
-#: views.py:511
+#: views.py:515
 msgid "Dec"
 msgstr "dic"
 
-#: views.py:514
+#: views.py:518
 msgid "Jan - Feb"
 msgstr "gen - feb"
 
-#: views.py:514
+#: views.py:518
 msgid "Mar - Apr"
 msgstr "mar - apr"
 
-#: views.py:514
+#: views.py:518
 msgid "May - Jun"
 msgstr "mag - giu"
 
-#: views.py:514
+#: views.py:518
 msgid "Jul - Aug"
 msgstr "lug - ago"
 
-#: views.py:514
+#: views.py:518
 msgid "Sep - Oct"
 msgstr "set - ott"
 
-#: views.py:514
+#: views.py:518
 msgid "Nov - Dec"
 msgstr "nov - dic"
 
-#: views.py:517
+#: views.py:521
 msgid "First quarter"
 msgstr "Primo quarto"
 
-#: views.py:517
+#: views.py:521
 msgid "Second quarter"
 msgstr "Secondo quarto"
 
-#: views.py:517
+#: views.py:521
 msgid "Third quarter"
 msgstr "Terzo quarto"
 
-#: views.py:517
+#: views.py:521
 msgid "Fourth quarter"
 msgstr "Quarto quarto"
 
-#: views.py:520
+#: views.py:524
 msgid "First semester"
 msgstr "Primo semestre"
 
-#: views.py:520
+#: views.py:524
 msgid "Second semester"
 msgstr "Secondo semestre"
 
-#: views.py:523
+#: views.py:527
 msgid "Year"
 msgstr "Anno"
 
-#: views.py:573 views.py:667
+#: views.py:577 views.py:671
 msgid "Sender not specified"
 msgstr "Destinatario non specificato"
 
-#: views.py:664
+#: views.py:668
 msgid "Invalid period"
 msgstr "Periodo non valido"
 
