@@ -38,7 +38,7 @@ if CONF is not None and \
 
 class MessageRecipientInline(admin.TabularInline):
     _fields = [
-        'recipient', 'recipient_address', 'sent_number', 'status', 'is_sender', 'extra',
+        'recipient', 'recipient_address', 'sent_number', 'status', 'is_sender', 'extra', 'extra_json',
         'creation_date', 'modification_date',
     ]
 
