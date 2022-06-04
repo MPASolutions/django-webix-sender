@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-20 18:05+0200\n"
-"PO-Revision-Date: 2022-03-17 15:10+0050\n"
+"POT-Creation-Date: 2022-06-04 11:05+0200\n"
+"PO-Revision-Date: 2022-05-26 18:04+0050\n"
 "Last-Translator: Traduzioni CBC <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -365,10 +365,8 @@ msgid "Duplicate"
 msgstr "Duplicado"
 
 #: models.py:482
-#, fuzzy
-#| msgid "Extra"
 msgid "Extra JSON"
-msgstr "Extra"
+msgstr "JSON Extra"
 
 #: models.py:491
 msgid "Recipient"
