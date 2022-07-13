@@ -257,7 +257,7 @@ class SenderMessagesListView(WebixListView):
                 'field_name': 'send_method_type',
                 'datalist_column': format_lazy(
                     '''{{id: "send_method_type", serverFilterType: "exact", header: ["{}", {{content: "serverSelectFilter", options: send_method_type_options}}], adjust: "all", fillspace: true}}''',
-                    escapejs(_("v")))
+                    escapejs(_("Send method type")))
             },
             {
                 'field_name': 'message_sent__subject',

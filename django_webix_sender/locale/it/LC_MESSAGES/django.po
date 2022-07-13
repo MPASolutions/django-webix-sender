@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-12 10:30+0200\n"
-"PO-Revision-Date: 2022-07-12 11:08+0050\n"
+"POT-Creation-Date: 2022-07-13 14:41+0200\n"
+"PO-Revision-Date: 2022-07-13 13:46+0050\n"
 "Last-Translator: Stefano Menegon <menegon@mpasol.it>\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -120,8 +120,7 @@ msgid "You have to define a `model` as string in your recipients list"
 msgstr "Devi definire un modello come stringa nel tuo recipiente"
 
 #: apps.py:195
-msgid ""
-"You have to define a `datatable_fields` as list in your recipients list"
+msgid "You have to define a `datatable_fields` as list in your recipients list"
 msgstr ""
 "Devi definire un \"datartable_fields' come lista nella lista dei recipienti"
 
@@ -280,7 +279,7 @@ msgstr "Data inserimento"
 msgid "Attachment"
 msgstr "Allegato"
 
-#: models.py:376 models.py:437
+#: models.py:376 models.py:437 views.py:278
 msgid "Attachments"
 msgstr "Allegati"
 
@@ -296,11 +295,11 @@ msgstr "Tipologie messaggi"
 msgid "Send method"
 msgstr "Metodo di invio"
 
-#: models.py:426 templates/django_webix_sender/sender.js:119
+#: models.py:426 templates/django_webix_sender/sender.js:119 views.py:266
 msgid "Subject"
 msgstr "Oggetto"
 
-#: models.py:427
+#: models.py:427 views.py:272
 msgid "Body"
 msgstr "Corpo"
 
@@ -316,7 +315,7 @@ msgstr "Ricevuti"
 msgid "Cost"
 msgstr "Costo"
 
-#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:696
+#: models.py:442 templates/django_webix_sender/invoices.js:86 views.py:709
 msgid "Invoiced"
 msgstr "Fatturato"
 
@@ -365,7 +364,6 @@ msgid "Duplicate"
 msgstr "Duplicato"
 
 #: models.py:482
-#| msgid "Extra"
 msgid "Extra JSON"
 msgstr "Extra JSON"
 
@@ -616,127 +614,131 @@ msgstr "Non ci sono destinatari per questa comunicazione"
 msgid "Related is not subclass of `DjangoWebixSender`"
 msgstr "Oggetto collegato non è una sottoclasse di `DjangoWebixSender`"
 
-#: utils.py:85 views.py:670
+#: utils.py:85 views.py:683
 msgid "Invalid send method"
 msgstr "Metodo di invio non valido"
 
-#: views.py:128
+#: views.py:131
 msgid "Content type doesn't match"
 msgstr "Nessun content type identificato"
 
-#: views.py:133
+#: views.py:136
 msgid "Not valid and/or filter"
 msgstr "Filtro e/o non valido"
 
-#: views.py:249
+#: views.py:252
 msgid "Messages"
 msgstr "Messaggi"
 
-#: views.py:514
+#: views.py:260
+msgid "Send method type"
+msgstr "Metodo di invio"
+
+#: views.py:527
 msgid "Jan"
 msgstr "Gen"
 
-#: views.py:514
+#: views.py:527
 msgid "Feb"
 msgstr "Feb"
 
-#: views.py:514
+#: views.py:527
 msgid "Mar"
 msgstr "Mar"
 
-#: views.py:514
+#: views.py:527
 msgid "Apr"
 msgstr "Apr"
 
-#: views.py:514
+#: views.py:527
 msgid "May"
 msgstr "Mag"
 
-#: views.py:514
+#: views.py:527
 msgid "Jun"
 msgstr "giu"
 
-#: views.py:514
+#: views.py:527
 msgid "Jul"
 msgstr "lug"
 
-#: views.py:514
+#: views.py:527
 msgid "Aug"
 msgstr "ago"
 
-#: views.py:514
+#: views.py:527
 msgid "Sep"
 msgstr "set"
 
-#: views.py:514
+#: views.py:527
 msgid "Oct"
 msgstr "ott"
 
-#: views.py:515
+#: views.py:528
 msgid "Nov"
 msgstr "nov"
 
-#: views.py:515
+#: views.py:528
 msgid "Dec"
 msgstr "dic"
 
-#: views.py:518
+#: views.py:531
 msgid "Jan - Feb"
 msgstr "gen - feb"
 
-#: views.py:518
+#: views.py:531
 msgid "Mar - Apr"
 msgstr "mar - apr"
 
-#: views.py:518
+#: views.py:531
 msgid "May - Jun"
 msgstr "mag - giu"
 
-#: views.py:518
+#: views.py:531
 msgid "Jul - Aug"
 msgstr "lug - ago"
 
-#: views.py:518
+#: views.py:531
 msgid "Sep - Oct"
 msgstr "set - ott"
 
-#: views.py:518
+#: views.py:531
 msgid "Nov - Dec"
 msgstr "nov - dic"
 
-#: views.py:521
+#: views.py:534
 msgid "First quarter"
 msgstr "Primo quarto"
 
-#: views.py:521
+#: views.py:534
 msgid "Second quarter"
 msgstr "Secondo quarto"
 
-#: views.py:521
+#: views.py:534
 msgid "Third quarter"
 msgstr "Terzo quarto"
 
-#: views.py:521
+#: views.py:534
 msgid "Fourth quarter"
 msgstr "Quarto quarto"
 
-#: views.py:524
+#: views.py:537
 msgid "First semester"
 msgstr "Primo semestre"
 
-#: views.py:524
+#: views.py:537
 msgid "Second semester"
 msgstr "Secondo semestre"
 
-#: views.py:527
+#: views.py:540
 msgid "Year"
 msgstr "Anno"
 
-#: views.py:577 views.py:671
+#: views.py:590 views.py:684
 msgid "Sender not specified"
 msgstr "Destinatario non specificato"
 
-#: views.py:668
+#: views.py:681
 msgid "Invalid period"
 msgstr "Periodo non valido"
 
@@ -759,8 +761,8 @@ msgstr "Periodo non valido"
 #~ "Warning! if there are messages with an unknown status, the data is not "
 #~ "updated"
 #~ msgstr ""
-#~ "Attenzione! Se ci sono messaggi con uno stato sconosciuto, i dati non sono "
-#~ "aggiornati"
+#~ "Attenzione! Se ci sono messaggi con uno stato sconosciuto, i dati non "
+#~ "sono aggiornati"
 
 #~ msgid "The messages have been sent"
 #~ msgstr "I messaggi sono stati inviati"
