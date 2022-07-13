@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-06 15:26+0200\n"
-"PO-Revision-Date: 2022-03-22 16:37+0050\n"
-"Last-Translator: Traduzioni CBC <>\n"
+"POT-Creation-Date: 2022-07-12 10:30+0200\n"
+"PO-Revision-Date: 2022-07-12 11:08+0050\n"
+"Last-Translator: Stefano Menegon <menegon@mpasol.it>\n"
 "Language-Team: \n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -120,7 +120,8 @@ msgid "You have to define a `model` as string in your recipients list"
 msgstr "Devi definire un modello come stringa nel tuo recipiente"
 
 #: apps.py:195
-msgid "You have to define a `datatable_fields` as list in your recipients list"
+msgid ""
+"You have to define a `datatable_fields` as list in your recipients list"
 msgstr ""
 "Devi definire un \"datartable_fields' come lista nella lista dei recipienti"
 
@@ -364,10 +365,9 @@ msgid "Duplicate"
 msgstr "Duplicato"
 
 #: models.py:482
-#, fuzzy
 #| msgid "Extra"
 msgid "Extra JSON"
-msgstr "Extra"
+msgstr "Extra JSON"
 
 #: models.py:491
 msgid "Recipient"
@@ -759,8 +759,8 @@ msgstr "Periodo non valido"
 #~ "Warning! if there are messages with an unknown status, the data is not "
 #~ "updated"
 #~ msgstr ""
-#~ "Attenzione! Se ci sono messaggi con uno stato sconosciuto, i dati non "
-#~ "sono aggiornati"
+#~ "Attenzione! Se ci sono messaggi con uno stato sconosciuto, i dati non sono "
+#~ "aggiornati"
 
 #~ msgid "The messages have been sent"
 #~ msgstr "I messaggi sono stati inviati"

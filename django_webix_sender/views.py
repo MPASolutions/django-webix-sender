@@ -17,7 +17,6 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils import translation
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from telegram import Update
@@ -28,6 +27,10 @@ from django_webix.views import WebixTemplateView, WebixListView
 from django_webix_sender.models import MessageSent, MessageRecipient, MessageUserRead
 from django_webix_sender.send_methods.telegram.persistences import DatabaseTelegramPersistence
 from django_webix_sender.utils import send_mixin
+
+from django.utils.html import escapejs
+from django.utils.translation import gettext_lazy as _
+from django.utils.text import format_lazy
 
 if apps.is_installed('django_webix_filter'):
     from django_webix_filter.models import WebixFilter
@@ -248,24 +251,34 @@ class SenderMessagesListView(WebixListView):
     template_name = "django_webix_sender/list_messages.js"
     title = _("Messages")
 
-    fields = [
-        {
-            'field_name': 'send_method_type',
-            'datalist_column': '''{id: "send_method_type", serverFilterType: "exact", header: ["{{ _("Send method")|escapejs }}", {content: "serverSelectFilter", options: send_method_type_options}], adjust: "all", fillspace: true}'''
-        },
-        {
-            'field_name': 'message_sent__subject',
-            'datalist_column': '''{id: "message_sent__subject", serverFilterType: "icontains", header: ["{{ _("Subject")|escapejs }}", {content: "textFilter"}], adjust: "all", fillspace: true}'''
-        },
-        {
-            'field_name': 'message_sent__body',
-            'datalist_column': '''{id: "message_sent__body", serverFilterType: "icontains", header: ["{{ _("Body")|escapejs }}", {content: "textFilter"}], adjust: "all", fillspace: true}'''
-        },
-        {
-            'field_name': 'attachments',
-            'datalist_column': '''{id: "attachments", header: ["{{ _("Attachments")|escapejs }}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsTemplate}'''
-        },
-    ]
+    def get_fields(self):
+        _fields = [
+            {
+                'field_name': 'send_method_type',
+                'datalist_column': format_lazy(
+                    '''{{id: "send_method_type", serverFilterType: "exact", header: ["{}", {{content: "serverSelectFilter", options: send_method_type_options}}], adjust: "all", fillspace: true}}''',
+                    escapejs(_("v")))
+            },
+            {
+                'field_name': 'message_sent__subject',
+                'datalist_column': format_lazy(
+                    '''{{id: "message_sent__subject", serverFilterType: "icontains", header: ["{}", {{content: "textFilter"}}], adjust: "all", fillspace: true}}''',
+                    escapejs(_("Subject")))
+            },
+            {
+                'field_name': 'message_sent__body',
+                'datalist_column': format_lazy(
+                    '''{{id: "message_sent__body", serverFilterType: "icontains", header: ["{}", {{content: "textFilter"}}], adjust: "all", fillspace: true}}''',
+                    escapejs(_("Body")))
+            },
+            {
+                'field_name': 'attachments',
+                'datalist_column': format_lazy(
+                    '''{{id: "attachments", header: ["{}"], width: 70, minWidth: 70, sort: 'string', template: attachmentsTemplate}}''',
+                    escapejs(_("Attachments")))
+            },
+        ]
+        return super().get_fields(fields = _fields)
 
     url_pattern_list = 'django_webix_sender.messages_list'
     add_permission = False
