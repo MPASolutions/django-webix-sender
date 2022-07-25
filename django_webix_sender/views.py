@@ -730,7 +730,16 @@ class SenderTelegramWebhookView(View):
         for recipient in CONF['recipients']:
             app_label, model = recipient['model'].lower().split(".")
             model_class = apps.get_model(app_label=app_label, model_name=model)
-            if model_class.get_telegram_fieldpath():
+            telegram_id = None
+            if "message" in response and \
+                "from" in response['message'] and \
+                "id" in response["message"]:
+                telegram_id = response['message']['from']['id']
+            elif "my_chat_member" in response and \
+                "from" in response['message'] and \
+                "id" in response["message"]:
+                telegram_id = response['my_chat_member']['from']['id']
+            if telegram_id is not None and model_class.get_telegram_fieldpath():
                 recipients += list(model_class.objects.filter(
                     **{model_class.get_telegram_fieldpath(): response['message']['from']['id']}
                 ))
