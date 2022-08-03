@@ -733,15 +733,15 @@ class SenderTelegramWebhookView(View):
             telegram_id = None
             if "message" in response and \
                 "from" in response['message'] and \
-                "id" in response["message"]:
+                "id" in response["message"]['from']:
                 telegram_id = response['message']['from']['id']
             elif "my_chat_member" in response and \
-                "from" in response['message'] and \
-                "id" in response["message"]:
+                "from" in response['my_chat_member'] and \
+                "id" in response["my_chat_member"]['from']:
                 telegram_id = response['my_chat_member']['from']['id']
             if telegram_id is not None and model_class.get_telegram_fieldpath():
                 recipients += list(model_class.objects.filter(
-                    **{model_class.get_telegram_fieldpath(): response['message']['from']['id']}
+                    **{model_class.get_telegram_fieldpath(): telegram_id}
                 ))
 
         # Save only text messages (exclude commands)
