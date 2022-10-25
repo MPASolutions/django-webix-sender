@@ -5,7 +5,7 @@ from django.apps import AppConfig, apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth import get_user_model
 
 class DjangoWebixSenderConfig(AppConfig):
     name = 'django_webix_sender'
@@ -25,6 +25,18 @@ class DjangoWebixSenderConfig(AppConfig):
         self.recipients_check()
         self.groups_can_send_check()
         self.extra_check()
+        self.set_user_cost()
+
+    def set_user_cost(self):
+        from django_webix_sender.utils import my_import
+
+        user_cost_config = getattr(self.CONF, "USER_COST", None)
+        User = get_user_model()
+        if user_cost_config is None:
+            user_cost_config = 'django_webix_sender.send_methods.get_default_user_cost'
+        _get_cost = my_import(user_cost_config)
+        User.get_cost = _get_cost
+        return _get_cost
 
     def send_methods_check(self):
         from django_webix_sender.utils import my_import
