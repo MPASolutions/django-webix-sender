@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-26 09:26+0200\n"
+"POT-Creation-Date: 2022-11-02 17:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,75 +54,75 @@ msgstr ""
 msgid "`WEBIX_SENDER` is not configured in your settings.py file"
 msgstr ""
 
-#: apps.py:35
+#: apps.py:47
 msgid "`method` is not configured in send method"
 msgstr ""
 
-#: apps.py:37
+#: apps.py:49
 msgid "`verbose_name` is not configured in send method"
 msgstr ""
 
-#: apps.py:39
+#: apps.py:51
 msgid "`show_in_list` is not configured in send method"
 msgstr ""
 
-#: apps.py:41
+#: apps.py:53
 msgid "`show_in_chat` is not configured in send method"
 msgstr ""
 
-#: apps.py:55 apps.py:180
+#: apps.py:67 apps.py:192
 msgid "`function` is not configured in send method"
 msgstr ""
 
-#: apps.py:67
+#: apps.py:79
 msgid "`recipients_clean` is not configured in send method"
 msgstr ""
 
-#: apps.py:79
+#: apps.py:91
 msgid "`presend_check` is not configured in send method"
 msgstr ""
 
-#: apps.py:91
+#: apps.py:103
 msgid "`attachments_format` is not configured in send method"
 msgstr ""
 
-#: apps.py:103
+#: apps.py:115
 msgid "`{}` method is used {} times instead of 1"
 msgstr ""
 
-#: apps.py:111
+#: apps.py:123
 msgid "Email `config` is not configured in your settings.py file"
 msgstr ""
 
-#: apps.py:122
+#: apps.py:134
 msgid "Skebby `config` is not configured in your settings.py file"
 msgstr ""
 
-#: apps.py:129
+#: apps.py:141
 msgid "Telegram `config` is not configured in your settings.py file"
 msgstr ""
 
-#: apps.py:167
+#: apps.py:179
 msgid "`method` is not configured in initial send method"
 msgstr ""
 
-#: apps.py:187
+#: apps.py:199
 msgid "`recipients` is not configured in your settings"
 msgstr ""
 
-#: apps.py:189
+#: apps.py:201
 msgid "`recipients` must be a list"
 msgstr ""
 
-#: apps.py:193
+#: apps.py:205
 msgid "You have to define a `model` as string in your recipients list"
 msgstr ""
 
-#: apps.py:195
+#: apps.py:207
 msgid "You have to define a `datatable_fields` as list in your recipients list"
 msgstr ""
 
-#: apps.py:201
+#: apps.py:213
 msgid "Recipient model `{}` is not valid"
 msgstr ""
 

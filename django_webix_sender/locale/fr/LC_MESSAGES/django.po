@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-26 09:26+0200\n"
+"POT-Creation-Date: 2022-11-02 17:35+0100\n"
 "PO-Revision-Date: 2022-03-21 15:33+0050\n"
 "Last-Translator: Traduzioni CBC <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,79 +55,79 @@ msgstr "Fonction"
 msgid "`WEBIX_SENDER` is not configured in your settings.py file"
 msgstr "`WEBIX_SENDER` n'est pas configuré dans vos réglages.py file"
 
-#: apps.py:35
+#: apps.py:47
 msgid "`method` is not configured in send method"
 msgstr "Méthode n'est pas configuré dans votre méthode d'envoi"
 
-#: apps.py:37
+#: apps.py:49
 msgid "`verbose_name` is not configured in send method"
 msgstr "`verbose_name` n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:39
+#: apps.py:51
 msgid "`show_in_list` is not configured in send method"
 msgstr "`show_in_list` n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:41
+#: apps.py:53
 msgid "`show_in_chat` is not configured in send method"
 msgstr "`show_in_chat` n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:55 apps.py:180
+#: apps.py:67 apps.py:192
 msgid "`function` is not configured in send method"
 msgstr "`function`n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:67
+#: apps.py:79
 msgid "`recipients_clean` is not configured in send method"
 msgstr "`recipients_clean` n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:79
+#: apps.py:91
 msgid "`presend_check` is not configured in send method"
 msgstr "`presend_check`  n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:91
+#: apps.py:103
 msgid "`attachments_format` is not configured in send method"
 msgstr "`attachments_format`  n'est pas configuré dans la méthode d'envoi"
 
-#: apps.py:103
+#: apps.py:115
 msgid "`{}` method is used {} times instead of 1"
 msgstr "`{}` méthode est utilisé {} fois au lieu de 1"
 
-#: apps.py:111
+#: apps.py:123
 msgid "Email `config` is not configured in your settings.py file"
 msgstr "Email `config` n'est pas configuré dans vos réglages.py file"
 
-#: apps.py:122
+#: apps.py:134
 msgid "Skebby `config` is not configured in your settings.py file"
 msgstr "Skebby `config` n'est pas configuré dans vos réglages.py file"
 
-#: apps.py:129
+#: apps.py:141
 msgid "Telegram `config` is not configured in your settings.py file"
 msgstr "Telegram `config` n'est pas configuré dans vos réglages.py file"
 
-#: apps.py:167
+#: apps.py:179
 msgid "`method` is not configured in initial send method"
 msgstr "`method` n'est pas configuré dans votre méthode initiale d'envoi"
 
-#: apps.py:187
+#: apps.py:199
 msgid "`recipients` is not configured in your settings"
 msgstr "`recipients`n'est pas configuré dans vos réglages"
 
-#: apps.py:189
+#: apps.py:201
 msgid "`recipients` must be a list"
 msgstr "`recipients` doit être une liste"
 
-#: apps.py:193
+#: apps.py:205
 msgid "You have to define a `model` as string in your recipients list"
 msgstr ""
 "Vous devez définir un  `model` comme une chaine dans votre liste de "
 "destinataires"
 
-#: apps.py:195
+#: apps.py:207
 msgid "You have to define a `datatable_fields` as list in your recipients list"
 msgstr ""
 "Vous devez définir des `datatable_fields` comme liste dans votre liste de "
 "destinataires"
 
-#: apps.py:201
+#: apps.py:213
 msgid "Recipient model `{}` is not valid"
 msgstr "Le modèle de destinataires `{}` n'est pas valide"
 
